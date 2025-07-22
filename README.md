@@ -19,6 +19,34 @@
 
 **Sobreviva à Noite** é um jogo mobile desenvolvido em Android que oferece uma experiência única de suspense e ação. O jogador é desafiado a sobreviver através de diferentes mecânicas de gameplay, cada uma testando habilidades específicas em um ambiente de tensão constante.
 
+### 🎓 Contexto Acadêmico
+Este projeto foi desenvolvido como parte da disciplina de **Programação para Dispositivos Móveis**, onde o desafio inicial era criar um aplicativo multi-telas utilizando **Jetpack Compose**. 
+
+Motivado a ir além dos requisitos básicos, decidi criar um **joguinho** que explorasse os limites da proposta acadêmica, implementando:
+- ✅ **Múltiplas telas** com navegação fluida
+- ✅ **Interface moderna** com Jetpack Compose
+- ✅ **Lógica complexa** de jogos interativos
+
+O resultado foi um projeto que não apenas cumpriu os requisitos acadêmicos, mas também demonstrou o potencial criativo e técnico no desenvolvimento Android.
+
+### 🎯 Objetivos Acadêmicos Alcançados
+
+| Requisito Original | Implementação no Projeto | Status |
+|:---:|:---:|:---:|
+| **Multi-telas** | Menu principal, telas de jogo, resultados | ✅ Superado |
+| **Jetpack Compose** | Interface 100% em Compose | ✅ Completo |
+| **Navegação** | Sistema robusto entre telas | ✅ Avançado |
+| **Interatividade** | Jogos com mecânicas complexas | ✅ Inovador |
+
+### 📚 Principais Aprendizados
+- **Arquitetura Android** com Jetpack Compose
+- **Gerenciamento de estado** em aplicações interativas
+- **Navigation Component** para fluxo entre telas
+- **Design responsivo** e experiência do usuário
+- **Lógica de jogos** e algoritmos de gameplay
+
+---
+
 ### 🚨 Problema Principal
 Oferecer uma experiência de jogo simples e interativa, explorando diferentes mecânicas de gameplay em um ambiente de suspense que mantém o jogador sempre alerta.
 
@@ -191,7 +219,22 @@ app/
 | :---: |
 | 💻 Desenvolvedor Principal |
 
+*Projeto desenvolvido como parte da disciplina de **Programação para Dispositivos Móveis***
+
 </div>
+
+---
+
+## 🎓 Reflexão Acadêmica
+
+Este projeto representa mais do que um simples cumprimento de requisitos acadêmicos. Foi uma oportunidade de:
+
+- **Explorar limites criativos** dentro de um framework técnico específico
+- **Aplicar conhecimentos teóricos** em um projeto prático e envolvente  
+- **Demonstrar domínio técnico** do Jetpack Compose e arquitetura Android
+- **Criar valor real** através de uma experiência de usuário divertida
+
+O resultado final mostra como é possível **ir além do esperado** mesmo dentro de constraints acadêmicas, transformando um exercício de programação em um **produto completo** e **funcional**.
 
 ---
 
