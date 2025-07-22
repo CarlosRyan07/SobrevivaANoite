@@ -1,15 +1,103 @@
+# Arquivos específicos do Android Studio
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+.idea/
+.gradle/
 local.properties
+
+# Arquivos de build
+/build/
+app/build/
+*/build/
+build/
+
+# Arquivos de saída do APK
+*.apk
+*.aar
+*.ap_
+*.aab
+
+# Arquivos de log
+*.log
+hs_err_pid*.log
+replay_pid*.log
+
+# Arquivos de configuração local
+local.properties
+
+# Arquivos de assinatura (keystore) - IMPORTANTE: mantenha seguro
+# Descomente a linha abaixo se quiser versionar o keystore (não recomendado para produção)
+# *.jks
+# *.keystore
+ChaveAPK.jks
+
+# Arquivos temporários
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Diretórios de dependências
+node_modules/
+
+# Arquivos do Gradle Wrapper (manter apenas o gradle-wrapper.properties)
+.gradle/
+gradlew
+gradlew.bat
+gradle/wrapper/gradle-wrapper.jar
+
+# Arquivos gerados pelo R8/ProGuard
+mapping.txt
+
+# Arquivos de cache
+.externalNativeBuild/
+.cxx/
+*.cache
+
+# Arquivos de backup do editor
+*~
+*.swp
+*.swo
+
+# Arquivos do sistema operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Arquivos do IntelliJ IDEA
+*.iws
+out/
+.idea_modules/
+
+# Arquivos do Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+.settings/
+.loadpath
+.recommenders
+
+# Arquivos do NDK
+obj/
+
+# Arquivos do Firebase
+google-services.json
+
+# Arquivos de profiling
+*.hprof
+
+# Arquivos específicos do projeto
+*.compiler.options
+
+# Diretórios de saída
+/captures
+/.externalNativeBuild
+/.cxx
+/app/release/

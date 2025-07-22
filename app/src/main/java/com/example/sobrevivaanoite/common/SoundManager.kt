@@ -1,19 +1,20 @@
+// Arquivo: common/SoundManager.kt (COMPLETO E ATUALIZADO)
 package com.example.sobrevivaanoite.common
 
 import android.content.Context
 import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.media.SoundPool
+import androidx.annotation.RawRes
 import com.example.sobrevivaanoite.R
 
 object SoundManager {
 
-    // NOVO: Lista específica para os sons de morte
+    // --- LÓGICA ANTIGA PARA EFEITOS CURTOS (SoundPool) ---
     val deathSounds = listOf(
         R.raw.morte1, R.raw.morte2, R.raw.morte3, R.raw.morte4,
         R.raw.morte5, R.raw.morte6, R.raw.morte7, R.raw.morte8
     )
-
-    // A lista principal agora contém TODOS os sons, incluindo a nova lista
     val allSounds = listOf(
         R.raw.musica_tensa,
         R.raw.fnaf2_theme,
@@ -22,15 +23,16 @@ object SoundManager {
         R.raw.porta_sendo_quebrada,
         R.raw.win_hide,
         R.raw.lose_hide,
-        // modo batalha
         R.raw.soco,
         R.raw.soco_forte,
         R.raw.parry,
         R.raw.lobisomem_ataque
-    ) + deathSounds // Adicionamos a lista de sons de morte à lista principal
-
+    ) + deathSounds
     private var soundPool: SoundPool? = null
     private val soundIds = mutableMapOf<Int, Int>()
+
+    // --- NOVA LÓGICA PARA MÚSICAS (MediaPlayer) ---
+    private var mediaPlayer: MediaPlayer? = null
 
     fun initialize(context: Context) {
         val audioAttributes = AudioAttributes.Builder()
@@ -38,7 +40,7 @@ object SoundManager {
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .build()
         soundPool = SoundPool.Builder()
-            .setMaxStreams(7)
+            .setMaxStreams(10)
             .setAudioAttributes(audioAttributes)
             .build()
         allSounds.forEach { soundRes ->
@@ -49,14 +51,37 @@ object SoundManager {
         }
     }
 
-    fun playSound(soundResId: Int) {
+    // Função para efeitos curtos
+    fun playSound(@RawRes soundResId: Int) {
         soundIds[soundResId]?.let { soundId ->
             soundPool?.play(soundId, 1f, 1f, 0, 0, 1f)
         }
     }
 
+    // NOVA FUNÇÃO: Para músicas longas
+    fun playMusic(context: Context, @RawRes musicResId: Int) {
+        // Para e libera qualquer música que já esteja tocando
+        stopMusic()
+
+        mediaPlayer = MediaPlayer.create(context, musicResId).apply {
+            setOnCompletionListener {
+                // Quando a música terminar, libera os recursos
+                stopMusic()
+            }
+            start() // Inicia a música
+        }
+    }
+
+    // NOVA FUNÇÃO: Para parar a música
+    fun stopMusic() {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
     fun release() {
         soundPool?.release()
         soundPool = null
+        stopMusic() // Garante que a música pare também
     }
 }

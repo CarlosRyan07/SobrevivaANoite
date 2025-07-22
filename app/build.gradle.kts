@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.sobrevivaanoite"
-        minSdk = 24
+        minSdk = 28
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -40,7 +40,11 @@ android {
 }
 
 dependencies {
-
+    // Glide - Motor Principal, Decodificador de GIF, e Integração com Compose
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.github.bumptech.glide:gifdecoder:4.16.0")
+    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+    // Suas outras dependências
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.core.ktx)
@@ -51,6 +55,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.volley)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
