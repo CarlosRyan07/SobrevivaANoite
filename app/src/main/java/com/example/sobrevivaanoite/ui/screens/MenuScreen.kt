@@ -7,12 +7,26 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,10 +51,7 @@ fun MenuScreen(navController: NavController) {
 
     var menuState by remember { mutableStateOf(MenuFlowState.Initial) }
 
-    // AJUSTE 1: Lógica para o botão "Voltar"
-    // Ele só estará ativo quando a lore estiver sendo mostrada
     BackHandler(enabled = menuState == MenuFlowState.ShowingLore) {
-        // Ao clicar em voltar, retorna para a tela inicial
         menuState = MenuFlowState.Initial
     }
 
@@ -73,6 +84,19 @@ fun MenuScreen(navController: NavController) {
                         .width(200.dp)
                 ) {
                     Text("Iniciar Jogo", fontSize = 18.sp)
+                }
+
+                // NOVO: Botão para o Histórico de Partidas
+                Button(
+                    onClick = {
+                        SoundManager.playSound(R.raw.clique_botao)
+                        navController.navigate("history")
+                    },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd) // Alinha no canto superior direito
+                        .padding(top = 24.dp, end = 24.dp) // Adiciona um espaçamento da borda
+                ) {
+                    Text("Histórico")
                 }
             }
         }
@@ -111,7 +135,6 @@ private fun LoreScreen(
             contentPadding = PaddingValues(horizontal = 24.dp, vertical = 48.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // ... (itens da história) ...
             item {
                 Text(
                     text = "Você e mais cinco amigos estavam aproveitando uma noite tranquila no sítio, que parecia perfeita.",
@@ -188,12 +211,10 @@ private fun LoreScreen(
                     style = loreTextStyle()
                 )
             }
-
             item {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        // AJUSTE 3: Aumenta o espaço acima da seção de escolha
                         .padding(top = 10.dp, bottom = 80.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -221,7 +242,6 @@ private fun LoreScreen(
 
 @Composable
 private fun loreTextStyle(): TextStyle {
-    // AJUSTE 2: Fonte e espaçamento entre linhas diminuídos
     return TextStyle(
         fontSize = 17.sp,
         color = Color(0xFFE0E0E0),

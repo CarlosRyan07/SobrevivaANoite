@@ -1,10 +1,14 @@
 package com.example.sobrevivaanoite.game
 
+import android.app.Application
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sobrevivaanoite.R
+import com.example.sobrevivaanoite.data.AppDatabase
+import com.example.sobrevivaanoite.data.MatchHistory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -14,7 +18,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-// --- (Enums e data classes não mudam) ---
+// ... (Enums e data classes não mudam)
 enum class PlayerStatus { Hiding, Dead }
 sealed class GameUiState {
     data object Choosing : GameUiState()
@@ -37,22 +41,23 @@ sealed class SoundEvent {
     data object PlayTenseSound : SoundEvent()
 }
 
-class HideViewModel : ViewModel() {
+// NOVO: A classe agora herda de AndroidViewModel
+class HideViewModel(application: Application) : AndroidViewModel(application) {
 
-    // --- CONSTANTES ---
-    // ALTERADO: A altura (Y) do esconderijo 2 agora é a mesma do 5.
+    // NOVO: Acesso ao DAO do banco de dados
+    private val matchHistoryDao = AppDatabase.getDatabase(application).matchHistoryDao()
+
     private val hidingSpotCoordinates = mapOf(
         1 to Position((-35).dp, 250.dp),
-        2 to Position(130.dp, (-35).dp), // Y alterado de 10.dp para -35.dp
+        2 to Position(130.dp, (-35).dp),
         3 to Position(130.dp, 190.dp),
         4 to Position((-170).dp, 150.dp),
         5 to Position((-140).dp, (-35).dp),
         6 to Position((-35).dp, (-230).dp)
     )
-    // ALTERADO: A altura (Y) da hesitação do esconderijo 2 também foi ajustada.
     private val hesitationCoordinates = mapOf(
         1 to Position((-35).dp, 220.dp),
-        2 to Position(100.dp, (-35).dp), // Y alterado de 10.dp para -35.dp
+        2 to Position(100.dp, (-35).dp),
         3 to Position(100.dp, 190.dp),
         4 to Position((-140).dp, 150.dp),
         5 to Position((-110).dp, (-35).dp),
@@ -68,7 +73,6 @@ class HideViewModel : ViewModel() {
         R.drawable.ghostface
     )
 
-    // --- (O resto do ViewModel não precisa de nenhuma alteração) ---
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState.Choosing)
     val uiState: StateFlow<GameUiState> = _uiState
     private val _playersStatus = MutableStateFlow(getInitialPlayersStatus())
@@ -100,6 +104,8 @@ class HideViewModel : ViewModel() {
                 _countdown.value--
             }
             if (_uiState.value is GameUiState.Choosing) {
+                // Salva o resultado de derrota
+                saveHideResult(wasVictory = false)
                 _soundEventChannel.send(SoundEvent.PlayerLoses)
                 _uiState.value = GameUiState.Result(
                     didPlayerWin = false,
@@ -140,6 +146,8 @@ class HideViewModel : ViewModel() {
                     delay(6000)
                     val foundYou = Random.nextBoolean()
                     if (foundYou) {
+                        // Salva o resultado de derrota
+                        saveHideResult(wasVictory = false)
                         _soundEventChannel.send(SoundEvent.PlayerLoses)
                         updatePosition(hidingSpotCoordinates[roomToSearch] ?: houseCenterPosition)
                         delay(300)
@@ -175,6 +183,8 @@ class HideViewModel : ViewModel() {
             delay(2000)
             updatePosition(offScreenPosition)
             delay(1500)
+            // Salva o resultado de vitória
+            saveHideResult(wasVictory = true)
             _soundEventChannel.send(SoundEvent.PlayerWins)
             _uiState.value = GameUiState.Result(true, playerChoice, finalOtherSurvivor)
         }
@@ -205,5 +215,19 @@ class HideViewModel : ViewModel() {
 
     private fun getInitialPlayersStatus(): Map<Int, PlayerStatus> {
         return (1..6).associateWith { PlayerStatus.Hiding }
+    }
+
+    // NOVO: Função para salvar o resultado
+    private fun saveHideResult(wasVictory: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val match = MatchHistory(
+                gameMode = "Esconde-Esconde",
+                wasVictory = wasVictory,
+                // Campos não relevantes para este modo, usamos valores padrão
+                finalPlayerHp = if (wasVictory) 100 else 0,
+                parryCount = 0
+            )
+            matchHistoryDao.insertMatch(match)
+        }
     }
 }

@@ -5,9 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.sobrevivaanoite.ui.screens.MenuScreen
 import com.example.sobrevivaanoite.ui.screens.BattleScreen
 import com.example.sobrevivaanoite.ui.screens.HideScreen
+import com.example.sobrevivaanoite.ui.screens.HistoryScreen
+import com.example.sobrevivaanoite.ui.screens.MenuScreen
 
 @Composable
 fun NavGraph() {
@@ -29,6 +30,9 @@ fun NavGraph() {
 
         composable(route = "battle") {
             BattleScreen(navController = navController)
+        }
+        composable(route = "history") {
+            HistoryScreen(navController = navController)
         }
     }
 }

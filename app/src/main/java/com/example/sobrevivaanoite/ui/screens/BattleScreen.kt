@@ -74,7 +74,7 @@ fun BattleScreen(navController: NavController) {
                 .fillMaxSize()
                 .offset(y = (-60).dp)
         )
-
+        HighScoreDisplay(highCombo = uiState.highCombo)
         if (uiState.gameResult == "win") {
             VictoryOverlay(
                 onBackToMenu = { navController.popBackStack() },
@@ -119,7 +119,26 @@ fun BattleScreen(navController: NavController) {
         }
     }
 }
-
+// NOVO: Componente para mostrar o recorde
+@Composable
+fun HighScoreDisplay(highCombo: Int) {
+    if (highCombo > 0) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                // Altera o padding para a direita (end) em vez da esquerda (start)
+                .padding(top = 16.dp, end = 16.dp),
+            contentAlignment = Alignment.TopEnd // Alinha no canto superior direito
+        ) {
+            Text(
+                text = "RECORDE: $highCombo",
+                color = Color.Yellow,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CenterStage(@DrawableRes enemyImage: Int, @DrawableRes playerImage: Int, isPlayerDancing: Boolean) {

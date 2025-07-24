@@ -6,6 +6,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sobrevivaanoite.R
 import com.example.sobrevivaanoite.common.SoundManager
+import com.example.sobrevivaanoite.data.AppDatabase
+import com.example.sobrevivaanoite.data.GameSettingsManager
+import com.example.sobrevivaanoite.data.MatchHistory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,13 +33,16 @@ data class BattleUiState(
     val enemyAction: EnemyAction = EnemyAction.IDLE,
     @DrawableRes val enemyImage: Int = R.drawable.psicopata_parado,
     val gameResult: String? = null,
-    val playerComboStep: Int = 0
+    val playerComboStep: Int = 0,
+    val highCombo: Int = 0
 )
 
 class BattleViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(BattleUiState())
     val uiState: StateFlow<BattleUiState> = _uiState.asStateFlow()
+    private val gameSettingsManager = GameSettingsManager(application)
+    private val matchHistoryDao = AppDatabase.getDatabase(application).matchHistoryDao()
 
     private var aiLoopJob: Job? = null
     private var playerActionJob: Job? = null
@@ -43,6 +50,7 @@ class BattleViewModel(application: Application) : AndroidViewModel(application) 
     private var playerDodgeIntent: AttackDirection? = null
     private var dodgeTiming: DodgeTiming = DodgeTiming.NONE
     private var playerComboStep = 0
+    private var parryCount = 0
     private var comboTimerJob: Job? = null
 
     private val playerIdleImages = listOf(R.drawable.sobrevivente_parado)
@@ -55,9 +63,25 @@ class BattleViewModel(application: Application) : AndroidViewModel(application) 
     private var attackSpeed: Long = 250L
 
     init {
+        viewModelScope.launch {
+            gameSettingsManager.highComboFlow.collect { savedHighCombo ->
+                _uiState.update { it.copy(highCombo = savedHighCombo) }
+            }
+        }
         startEnemyAiLoop()
     }
-
+    private fun saveBattleResult(wasVictory: Boolean) {
+        // Usamos Dispatchers.IO, que é otimizado para operações de disco como salvar no banco de dados
+        viewModelScope.launch(Dispatchers.IO) {
+            val newMatch = MatchHistory(
+                gameMode = "Batalha",
+                wasVictory = wasVictory,
+                finalPlayerHp = _uiState.value.playerHp,
+                parryCount = parryCount
+            )
+            matchHistoryDao.insertMatch(newMatch)
+        }
+    }
     private fun isPlayerBusy(): Boolean {
         return _uiState.value.playerState != PlayerState.IDLE
     }
@@ -114,6 +138,7 @@ class BattleViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
     private suspend fun handleParrySuccess(attackDirection: AttackDirection) {
+        parryCount++
         val parryImage = if (attackDirection == AttackDirection.LEFT) R.drawable.sobrevivente_parry_esquerda else R.drawable.sobrevivente_parry_direita
         SoundManager.playSound(R.raw.parry)
         _uiState.update { it.copy(playerImage = parryImage, playerState = PlayerState.IDLE, enemyAction = EnemyAction.STUNNED, enemyImage = R.drawable.psicopata_atordoado) }
@@ -142,12 +167,14 @@ class BattleViewModel(application: Application) : AndroidViewModel(application) 
         if (currentState.enemyHp <= 0 && currentState.gameResult == null) {
             handleVictorySequence()
         } else if (currentState.playerHp <= 0 && currentState.gameResult == null) {
+            saveBattleResult(wasVictory = false) // NOVO: Salva o resultado de derrota
             aiLoopJob?.cancel()
             _uiState.update { it.copy(gameResult = "lose") }
         }
     }
 
     private fun handleVictorySequence() {
+        saveBattleResult(wasVictory = true) // NOVO: Salva o resultado de vitória
         aiLoopJob?.cancel()
         viewModelScope.launch {
             _uiState.update { it.copy(enemyImage = R.drawable.psicopata_atordoado, enemyAction = EnemyAction.DEFEATED) }
@@ -204,6 +231,13 @@ class BattleViewModel(application: Application) : AndroidViewModel(application) 
 
         val attackImage = playerAttackImages[playerComboStep % playerAttackImages.size]
         playerComboStep++
+        val currentCombo = playerComboStep
+        if (currentCombo > _uiState.value.highCombo) {
+            viewModelScope.launch {
+                gameSettingsManager.updateHighCombo(currentCombo)
+            }
+        }
+
         _uiState.update { it.copy(playerImage = attackImage, playerState = PlayerState.ATTACKING, playerComboStep = playerComboStep) }
 
         playerActionJob?.cancel()
@@ -250,12 +284,14 @@ class BattleViewModel(application: Application) : AndroidViewModel(application) 
         aiLoopJob?.cancel()
         SoundManager.stopMusic()
         playerComboStep = 0
+        parryCount = 0
         resetComboSpeed()
         dodgeTiming = DodgeTiming.NONE
         playerDodgeIntent = null
         _uiState.value = BattleUiState()
         startEnemyAiLoop()
     }
+
 
     override fun onCleared() {
         super.onCleared()

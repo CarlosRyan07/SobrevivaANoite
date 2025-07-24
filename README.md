@@ -38,12 +38,24 @@ O resultado foi um projeto que não apenas cumpriu os requisitos acadêmicos, ma
 | **Navegação** | Sistema robusto entre telas | ✅ Avançado |
 | **Interatividade** | Jogos com mecânicas complexas | ✅ Inovador |
 
+### 🔄 Próximos Objetivos (Persistência de Dados)
+
+| Requisito da Atividade | Implementação Proposta | Status |
+|:---:|:---:|:---:|
+| **Persistência (ROOM)** | Histórico de partidas e recordes | 🔄 Proposto |
+| **DataStore** | Preferências e configurações | 🔄 Proposto |
+
 ### 📚 Principais Aprendizados
 - **Arquitetura Android** com Jetpack Compose
 - **Gerenciamento de estado** em aplicações interativas
 - **Navigation Component** para fluxo entre telas
 - **Design responsivo** e experiência do usuário
 - **Lógica de jogos** e algoritmos de gameplay
+
+### 🎯 Próximos Aprendizados (Propostos)
+- **ROOM Database** para persistência de dados local
+- **DataStore Preferences** para configurações do usuário
+- **Padrões de arquitetura** MVVM com Repository Pattern
 
 ---
 
@@ -95,7 +107,10 @@ Oferecer uma experiência de jogo simples e interativa, explorando diferentes me
 - ✅ **Sistema de pontuação** para competição
 - ✅ **Efeitos sonoros** imersivos
 - ✅ **Compatibilidade** com Android 9.0+ (API 28+)
-- 🔄 **Salvamento automático** de progresso
+- 🔄 **Salvamento automático** de progresso (proposto)
+- 🔄 **Sistema de histórico** de partidas (proposto)
+- 🔄 **Recordes de combos** no modo batalha (proposto)
+- 🔄 **Preferências do usuário** (proposto)
 - 🎨 **Design moderno** com tema dark
 
 ---
@@ -235,6 +250,10 @@ Este projeto representa mais do que um simples cumprimento de requisitos acadêm
 - **Criar valor real** através de uma experiência de usuário divertida
 
 O resultado final mostra como é possível **ir além do esperado** mesmo dentro de constraints acadêmicas, transformando um exercício de programação em um **produto completo** e **funcional**.
+
+### 📋 Documentação das Novas Funcionalidades
+Para detalhes completos sobre a implementação de **persistência de dados** (ROOM e DataStore), consulte:
+**[📄 PERSISTENCIA_DADOS.md](./PERSISTENCIA_DADOS.md)** - Documentação detalhada das novas funcionalidades
 
 ---
 
