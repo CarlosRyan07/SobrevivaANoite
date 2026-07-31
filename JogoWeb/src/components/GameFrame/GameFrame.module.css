@@ -3,7 +3,9 @@
   width: 100%;
   min-height: 100dvh;
   place-items: center;
-  background: var(--game-backdrop) center / cover no-repeat fixed;
+  background:
+    linear-gradient(rgb(0 5 18 / 58%), rgb(0 5 18 / 58%)),
+    var(--game-backdrop) center / cover no-repeat fixed;
 }
 
 .frame {

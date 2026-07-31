@@ -96,9 +96,16 @@ try {
             '[aria-label="Modo esconder"]',
             (root) => root.textContent?.includes('Ele está procurando...') ?? false,
           )
-          interaction = { before, pressed, moved, searching }
+          const searchStatus = await page.$eval('[role="status"]', (element) => {
+            const rect = element.getBoundingClientRect()
+            return { top: rect.top, bottom: rect.bottom }
+          })
+          interaction = { before, pressed, moved, searching, searchStatus }
           if (moved > 1) errors.push(`Esconderijo deslocou ${moved.toFixed(2)}px ao pressionar.`)
           if (!searching) errors.push('O clique no esconderijo não iniciou a busca.')
+          if (searchStatus.top > 40) {
+            errors.push(`Mensagem de busca iniciou em ${searchStatus.top.toFixed(2)}px; esperado no topo.`)
+          }
         }
       }
     }
@@ -117,6 +124,17 @@ try {
         scrollWidth: document.documentElement.scrollWidth,
         brokenImages,
         shellBackgroundImage: getComputedStyle(document.querySelector('main')).backgroundImage,
+        openingImage: (() => {
+          const image = document.querySelector('img[alt="Tela de Início"]')
+          if (!(image instanceof HTMLImageElement)) return null
+          const imageRect = image.getBoundingClientRect()
+          return {
+            objectFit: getComputedStyle(image).objectFit,
+            left: imageRect.left,
+            right: imageRect.right,
+            width: imageRect.width,
+          }
+        })(),
         openingVisible:
           document.querySelector('img[alt="Tela de Início"]') instanceof HTMLImageElement &&
           [...document.querySelectorAll('button')].some(
@@ -144,9 +162,18 @@ try {
     }
     if (
       visualCase.hash === '' &&
-      (metrics.shellBackgroundImage === 'none' || metrics.shellBackgroundImage.includes('/assets/assets/'))
+      (metrics.openingImage?.objectFit !== 'cover' ||
+        Math.abs((metrics.openingImage?.width ?? 0) - metrics.frame.width) > 1)
     ) {
-      errors.push(`Fundo lateral inválido: ${metrics.shellBackgroundImage}`)
+      errors.push(`A arte da abertura não preencheu o palco: ${JSON.stringify(metrics.openingImage)}`)
+    }
+    if (
+      visualCase.hash === '' &&
+      (metrics.shellBackgroundImage === 'none' ||
+        metrics.shellBackgroundImage.includes('/assets/assets/') ||
+        !metrics.shellBackgroundImage.includes('linear-gradient'))
+    ) {
+      errors.push(`Fundo lateral ausente ou sem escurecimento: ${metrics.shellBackgroundImage}`)
     }
 
     const screenshot = path.join(outputDirectory, `${visualCase.name}.png`)

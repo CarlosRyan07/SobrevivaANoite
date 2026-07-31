@@ -98,7 +98,7 @@ export function HideScreen({ onBackToMenu }: HideScreenProps) {
       )}
 
       {state.phase.kind === 'searching' && (
-        <div className={styles.searchStatus}>
+        <div className={styles.searchStatus} role="status" aria-live="polite">
           <p className={styles.searchingText}>Ele está procurando...</p>
         </div>
       )}

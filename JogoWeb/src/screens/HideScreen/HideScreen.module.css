@@ -122,11 +122,12 @@
 .searchStatus {
   position: absolute;
   z-index: 4;
+  top: calc(16px + env(safe-area-inset-top, 0px));
   right: 0;
-  bottom: calc(48px + env(safe-area-inset-bottom, 0px));
   left: 0;
   display: flex;
   justify-content: center;
+  padding: 0 12px;
   pointer-events: none;
 }
 
@@ -211,10 +212,6 @@
 @media (max-height: 650px) {
   .world {
     transform: scale(0.86);
-  }
-
-  .searchStatus {
-    bottom: 24px;
   }
 }
 

@@ -92,9 +92,9 @@ A matriz final está em `MATRIZ_EQUIVALENCIA.md`.
 - HP zero agora trava imediatamente ataques e esquivas, cancela timers concorrentes e fixa o sprite derrotado antes do joinha e da dança.
 - A vitória possui cenário de teste com inimigo iniciado em 1 HP e usa o `rat_dance_music.mp3` oficial da `master` atualizada.
 - `Voltar ao Menu` nos resultados limpa o hash da lore e retorna à abertura real.
-- A espera do sprite derrotado foi ampliada de 2.500 para 4.000 ms antes do joinha, conforme solicitado para a Web.
+- A espera do sprite derrotado foi ajustada para 2.000 ms antes do joinha, reduzindo em 2 segundos o congelamento percebido após o golpe final.
 - A música é preparada muda durante o golpe final e retomada audível com o joinha, evitando o bloqueio de autoplay após o timer.
-- A arte da abertura usa cobertura responsiva e o mesmo fundo fora do palco, eliminando as faixas azuis laterais.
+- A arte da abertura usa cobertura responsiva e uma versão escurecida do mesmo fundo fora do palco, eliminando as faixas azuis sem competir com o conteúdo central.
 - O histórico dispara atualização local imediata, é testado após reload e o servidor de desenvolvimento fixa a origem em `localhost:5173`.
 
 ### 7.2. Sincronização com a `master` remota

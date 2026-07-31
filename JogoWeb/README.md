@@ -10,11 +10,11 @@ Concluído e validado:
 - modo esconder com seis locais reposicionados pela referência visual, IA, probabilidades, timers e sons;
 - resultado do esconderijo com reinício ou retorno ao menu;
 - modo batalha com dano, esquiva por setas/teclado, ataque por botão/Espaço/mouse, parry, combo, HUD e resultados;
-- vitória atualizada com bloqueio imediato, espera maior no derrotado, joinha, Rat Dance e música preparada contra bloqueio de autoplay;
+- vitória atualizada com bloqueio imediato, espera de 2 segundos no derrotado, joinha, Rat Dance e música preparada contra bloqueio de autoplay;
 - recorde de combo persistido entre sessões;
 - histórico de partidas com estatísticas dos dois modos e detalhes de batalha;
 - assets Android sincronizados, com a imagem da lore corrigida e o GIF não utilizado do Fortnite removido;
-- layout vertical responsivo, com a arte preenchendo as laterais da abertura;
+- layout vertical responsivo, com a arte preenchendo e escurecendo as laterais da abertura;
 - PWA e funcionamento offline após o cache dos modos;
 - 66 testes aprovados em 16 arquivos;
 - lint, TypeScript estrito, build, verificação visual e verificação offline aprovados.

@@ -115,13 +115,13 @@ describe('BattleScreen', () => {
       expect.stringContaining('psicopata_derrotado.webp'),
     )
 
-    await act(async () => vi.advanceTimersByTimeAsync(2_500))
+    await act(async () => vi.advanceTimersByTimeAsync(1_999))
     expect(screen.getByRole('img', { name: 'Sobrevivente' })).not.toHaveAttribute(
       'src',
       expect.stringContaining('sobrevivente_vitoria.webp'),
     )
 
-    await act(async () => vi.advanceTimersByTimeAsync(1_500))
+    await act(async () => vi.advanceTimersByTimeAsync(1))
     expect(screen.getByRole('img', { name: 'Sobrevivente' })).toHaveAttribute(
       'src',
       expect.stringContaining('sobrevivente_vitoria.webp'),

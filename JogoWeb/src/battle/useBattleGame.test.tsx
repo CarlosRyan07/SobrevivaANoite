@@ -133,10 +133,10 @@ describe('useBattleGame', () => {
     expect(result.current.state.enemyImage).toContain('psicopata_derrotado.webp')
     expect(result.current.state.playerImage).not.toContain('sobrevivente_vitoria.webp')
 
-    await act(async () => vi.advanceTimersByTimeAsync(2_500))
+    await act(async () => vi.advanceTimersByTimeAsync(1_999))
     expect(result.current.state.playerImage).not.toContain('sobrevivente_vitoria.webp')
 
-    await act(async () => vi.advanceTimersByTimeAsync(1_500))
+    await act(async () => vi.advanceTimersByTimeAsync(1))
     expect(result.current.state.playerImage).toContain('sobrevivente_vitoria.webp')
     expect(audio.play).toHaveBeenCalledWith('ratDanceMusic', { resumePrepared: true })
 

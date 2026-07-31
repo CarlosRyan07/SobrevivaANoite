@@ -76,7 +76,7 @@ A versão Web preserva o baseline Android, acrescido dos refinamentos explicitam
 | Maior combo persiste no DataStore | `localStorage`, atualização imediata e exibição `RECORDE` | ✔ Equivalente |
 | HP gradiente com limites estritos | Mesmas cinco paletas e comparadores `>` | ✔ Equivalente |
 | Barra anima por 500 ms | CSS 500 ms | ✔ Equivalente |
-| Vitória: atordoado 1 s, derrotado 2,5 s, pose 2,5 s e GIF | Atordoado 1 s, derrotado 4 s, pose 2,5 s e somente `rat_dance.gif` | ✔ Ritmo Web autorizado |
+| Vitória: atordoado 1 s, derrotado 2,5 s, pose 2,5 s e GIF | Atordoado 1 s, derrotado 2 s, pose 2,5 s e somente `rat_dance.gif` | ✔ Ritmo Web autorizado |
 | Combate ainda aceitava ações durante a sequência | HP zero trava ações e cancela timers concorrentes | ✔ Correção Web |
 | `rat_dance_music.mp3` inicia com a pose | Preparada muda no golpe final e audível no início da pose | ✔ Equivalente perceptivo |
 | Derrota imediata no HP zero | Mesmo resultado e overlay | ✔ Equivalente |

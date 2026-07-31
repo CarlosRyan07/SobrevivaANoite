@@ -20,6 +20,9 @@ describe('HideScreen', () => {
     expect(screen.getAllByRole('button', { name: /Esconderijo/ })).toHaveLength(6)
     expect(screen.getByText('Rápido, se esconda!')).toBeInTheDocument()
     expect(screen.getByText('10')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Esconderijo 1' }))
+    expect(screen.getByRole('status')).toHaveTextContent('Ele está procurando...')
   })
 
   it('oferece jogar novamente e voltar ao menu no resultado', async () => {

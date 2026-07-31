@@ -31,7 +31,7 @@ Migração realinhada, validada e pronta na branch `feat/web`, criada diretament
 - ✔ Música e GIF do Rat Dance idênticos aos arquivos da `master` atualizada.
 - ✔ Histórico persistente com estatísticas e detalhes dos dois modos.
 - ✔ Áudio com preload real, sobreposição e dez vozes.
-- ✔ Palco responsivo 390/480 px, arte de abertura em cobertura e laterais preenchidas.
+- ✔ Palco responsivo 390/480 px, arte de abertura em cobertura e laterais preenchidas com escurecimento.
 - ✔ Spring do assassino equivalente ao padrão Compose.
 - ✔ 36 WebPs lossless validados: 28,3 MiB → 16,4 MiB.
 - ✔ PWA com manifest, ícones, service worker e cache sob demanda.
@@ -49,6 +49,13 @@ Migração realinhada, validada e pronta na branch `feat/web`, criada diretament
 ## Pendências
 
 - Nenhuma pendência técnica conhecida.
+
+## Ideia planejada — códigos desbloqueáveis
+
+- Não implementada neste ciclo; a velocidade atual permanece `250→175→100 ms`.
+- Futuramente, a primeira vitória contra o psicopata poderá revelar um código e liberar no menu um campo para resgatá-lo.
+- Antes do resgate, a referência histórica será a progressão mais lenta: ataque inicial de `300 ms`, aceleração de `65 ms` somente a partir do combo 5 e mínimo de `135 ms`.
+- O código desbloqueará a progressão rápida usada hoje: `250→175→100 ms`.
 
 ## Próximo passo opcional
 
