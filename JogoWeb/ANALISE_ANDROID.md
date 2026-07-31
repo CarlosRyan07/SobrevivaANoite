@@ -284,11 +284,12 @@ Reiniciar cancela jobs de jogador, impacto, combo e IA, para a música, zera par
 ## Responsividade a preservar
 
 - O Android usa retrato e muitos deslocamentos absolutos em dp.
-- A Web usará um palco vertical central de no máximo 480 CSS px, com altura do viewport.
+- Menu, lore e histórico usam um palco vertical central de no máximo 480 CSS px e altura do viewport.
+- Esconderijo e batalha usam um palco lógico de `480×1000`, escalado uniformemente como uma única unidade.
 - Em telas grandes, o palco permanece vertical e as laterais recebem fundo derivado do jogo.
-- Em telas menores, dimensões e offsets serão reduzidos apenas quando necessário para evitar corte.
+- Em telas menores ou com zoom, todos os elementos e offsets do gameplay são reduzidos juntos, sem alterar a proporção.
 - O conteúdo da lore continua rolável.
-- O palco deve respeitar `100dvh` e as safe areas de celulares.
+- O contêiner externo respeita `100dvh`; telas de conteúdo continuam respeitando safe areas de celulares.
 
 ## Riscos e diferenças de plataforma conhecidas
 

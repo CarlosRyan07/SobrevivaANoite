@@ -20,6 +20,21 @@
   box-shadow: none;
 }
 
+.fixedFrame {
+  max-width: none;
+  min-height: 0;
+  padding: 0;
+}
+
+.gameplayCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 480px;
+  height: 1000px;
+  transform-origin: top left;
+}
+
 @supports (padding: max(0px)) {
   .frame {
     padding-right: env(safe-area-inset-right);

@@ -37,10 +37,11 @@ function LoadingScreen() {
 
 export function App() {
   const { route, navigate, backToMenu } = useGameNavigation()
+  const frameLayout = route === 'hide' || route === 'battle' ? 'gameplay' : 'responsive'
 
   return (
     <AudioProvider>
-      <GameFrame>
+      <GameFrame layout={frameLayout}>
         <Suspense fallback={<LoadingScreen />}>
           {route === 'menu' && (
             <MenuScreen

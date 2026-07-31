@@ -16,7 +16,7 @@ Concluído e validado:
 - assets Android sincronizados, com a imagem da lore corrigida e o GIF não utilizado do Fortnite removido;
 - layout vertical responsivo, com a arte preenchendo e escurecendo as laterais da abertura;
 - PWA e funcionamento offline após o cache dos modos;
-- 66 testes aprovados em 16 arquivos;
+- 67 testes aprovados em 16 arquivos;
 - lint, TypeScript estrito, build, verificação visual e verificação offline aprovados.
 
 A lógica do aplicativo Android fora de `JogoWeb` não foi modificada pela migração. A imagem `lore_fogueira.jpg` corrigida pelo usuário foi sincronizada entre Android e Web, e o GIF não utilizado do Fortnite foi removido das duas versões.
@@ -53,7 +53,7 @@ Os arquivos finais ficam em `dist/` e podem ser hospedados como site estático.
 | `npm run test` | Vitest em modo interativo |
 | `npm run test:run` | Suíte completa uma vez |
 | `npm run assets:optimize` | Recria WebPs lossless e ícones PWA |
-| `npm run visual:check` | Build + screenshots/asserts em oito casos visuais/interativos |
+| `npm run visual:check` | Build + screenshots/asserts em 14 casos visuais/interativos, incluindo extremos de zoom |
 | `npm run pwa:check` | Build + teste real de persistência e funcionamento offline de telas/áudio |
 
 ## Publicação

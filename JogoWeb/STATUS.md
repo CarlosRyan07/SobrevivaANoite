@@ -14,7 +14,7 @@ Migração realinhada, validada e pronta na branch `feat/web`, criada diretament
 | 2. Planejamento | ✔ Concluída | `PLANO_MIGRACAO.md`, `AGENTS.md` |
 | 3. Arquitetura/scaffold | ✔ Concluída | React/TypeScript/Vite e assets validados |
 | 4. Portabilização | ✔ Concluída | Menu, histórico, persistência, esconderijo, batalha, áudio, HUD e resultados |
-| 5. Testes | ✔ Concluída | 66 testes, lint, tipagem, build, oito cenários visuais e PWA offline aprovados |
+| 5. Testes | ✔ Concluída | 67 testes, lint, tipagem, build, 14 cenários visuais e PWA offline aprovados |
 | 6. Otimização | ✔ Concluída | WebP lossless, chunks, lazy loading, cache e PWA offline |
 | 7. Verificação | ✔ Concluída | `MATRIZ_EQUIVALENCIA.md` e inspeção real |
 | 8. Documentação final | ✔ Concluída | README, execução, arquitetura e migração |
@@ -31,13 +31,13 @@ Migração realinhada, validada e pronta na branch `feat/web`, criada diretament
 - ✔ Música e GIF do Rat Dance idênticos aos arquivos da `master` atualizada.
 - ✔ Histórico persistente com estatísticas e detalhes dos dois modos.
 - ✔ Áudio com preload real, sobreposição e dez vozes.
-- ✔ Palco responsivo 390/480 px, arte de abertura em cobertura e laterais preenchidas com escurecimento.
+- ✔ Menu responsivo e gameplay em palco lógico `480×1000`, escalado integralmente sem deformação por zoom.
 - ✔ Spring do assassino equivalente ao padrão Compose.
 - ✔ 36 WebPs lossless validados: 28,3 MiB → 16,4 MiB.
 - ✔ PWA com manifest, ícones, service worker e cache sob demanda.
 - ✔ Abertura, esconderijo, batalha, histórico e áudios aprovados offline.
-- ✔ 66 testes em 16 arquivos aprovados no ciclo funcional.
-- ✔ Oito cenários visuais reais aprovados, incluindo histórico e abertura 546×866.
+- ✔ 67 testes em 16 arquivos aprovados no ciclo funcional.
+- ✔ 14 cenários visuais reais aprovados, incluindo histórico, abertura 546×866 e zoom equivalente de 67% a 150%.
 - ✔ Matriz Android/Web atualizada com os refinamentos explicitamente autorizados.
 - ✔ Código Android preservado; somente a lore corrigida pelo usuário e a remoção do GIF não utilizado alteram os assets da baseline.
 - ✔ Documentos obrigatórios finalizados.

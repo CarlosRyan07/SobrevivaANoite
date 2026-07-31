@@ -47,6 +47,19 @@ const cases = [
   { name: 'mobile-history', hash: '#/history', width: 390, height: 844, wait: 150 },
   { name: 'tablet-opening', hash: '', width: 546, height: 866, wait: 150 },
   { name: 'desktop-opening', hash: '', width: 1_440, height: 900, wait: 150 },
+  { name: 'desktop-hide-zoom-90', hash: '#/hide', width: 2_133, height: 1_000, wait: 150 },
+  {
+    name: 'desktop-hide-zoom-100',
+    hash: '#/hide',
+    width: 1_920,
+    height: 900,
+    wait: 150,
+    interaction: 'hide-selection',
+  },
+  { name: 'desktop-hide-zoom-67', hash: '#/hide', width: 2_866, height: 1_343, wait: 150 },
+  { name: 'desktop-battle-zoom-80', hash: '#/battle', width: 2_400, height: 1_125, wait: 150 },
+  { name: 'desktop-battle-zoom-110', hash: '#/battle', width: 1_745, height: 818, wait: 150 },
+  { name: 'desktop-battle-zoom-150', hash: '#/battle', width: 1_280, height: 600, wait: 150 },
 ]
 
 const report = []
@@ -106,6 +119,28 @@ try {
           if (searchStatus.top > 40) {
             errors.push(`Mensagem de busca iniciou em ${searchStatus.top.toFixed(2)}px; esperado no topo.`)
           }
+          await new Promise((resolve) => setTimeout(resolve, 400))
+          const psychopathVisibility = await page.$eval('img[alt="Psicopata"]', (element) => {
+            const frame = document.querySelector('main > section')
+            if (!(frame instanceof HTMLElement)) throw new Error('GameFrame não encontrado.')
+            const frameRect = frame.getBoundingClientRect()
+            const rect = element.getBoundingClientRect()
+            return {
+              top: rect.top,
+              right: rect.right,
+              bottom: rect.bottom,
+              left: rect.left,
+              fullyVisible:
+                rect.top >= frameRect.top - 1 &&
+                rect.right <= frameRect.right + 1 &&
+                rect.bottom <= frameRect.bottom + 1 &&
+                rect.left >= frameRect.left - 1,
+            }
+          })
+          interaction.psychopathVisibility = psychopathVisibility
+          if (!psychopathVisibility.fullyVisible) {
+            errors.push(`Psicopata saiu do palco: ${JSON.stringify(psychopathVisibility)}`)
+          }
         }
       }
     }
@@ -120,7 +155,15 @@ try {
 
       return {
         viewport: { width: window.innerWidth, height: window.innerHeight },
-        frame: { left: rect.left, right: rect.right, width: rect.width, height: rect.height },
+        frame: {
+          top: rect.top,
+          right: rect.right,
+          bottom: rect.bottom,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+        },
+        layout: frame.dataset.layout,
         scrollWidth: document.documentElement.scrollWidth,
         brokenImages,
         shellBackgroundImage: getComputedStyle(document.querySelector('main')).backgroundImage,
@@ -143,13 +186,31 @@ try {
       }
     })
 
-    const expectedFrameWidth = Math.min(visualCase.width, 480)
+    const fixedGameplay = metrics.layout === 'gameplay'
+    const gameplayScale = Math.min(visualCase.width / 480, visualCase.height / 1_000)
+    const expectedFrameWidth = fixedGameplay
+      ? 480 * gameplayScale
+      : Math.min(visualCase.width, 480)
+    const expectedFrameHeight = fixedGameplay ? 1_000 * gameplayScale : visualCase.height
     const expectedLeft = (visualCase.width - expectedFrameWidth) / 2
+    const expectedTop = (visualCase.height - expectedFrameHeight) / 2
     if (Math.abs(metrics.frame.width - expectedFrameWidth) > 1) {
       errors.push(`Palco com ${metrics.frame.width}px; esperado ${expectedFrameWidth}px.`)
     }
+    if (Math.abs(metrics.frame.height - expectedFrameHeight) > 1) {
+      errors.push(`Palco com altura ${metrics.frame.height}px; esperado ${expectedFrameHeight}px.`)
+    }
     if (Math.abs(metrics.frame.left - expectedLeft) > 1) {
       errors.push(`Palco iniciou em ${metrics.frame.left}px; esperado ${expectedLeft}px.`)
+    }
+    if (Math.abs(metrics.frame.top - expectedTop) > 1) {
+      errors.push(`Palco iniciou verticalmente em ${metrics.frame.top}px; esperado ${expectedTop}px.`)
+    }
+    if (
+      fixedGameplay &&
+      Math.abs(metrics.frame.width / metrics.frame.height - 480 / 1_000) > 0.001
+    ) {
+      errors.push(`Proporção do gameplay mudou: ${metrics.frame.width}×${metrics.frame.height}.`)
     }
     if (metrics.scrollWidth > visualCase.width) {
       errors.push(`Overflow horizontal: ${metrics.scrollWidth}px em viewport ${visualCase.width}px.`)

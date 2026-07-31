@@ -22,7 +22,7 @@ App / navegação por hash
 
 - `src/app/App.tsx`: provider, palco, lazy imports e seleção da tela.
 - `src/app/navigation.ts`: converte hashes em `GameRoute` e retorna à lore.
-- `src/components/GameFrame`: palco de 100% no celular e máximo 480 px no desktop.
+- `src/components/GameFrame`: palco responsivo para telas de conteúdo e palco lógico escalável para gameplay.
 
 Não há React Router porque quatro rotas por hash resolvem integralmente o fluxo com menos estado e sem configuração de servidor.
 
@@ -104,11 +104,11 @@ BattleResult: null → win | lose
 
 ## Responsividade
 
-- Palco: `100dvh`, largura 100%, máximo 480 px.
-- Desktop/tablet: centralizado, com a arte da abertura cobrindo o palco e o fundo externo.
-- Mobile: ocupa toda a largura, respeita safe areas.
-- Telas baixas: HUD e sprites usam breakpoint de altura.
-- Telas abaixo de 350 px: mapa de esconderijo reduzido proporcionalmente.
+- Menu, lore e histórico: `100dvh`, largura 100% e máximo 480 px.
+- Esconderijo e batalha: palco lógico imutável de `480×1000`, escalado uniformemente para caber na área visível.
+- A escala considera largura e altura; redimensionamento e zoom não alteram a proporção `0,48` nem as coordenadas internas.
+- Desktop/tablet: palco centralizado, com margens temáticas quando a proporção da tela é diferente.
+- Mobile: palco inteiro reduzido como uma unidade, sem cortar personagens ou reposicionar controles isoladamente.
 - Lore: rolagem própria e overscroll contido.
 
 ## Assets e performance
@@ -136,7 +136,7 @@ Workbox gera o service worker:
 - Hooks: fake timers, parry, hits, combo, contador e resultados.
 - Componentes: elementos, controles e acessibilidade.
 - Áudio: dez streams, preparação do Rat Dance e cleanup.
-- Visual: Chrome real em oito casos, incluindo histórico, abertura 546×866 e seleção com botão mantido pressionado.
+- Visual: Chrome real em 14 casos, incluindo histórico, abertura 546×866, seleção mantida e equivalentes de zoom entre 67% e 150%.
 - PWA: Chrome real com reload persistente e funcionamento offline.
 
 ## Dependências

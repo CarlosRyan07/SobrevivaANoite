@@ -126,6 +126,7 @@ A versão Web preserva o baseline Android, acrescido dos refinamentos explicitam
 6. Os botões de esconderijo preservam a centralização durante `:active` e permanecem acessíveis nas bordas.
 7. O áudio passou a aceitar parada por chave e a respeitar `BASE_URL` também em hospedagem por subpasta.
 8. A vitória cancela timers de ação/impacto/combo antes de fixar o estado `defeated`.
+9. Esconderijo e batalha passaram a usar um palco lógico `480×1000`, escalado por inteiro para impedir deformação por viewport ou zoom.
 
 ## Diferenças inevitáveis de plataforma
 
@@ -135,16 +136,16 @@ A versão Web preserva o baseline Android, acrescido dos refinamentos explicitam
 | Material 3 dinâmico vs paleta fixa | Android pode derivar cores do wallpaper | Web usa o roxo Material equivalente e consistente |
 | Corrotinas vs timers/event loop | Runtimes diferentes | Mesmos tempos solicitados; variação de scheduling depende do dispositivo |
 | Navigation Compose vs hash | Ambiente Web | Mesmo fluxo e suporte nativo ao botão Voltar |
-| Retrato forçado vs palco vertical | Browser desktop não deve girar a tela | O jogo permanece vertical, centralizado, com laterais temáticas |
+| Retrato forçado vs palco vertical | Browser desktop não deve girar a tela | Gameplay preserva proporção `480:1000`, centralizado e com laterais temáticas |
 
 As diferenças de plataforma não alteram HP, dano, probabilidade, escolha, IA ou combo. As mudanças de controles, coordenadas, áudio e vitória listadas acima foram solicitadas explicitamente pelo usuário.
 
 ## Evidências de verificação
 
-- 66 testes em 16 arquivos.
+- 67 testes em 16 arquivos.
 - ESLint sem erros/avisos.
 - TypeScript estrito sem erros.
 - Build Vite/PWA concluído.
-- Oito casos visuais/interativos reais, incluindo histórico, viewport 546×866 e pressão mantida no esconderijo.
+- 14 casos visuais/interativos reais, incluindo histórico, viewport 546×866, pressão mantida e zoom equivalente de 67% a 150%.
 - Abertura, esconderijo, batalha e áudio verificados offline.
-- `git diff --stat` do Android permanece idêntico ao baseline inicial: seis arquivos previamente modificados, 122 inserções e 79 remoções; a migração adicionou somente `JogoWeb/`.
+- A lógica Android permanece equivalente; alterações de assets autorizadas pelo usuário estão registradas em `MIGRACAO.md`.

@@ -61,7 +61,9 @@ Ela gera arquivos ignorados pelo Git em `.artifacts/visual` e valida:
 - 390×844: abertura, lore, esconderijo, batalha e histórico;
 - 546×866: abertura com preenchimento lateral;
 - 1440×900: abertura e palco central;
-- largura/centralização do palco;
+- equivalentes desktop de zoom em 67%, 80%, 90%, 100%, 110% e 150%;
+- largura, altura, centralização e proporção fixa `480:1000` do gameplay;
+- psicopata totalmente visível fora da casa durante a busca;
 - overflow horizontal;
 - imagens quebradas;
 - erros de página e rede.

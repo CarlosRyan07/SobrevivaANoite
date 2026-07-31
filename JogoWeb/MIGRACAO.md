@@ -57,10 +57,10 @@ Cada módulo recebeu teste focado antes do seguinte.
 
 ### 5. Testes
 
-- 66 testes em 16 arquivos.
+- 67 testes em 16 arquivos.
 - Fake timers para janelas e contadores.
 - Randomização injetada para resultados determinísticos.
-- Inspeção real via Chrome em oito casos visuais/interativos.
+- Inspeção real via Chrome em 14 casos visuais/interativos.
 
 ### 6. Otimização
 
@@ -96,6 +96,7 @@ A matriz final está em `MATRIZ_EQUIVALENCIA.md`.
 - A música é preparada muda durante o golpe final e retomada audível com o joinha, evitando o bloqueio de autoplay após o timer.
 - A arte da abertura usa cobertura responsiva e uma versão escurecida do mesmo fundo fora do palco, eliminando as faixas azuis sem competir com o conteúdo central.
 - O histórico dispara atualização local imediata, é testado após reload e o servidor de desenvolvimento fixa a origem em `localhost:5173`.
+- Esconderijo e batalha usam um palco lógico fixo de `480×1000`; o palco inteiro é escalado para caber no viewport, preservando posições em qualquer zoom.
 
 ### 7.2. Sincronização com a `master` remota
 
