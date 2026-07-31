@@ -1,0 +1,228 @@
+.root,
+.world,
+.background,
+.centerOverlay,
+.resultOverlay {
+  position: absolute;
+  inset: 0;
+}
+
+.root {
+  overflow: hidden;
+  background: var(--color-night);
+}
+
+.world {
+  transform-origin: center;
+}
+
+.background {
+  width: 100%;
+  height: 100%;
+  transform: translateY(-5px);
+  object-fit: contain;
+}
+
+.spot,
+.blood,
+.psychopath {
+  position: absolute;
+  left: calc(50% + var(--x));
+  top: calc(50% + var(--y));
+  transform: translate(-50%, -50%);
+}
+
+.spot {
+  z-index: 2;
+  display: grid;
+  left: clamp(18px, calc(50% + var(--x)), calc(100% - 18px));
+  width: 35px;
+  min-width: 35px;
+  height: 35px;
+  min-height: 35px;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 16px;
+}
+
+.spot:active:not(:disabled) {
+  transform: translate(-50%, -50%) scale(0.97);
+}
+
+.spot:disabled {
+  opacity: 0.7;
+}
+
+.selected,
+.selected:hover,
+.selected:disabled {
+  background: #00c853;
+  color: #000;
+}
+
+.blood {
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  animation: fadeIn 300ms ease both;
+}
+
+.psychopath {
+  z-index: 3;
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.facingRight {
+  transform: translate(-50%, -50%) scaleX(-1);
+}
+
+.centerOverlay {
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  animation: fadeIn 500ms ease both;
+}
+
+.countdownBox {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  transform: translateY(-20px);
+}
+
+.prompt,
+.searchingText {
+  margin: 0;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 50%);
+  color: #fff;
+  font-weight: 700;
+}
+
+.prompt {
+  font-size: 17px;
+}
+
+.countdown {
+  margin: 8px 0 0;
+  color: #fff;
+  font-size: 45px;
+  font-weight: 700;
+}
+
+.urgent {
+  color: #f44336;
+}
+
+.searchStatus {
+  position: absolute;
+  z-index: 4;
+  right: 0;
+  bottom: calc(48px + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.searchingText {
+  font-size: 24px;
+}
+
+.resultOverlay {
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 24px 16px;
+  background: rgb(0 0 0 / 80%);
+  text-align: center;
+  animation: fadeIn 300ms ease both;
+}
+
+.resultOverlay h1,
+.resultOverlay h2,
+.resultOverlay p {
+  margin: 0;
+}
+
+.resultOverlay h1 {
+  font-size: 24px;
+}
+
+.resultOverlay h2 {
+  margin-top: 4px;
+  font-size: 32px;
+}
+
+.resultOverlay p {
+  margin-top: 16px;
+  font-size: 18px;
+  line-height: 1.45;
+}
+
+.resultActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.resultActions button {
+  margin: 0;
+}
+
+.win {
+  color: #00c853;
+}
+
+.lose {
+  color: #f44336;
+}
+
+.loseMessage {
+  font-size: 22px !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 350px) {
+  .world {
+    transform: scale(0.88);
+  }
+}
+
+@media (max-width: 390px) {
+  .resultActions {
+    flex-direction: column;
+  }
+}
+
+@media (max-height: 650px) {
+  .world {
+    transform: scale(0.86);
+  }
+
+  .searchStatus {
+    bottom: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blood,
+  .centerOverlay,
+  .resultOverlay {
+    animation-duration: 1ms;
+  }
+
+}

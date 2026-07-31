@@ -1,0 +1,232 @@
+.root,
+.background,
+.centerStage,
+.loseOverlay,
+.winOverlay {
+  position: absolute;
+  inset: 0;
+}
+
+.root {
+  overflow: hidden;
+  background: var(--color-battle-night);
+}
+
+.background {
+  width: 100%;
+  height: 100%;
+  transform: translateY(-60px);
+  object-fit: contain;
+}
+
+.topUi {
+  position: absolute;
+  z-index: 3;
+  top: 180px;
+  right: 0;
+  left: 0;
+}
+
+.highScore {
+  position: absolute;
+  z-index: 5;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  color: #ffeb3b;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.combo {
+  position: absolute;
+  z-index: 4;
+  top: 380px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  color: var(--combo-color);
+  opacity: 1;
+  transition: color 500ms ease, opacity 300ms ease;
+}
+
+.combo strong {
+  font-size: 36px;
+  line-height: 1;
+}
+
+.combo span {
+  margin-top: 4px;
+  font-size: 16px;
+}
+
+.centerStage {
+  z-index: 2;
+}
+
+.enemy,
+.survivor {
+  position: absolute;
+  left: 50%;
+  width: 70%;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+}
+
+.enemy {
+  top: calc(50% - 20px);
+  height: 270px;
+}
+
+.survivor {
+  top: calc(50% + 60px);
+  width: 60%;
+  height: 200px;
+}
+
+.bottomUi {
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.controls {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 6px;
+  margin-top: 24px;
+}
+
+.controls button {
+  min-height: 48px;
+  padding: 8px 14px;
+  white-space: pre-line;
+  text-align: center;
+}
+
+.controls .attackButton {
+  width: 80px;
+  height: 70px;
+  padding: 0;
+  font-size: 25px;
+}
+
+.loseOverlay {
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 24px;
+  background: rgb(0 0 0 / 90%);
+  animation: fadeIn 300ms ease both;
+}
+
+.loseOverlay h1 {
+  margin: 0;
+  color: #f44336;
+  font-size: 48px;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.loseOverlay button:first-of-type {
+  margin-top: 32px;
+}
+
+.loseOverlay button + button {
+  margin-top: 16px;
+}
+
+.winOverlay {
+  z-index: 6;
+  pointer-events: none;
+  animation: fadeIn 300ms ease both;
+}
+
+.winOverlay h1 {
+  position: absolute;
+  top: 260px;
+  right: 0;
+  left: 0;
+  margin: 0;
+  color: #00c853;
+  font-size: 40px;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.winActions {
+  position: absolute;
+  right: 0;
+  bottom: calc(160px + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  pointer-events: auto;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-height: 760px) {
+  .topUi {
+    top: 100px;
+  }
+
+  .combo {
+    top: 275px;
+  }
+
+  .bottomUi {
+    bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .enemy {
+    height: 235px;
+  }
+
+  .survivor {
+    height: 175px;
+  }
+
+  .winOverlay h1 {
+    top: 160px;
+  }
+
+  .winActions {
+    bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 370px) {
+  .controls button {
+    padding-right: 9px;
+    padding-left: 9px;
+    font-size: 14px;
+  }
+
+  .controls .attackButton {
+    width: 70px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .combo,
+  .loseOverlay,
+  .winOverlay {
+    transition-duration: 1ms;
+    animation-duration: 1ms;
+  }
+}

@@ -1,0 +1,52 @@
+import {
+  attackDamage,
+  comboColor,
+  createInitialBattleState,
+  hpPalette,
+  nextAttackSpeed,
+  resolveEnemyAttack,
+} from './battleEngine'
+
+describe('engine da batalha', () => {
+  it('mantém HP e estado inicial do Android', () => {
+    expect(createInitialBattleState()).toMatchObject({
+      playerHp: 100,
+      enemyHp: 700,
+      playerState: 'idle',
+      enemyAction: { kind: 'idle' },
+      gameResult: null,
+      playerComboStep: 0,
+      highCombo: 0,
+    })
+  })
+
+  it('distingue parry, esquiva antecipada e dano', () => {
+    const attack = { kind: 'attacking', direction: 'left' } as const
+    expect(resolveEnemyAttack(attack, 'left', 'perfect')).toBe('parry')
+    expect(resolveEnemyAttack(attack, 'left', 'early')).toBe('early-dodge')
+    expect(resolveEnemyAttack(attack, 'right', 'perfect')).toBe('hit')
+    expect(resolveEnemyAttack(attack, null, 'none')).toBe('hit')
+  })
+
+  it('preserva dano normal e dano durante stun', () => {
+    expect(attackDamage(false)).toBe(3)
+    expect(attackDamage(true)).toBe(10)
+  })
+
+  it('acelera exatamente 250, 175 e 100 ms desde o segundo golpe', () => {
+    expect(nextAttackSpeed(250, 1)).toBe(250)
+    expect(nextAttackSpeed(250, 2)).toBe(175)
+    expect(nextAttackSpeed(175, 3)).toBe(100)
+    expect(nextAttackSpeed(100, 4)).toBe(100)
+  })
+
+  it('mantém limites estritos das cores de HP e combo', () => {
+    expect(hpPalette(0.81).end).toBe('#2e7d32')
+    expect(hpPalette(0.8).end).toBe('#afb42b')
+    expect(hpPalette(0.2).end).toBe('#c62828')
+    expect(comboColor(14)).toBe('#ffffff')
+    expect(comboColor(15)).toBe('#ffeb3b')
+    expect(comboColor(30)).toBe('#f57c00')
+    expect(comboColor(50)).toBe('#d32f2f')
+  })
+})
