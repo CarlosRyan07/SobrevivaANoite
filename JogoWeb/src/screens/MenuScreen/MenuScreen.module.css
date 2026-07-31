@@ -18,19 +18,31 @@
   transition: opacity 500ms ease;
 }
 
+.opening::before {
+  position: absolute;
+  inset: -16px;
+  background: var(--game-backdrop) center / cover no-repeat;
+  content: '';
+  filter: blur(8px);
+  transform: scale(1.04);
+}
+
 .openingHidden {
   opacity: 0;
   pointer-events: none;
 }
 
 .startImage {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .startButton {
   position: absolute;
+  z-index: 2;
   bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   width: 200px;
@@ -41,6 +53,7 @@
 
 .historyButton {
   position: absolute;
+  z-index: 2;
   top: calc(24px + env(safe-area-inset-top, 0px));
   right: calc(24px + env(safe-area-inset-right, 0px));
 }

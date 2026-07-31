@@ -21,9 +21,7 @@ html {
 
 body {
   overflow: hidden;
-  background:
-    linear-gradient(rgb(5 12 28 / 72%), rgb(5 12 28 / 92%)),
-    url('/assets/optimized/tela_inicio.webp') center 55% / cover fixed;
+  background: var(--color-page);
   color: var(--color-text);
   -webkit-tap-highlight-color: transparent;
 }

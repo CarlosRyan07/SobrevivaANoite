@@ -9,14 +9,14 @@ Concluído e validado:
 - abertura e lore completas;
 - modo esconder com seis locais reposicionados pela referência visual, IA, probabilidades, timers e sons;
 - resultado do esconderijo com reinício ou retorno ao menu;
-- modo batalha com dano, esquiva por botões/teclado, parry, combo, HUD e resultados;
-- vitória atualizada com bloqueio imediato, atordoado, derrotado, joinha, Rat Dance e sua música correta;
+- modo batalha com dano, esquiva por setas/teclado, ataque por botão/Espaço/mouse, parry, combo, HUD e resultados;
+- vitória atualizada com bloqueio imediato, espera maior no derrotado, joinha, Rat Dance e música preparada contra bloqueio de autoplay;
 - recorde de combo persistido entre sessões;
 - histórico de partidas com estatísticas dos dois modos e detalhes de batalha;
 - todos os assets Android preservados;
-- layout vertical responsivo e centralizado no desktop;
+- layout vertical responsivo, com a arte preenchendo as laterais da abertura;
 - PWA e funcionamento offline após o cache dos modos;
-- 55 testes aprovados em 16 arquivos;
+- 66 testes aprovados em 16 arquivos;
 - lint, TypeScript estrito, build, verificação visual e verificação offline aprovados.
 
 O aplicativo Android fora de `JogoWeb` não foi modificado pela migração.
@@ -53,8 +53,8 @@ Os arquivos finais ficam em `dist/` e podem ser hospedados como site estático.
 | `npm run test` | Vitest em modo interativo |
 | `npm run test:run` | Suíte completa uma vez |
 | `npm run assets:optimize` | Recria WebPs lossless e ícones PWA |
-| `npm run visual:check` | Build + screenshots/asserts em sete casos visuais/interativos |
-| `npm run pwa:check` | Build + teste real offline de telas e áudio |
+| `npm run visual:check` | Build + screenshots/asserts em oito casos visuais/interativos |
+| `npm run pwa:check` | Build + teste real de persistência e funcionamento offline de telas/áudio |
 
 ## Publicação
 
@@ -82,7 +82,7 @@ Os WebPs reduziram 28,3 MiB de PNGs para 16,4 MiB. A conversão é automaticamen
 
 ## Dados locais
 
-O recorde de combo e o histórico são armazenados no `localStorage` do navegador, equivalendo ao DataStore e ao Room do Android para este volume de dados. Eles permanecem após fechar/reabrir o site, mas pertencem ao navegador e domínio usados; limpar os dados do site também limpa o histórico.
+O recorde de combo e o histórico são armazenados no `localStorage` do navegador, equivalendo ao DataStore e ao Room do Android para este volume de dados. Eles permanecem após fechar/reabrir o site e a interface é notificada imediatamente após cada resultado. Os dados pertencem à origem usada (protocolo, domínio e porta); por isso o servidor de desenvolvimento usa sempre `localhost:5173`. Limpar os dados do site também limpa o histórico.
 
 ## Documentação
 

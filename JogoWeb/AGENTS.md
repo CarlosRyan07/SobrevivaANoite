@@ -55,7 +55,7 @@ Uma diferença entre documentação e Kotlin deve ser resolvida em favor do Kotl
 ## Regras de fidelidade
 
 - Não alterar HP, dano, tempos, probabilidades ou coordenadas por conveniência.
-- O teclado está autorizado somente para esquiva: `A`/seta esquerda e `D`/seta direita. Não adicionar outras teclas, dificuldade, configuração, placar ou mecânica sem autorização futura.
+- Controles Web autorizados: esquiva com `A`/seta esquerda e `D`/seta direita; ataque com `Espaço` ou clique esquerdo em área livre da batalha. Não adicionar outras teclas, dificuldade, configuração, placar ou mecânica sem autorização futura.
 - Manter os textos exatamente como no Android.
 - Manter sobreposição de sons e limite atual de dez vozes.
 - Manter o sorteio de imagens e direções.

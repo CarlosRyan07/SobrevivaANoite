@@ -57,4 +57,24 @@ describe('AudioService', () => {
     expect(created[1]?.pause).not.toHaveBeenCalled()
     expect(service.activeStreamCount).toBe(1)
   })
+
+  it('prepara uma música no gesto do usuário e a torna audível sem criar outra voz', () => {
+    const created: FakeAudio[] = []
+    const service = new AudioService(10, () => {
+      const audio = new FakeAudio()
+      created.push(audio)
+      return audio as unknown as HTMLAudioElement
+    })
+
+    service.play('ratDanceMusic', { prepareMuted: true })
+    expect(created).toHaveLength(1)
+    expect(created[0]?.volume).toBe(0)
+    expect(created[0]?.play).toHaveBeenCalledOnce()
+
+    service.play('ratDanceMusic', { resumePrepared: true })
+    expect(created).toHaveLength(1)
+    expect(created[0]?.volume).toBe(1)
+    expect(created[0]?.currentTime).toBe(0)
+    expect(created[0]?.play).toHaveBeenCalledOnce()
+  })
 })

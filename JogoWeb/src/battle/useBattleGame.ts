@@ -94,6 +94,8 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
     comboStep.current = 0
     resetComboSpeed()
     saveBattleResult(true)
+    audio.stop('ratDanceMusic')
+    audio.play('ratDanceMusic', { prepareMuted: true })
 
     const controller = new AbortController()
     victoryControllers.current.add(controller)
@@ -111,8 +113,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
       await delay(BATTLE_TIMINGS.stunnedBeforeDefeat, controller.signal)
       commit((current) => ({ ...current, enemyImage: images.enemy.defeated }))
       await delay(BATTLE_TIMINGS.defeatedPose, controller.signal)
-      audio.stop('ratDanceMusic')
-      audio.play('ratDanceMusic')
+      audio.play('ratDanceMusic', { resumePrepared: true })
       commit((current) => ({
         ...current,
         playerImage: images.survivor.victory,

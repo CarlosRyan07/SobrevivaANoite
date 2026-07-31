@@ -21,6 +21,6 @@ export const BATTLE_TIMINGS = {
   comboTimeout: 1_500,
   enemyHit: 1_000,
   stunnedBeforeDefeat: 1_000,
-  defeatedPose: 2_500,
+  defeatedPose: 4_000,
   survivorVictoryPose: 2_500,
 } as const

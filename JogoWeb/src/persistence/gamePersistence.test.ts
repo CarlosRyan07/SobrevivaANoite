@@ -1,4 +1,8 @@
-import { GamePersistence, STORAGE_KEYS } from './gamePersistence'
+import {
+  GamePersistence,
+  MATCH_HISTORY_UPDATED_EVENT,
+  STORAGE_KEYS,
+} from './gamePersistence'
 
 describe('persistência do jogo', () => {
   beforeEach(() => localStorage.clear())
@@ -39,5 +43,23 @@ describe('persistência do jogo', () => {
 
     expect(persistence.getHighCombo()).toBe(0)
     expect(persistence.getMatches()).toEqual([])
+  })
+
+  it('avisa a interface imediatamente quando uma partida é salva', () => {
+    const persistence = new GamePersistence(localStorage)
+    const listener = vi.fn()
+    window.addEventListener(MATCH_HISTORY_UPDATED_EVENT, listener, { once: true })
+
+    persistence.saveMatch({
+      gameMode: 'Batalha',
+      wasVictory: true,
+      finalPlayerHp: 85,
+      parryCount: 2,
+    })
+
+    expect(listener).toHaveBeenCalledOnce()
+    expect(new GamePersistence(localStorage).getMatches()).toMatchObject([
+      { gameMode: 'Batalha', wasVictory: true, finalPlayerHp: 85, parryCount: 2 },
+    ])
   })
 })

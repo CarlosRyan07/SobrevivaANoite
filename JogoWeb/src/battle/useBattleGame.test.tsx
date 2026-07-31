@@ -117,7 +117,7 @@ describe('useBattleGame', () => {
     expect(result.current.state.enemyAction).toEqual({ kind: 'defeated' })
     expect(result.current.state.enemyImage).toContain('psicopata_atordoado.webp')
     expect(result.current.state.gameResult).toBeNull()
-    expect(audio.play).not.toHaveBeenCalledWith('ratDanceMusic')
+    expect(audio.play).toHaveBeenCalledWith('ratDanceMusic', { prepareMuted: true })
     expect(gamePersistence.getMatches()).toMatchObject([
       { gameMode: 'Batalha', wasVictory: true, finalPlayerHp: 100, parryCount: 1 },
     ])
@@ -134,8 +134,11 @@ describe('useBattleGame', () => {
     expect(result.current.state.playerImage).not.toContain('sobrevivente_vitoria.webp')
 
     await act(async () => vi.advanceTimersByTimeAsync(2_500))
+    expect(result.current.state.playerImage).not.toContain('sobrevivente_vitoria.webp')
+
+    await act(async () => vi.advanceTimersByTimeAsync(1_500))
     expect(result.current.state.playerImage).toContain('sobrevivente_vitoria.webp')
-    expect(audio.play).toHaveBeenCalledWith('ratDanceMusic')
+    expect(audio.play).toHaveBeenCalledWith('ratDanceMusic', { resumePrepared: true })
 
     await act(async () => vi.advanceTimersByTimeAsync(2_500))
     expect(result.current.state.playerImage).toContain('rat_dance.gif')

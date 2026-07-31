@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { formatMatchTimestamp, summarizeMatches } from '../../history/historyEngine'
 import {
   gamePersistence,
+  MATCH_HISTORY_UPDATED_EVENT,
   type GamePersistencePort,
   type MatchHistory,
 } from '../../persistence/gamePersistence'
@@ -55,7 +56,13 @@ export function HistoryScreen({ onBack, persistence = gamePersistence }: History
   useEffect(() => {
     const refresh = () => setMatches(readMatches())
     window.addEventListener('storage', refresh)
-    return () => window.removeEventListener('storage', refresh)
+    window.addEventListener(MATCH_HISTORY_UPDATED_EVENT, refresh)
+    window.addEventListener('pageshow', refresh)
+    return () => {
+      window.removeEventListener('storage', refresh)
+      window.removeEventListener(MATCH_HISTORY_UPDATED_EVENT, refresh)
+      window.removeEventListener('pageshow', refresh)
+    }
   }, [readMatches])
 
   return (

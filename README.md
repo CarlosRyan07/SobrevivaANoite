@@ -210,7 +210,7 @@ Depois, abra o endereço local mostrado pelo Vite. Para gerar a versão de produ
 ### ⚔️ Modo Batalha
 1. **Entre** no modo batalha pelo menu
 2. **Observe** os comandos que aparecem na tela
-3. **Execute** os combos tocando nos botões; na Web, use também `A`/`←` para a esquerda e `D`/`→` para a direita
+3. **Execute** os combos tocando nos botões; na Web, use `A`/`←` e `D`/`→` para esquivar, e `Espaço` ou clique esquerdo para atacar
 4. **Derrote** todos os inimigos para avançar
 
 ---

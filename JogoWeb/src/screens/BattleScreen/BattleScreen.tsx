@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
 
 import { ENEMY_MAX_HP, PLAYER_MAX_HP } from '../../battle/battleConstants'
 import { comboColor } from '../../battle/battleEngine'
-import { dodgeDirectionForKey } from '../../battle/battleKeyboard'
+import { battleActionForKey } from '../../battle/battleKeyboard'
 import { useBattleGame, type BattleGameOptions } from '../../battle/useBattleGame'
 import { HpBar } from '../../components/HpBar/HpBar'
 import { useAudio } from '../../contexts/audioContextValue'
@@ -14,13 +14,22 @@ interface BattleScreenProps {
   gameOptions?: BattleGameOptions
 }
 
-type ComboStyle = React.CSSProperties & { '--combo-color': string }
+type ComboStyle = CSSProperties & { '--combo-color': string }
 
 export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
   const audio = useAudio()
   const { state, attack, dodgeLeft, dodgeRight, retry } = useBattleGame(audio, gameOptions)
   const comboStyle: ComboStyle = { '--combo-color': comboColor(state.playerComboStep) }
   const victorySequenceActive = state.enemyAction.kind === 'defeated'
+
+  const handlePointerAttack = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (event.pointerType !== 'mouse' || event.button !== 0) return
+      if (event.target instanceof Element && event.target.closest('button')) return
+      attack()
+    },
+    [attack],
+  )
 
   useEffect(() => {
     preloadImages([
@@ -47,23 +56,27 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
   }, [])
 
   useEffect(() => {
-    const handleDodgeKey = (event: KeyboardEvent) => {
-      if (event.altKey || event.ctrlKey || event.metaKey) return
+    const handleBattleKey = (event: KeyboardEvent) => {
+      if (event.altKey || event.ctrlKey || event.metaKey || event.repeat) return
+      if (event.target instanceof Element && event.target.closest('button, input, textarea, select')) {
+        return
+      }
 
-      const direction = dodgeDirectionForKey(event.key)
-      if (!direction) return
+      const action = battleActionForKey(event.key, event.code)
+      if (!action) return
 
       event.preventDefault()
-      if (direction === 'left') dodgeLeft()
-      else dodgeRight()
+      if (action === 'left') dodgeLeft()
+      else if (action === 'right') dodgeRight()
+      else attack()
     }
 
-    window.addEventListener('keydown', handleDodgeKey)
-    return () => window.removeEventListener('keydown', handleDodgeKey)
-  }, [dodgeLeft, dodgeRight])
+    window.addEventListener('keydown', handleBattleKey)
+    return () => window.removeEventListener('keydown', handleBattleKey)
+  }, [attack, dodgeLeft, dodgeRight])
 
   return (
-    <div className={styles.root} aria-label="Modo batalha">
+    <div className={styles.root} aria-label="Modo batalha" onPointerDown={handlePointerAttack}>
       <img className={styles.background} src={images.cabin} alt="Fundo da Cabana" />
 
       {state.highCombo > 0 && (
@@ -95,25 +108,34 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
           <HpBar name="Sobrevivente" currentHp={state.playerHp} maxHp={PLAYER_MAX_HP} />
           <div className={styles.controls}>
             <button
+              className={styles.dodgeButton}
               type="button"
               onClick={dodgeLeft}
               aria-label="Esquivar Esquerda"
               aria-keyshortcuts="ArrowLeft A"
               title="Seta esquerda ou A"
             >
-              {'Esquivar\nEsquerda'}
+              <span aria-hidden="true">←</span>
             </button>
-            <button className={styles.attackButton} type="button" onClick={attack} aria-label="Atacar">
+            <button
+              className={styles.attackButton}
+              type="button"
+              onClick={attack}
+              aria-label="Atacar"
+              aria-keyshortcuts="Space"
+              title="Barra de espaço ou clique na tela"
+            >
               👊🏻
             </button>
             <button
+              className={styles.dodgeButton}
               type="button"
               onClick={dodgeRight}
               aria-label="Esquivar Direita"
               aria-keyshortcuts="ArrowRight D"
               title="Seta direita ou D"
             >
-              {'Esquivar\nDireita'}
+              <span aria-hidden="true">→</span>
             </button>
           </div>
         </div>

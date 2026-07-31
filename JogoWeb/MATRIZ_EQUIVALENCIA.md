@@ -17,6 +17,7 @@ A versão Web preserva o baseline Android, acrescido dos refinamentos explicitam
 | Lore integral e duas imagens | Mesmos textos e arquivos | ✔ Equivalente |
 | Clique nos três botões de fluxo | `buttonClick` nos mesmos eventos | ✔ Equivalente |
 | Botão `Histórico` na abertura | Mesmo botão, posição e som | ✔ Equivalente |
+| Resultado volta pelo back stack ao menu | `Voltar ao Menu` limpa o hash e abre a tela inicial | ✔ Correção Web |
 
 ## Esconderijo
 
@@ -59,7 +60,7 @@ A versão Web preserva o baseline Android, acrescido dos refinamentos explicitam
 | Recovery 1.200 ms | 1.200 ms | ✔ Equivalente |
 | Stun 4.000 ms | 4.000 ms | ✔ Equivalente |
 | Esquiva dura 800 ms | 800 ms | ✔ Equivalente |
-| Controles touch | Touch/click mais `A`/← e `D`/→ | ✔ Refinamento Web autorizado |
+| Controles touch | Setas + `A`/← e `D`/→; ataque por botão, `Espaço` ou mouse | ✔ Refinamento Web autorizado |
 | EARLY correto evita dano e não atordoa | Mesma resolução e som | ✔ Equivalente |
 | PERFECT correto aplica parry | Mesmo sprite, som e stun | ✔ Equivalente |
 | Erro/ausência causa 15 HP | 15 HP | ✔ Equivalente |
@@ -75,9 +76,9 @@ A versão Web preserva o baseline Android, acrescido dos refinamentos explicitam
 | Maior combo persiste no DataStore | `localStorage`, atualização imediata e exibição `RECORDE` | ✔ Equivalente |
 | HP gradiente com limites estritos | Mesmas cinco paletas e comparadores `>` | ✔ Equivalente |
 | Barra anima por 500 ms | CSS 500 ms | ✔ Equivalente |
-| Vitória: atordoado 1 s, derrotado 2,5 s, pose 2,5 s e GIF | Mesma sequência de 6 s e somente `rat_dance.gif` | ✔ Equivalente |
+| Vitória: atordoado 1 s, derrotado 2,5 s, pose 2,5 s e GIF | Atordoado 1 s, derrotado 4 s, pose 2,5 s e somente `rat_dance.gif` | ✔ Ritmo Web autorizado |
 | Combate ainda aceitava ações durante a sequência | HP zero trava ações e cancela timers concorrentes | ✔ Correção Web |
-| `rat_dance_music.mp3` inicia com a pose | Mesmo arquivo atualizado e mesmo instante | ✔ Equivalente |
+| `rat_dance_music.mp3` inicia com a pose | Preparada muda no golpe final e audível no início da pose | ✔ Equivalente perceptivo |
 | Derrota imediata no HP zero | Mesmo resultado e overlay | ✔ Equivalente |
 | Retry cancela jobs rastreados e reseta | Todos os timers/controllers cancelados | ✔ Equivalente |
 
@@ -103,6 +104,7 @@ A versão Web preserva o baseline Android, acrescido dos refinamentos explicitam
 | Estatísticas por modo | Mesmas quatro contagens | ✔ Equivalente |
 | Batalha salva HP e parries | Mesmos campos e valores | ✔ Equivalente |
 | Esconderijo salva HP 100/0 e parries 0 | Mesmos valores | ✔ Equivalente |
+| Nova consulta ao reabrir histórico | Evento local imediato + releitura após reload/pageshow | ✔ Reforço Web |
 
 ## Assets e renderização
 
@@ -139,10 +141,10 @@ As diferenças de plataforma não alteram HP, dano, probabilidade, escolha, IA o
 
 ## Evidências de verificação
 
-- 55 testes em 16 arquivos.
+- 66 testes em 16 arquivos.
 - ESLint sem erros/avisos.
 - TypeScript estrito sem erros.
 - Build Vite/PWA concluído.
-- Sete casos visuais/interativos reais, incluindo histórico e pressão mantida no esconderijo.
+- Oito casos visuais/interativos reais, incluindo histórico, viewport 546×866 e pressão mantida no esconderijo.
 - Abertura, esconderijo, batalha e áudio verificados offline.
 - `git diff --stat` do Android permanece idêntico ao baseline inicial: seis arquivos previamente modificados, 122 inserções e 79 remoções; a migração adicionou somente `JogoWeb/`.

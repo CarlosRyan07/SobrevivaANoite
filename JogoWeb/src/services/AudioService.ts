@@ -5,7 +5,13 @@ type AudioFactory = (source: string) => HTMLAudioElement
 interface ActiveVoice {
   key: SoundKey
   audio: HTMLAudioElement
+  prepared: boolean
   cleanup: () => void
+}
+
+export interface PlaySoundOptions {
+  prepareMuted?: boolean
+  resumePrepared?: boolean
 }
 
 export class AudioService {
@@ -28,14 +34,29 @@ export class AudioService {
     })
   }
 
-  play(key: SoundKey): void {
+  play(key: SoundKey, options: PlaySoundOptions = {}): void {
+    if (options.resumePrepared) {
+      const preparedVoice = [...this.activeVoices]
+        .reverse()
+        .find((voice) => voice.key === key && voice.prepared)
+      if (preparedVoice) {
+        preparedVoice.prepared = false
+        preparedVoice.audio.currentTime = 0
+        preparedVoice.audio.volume = 1
+        if (preparedVoice.audio.paused) {
+          void preparedVoice.audio.play().catch(preparedVoice.cleanup)
+        }
+        return
+      }
+    }
+
     while (this.activeVoices.length >= this.maxStreams) {
       this.stopVoice(this.activeVoices[0])
     }
 
     const audio = this.factory(audioCatalog[key])
     audio.preload = 'auto'
-    audio.volume = 1
+    audio.volume = options.prepareMuted ? 0 : 1
     audio.playbackRate = 1
 
     const cleanup = () => {
@@ -45,7 +66,7 @@ export class AudioService {
       if (index >= 0) this.activeVoices.splice(index, 1)
     }
 
-    const voice = { key, audio, cleanup }
+    const voice = { key, audio, prepared: options.prepareMuted === true, cleanup }
     audio.addEventListener('ended', cleanup, { once: true })
     audio.addEventListener('error', cleanup, { once: true })
     this.activeVoices.push(voice)

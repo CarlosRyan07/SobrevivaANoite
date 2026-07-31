@@ -26,7 +26,12 @@ if (!baseUrl) {
 
 const browser = await puppeteer.launch({ executablePath, headless: true })
 const page = await browser.newPage()
-const report = { serviceWorkerControlled: false, offlineScreens: [], errors: [] }
+const report = {
+  serviceWorkerControlled: false,
+  historyPersistedAfterReload: false,
+  offlineScreens: [],
+  errors: [],
+}
 
 try {
   await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1, isMobile: true, hasTouch: true })
@@ -57,6 +62,29 @@ try {
         : `[aria-label="Modo ${route === 'hide' ? 'esconder' : 'batalha'}"]`
     await page.waitForSelector(selector)
     await page.waitForNetworkIdle({ idleTime: 300 })
+  }
+
+  await page.evaluate(() => {
+    localStorage.setItem(
+      'sobreviva-a-noite.match-history.v1',
+      JSON.stringify([
+        {
+          id: 1,
+          gameMode: 'Batalha',
+          wasVictory: true,
+          finalPlayerHp: 85,
+          parryCount: 2,
+          timestamp: Date.now(),
+        },
+      ]),
+    )
+  })
+  await page.reload({ waitUntil: 'networkidle0' })
+  report.historyPersistedAfterReload = await page.evaluate(
+    () => document.body.textContent?.includes('Vida Final: 85 | Parrys: 2') ?? false,
+  )
+  if (!report.historyPersistedAfterReload) {
+    report.errors.push('O histórico não permaneceu visível após recarregar a página.')
   }
 
   await page.setOfflineMode(true)

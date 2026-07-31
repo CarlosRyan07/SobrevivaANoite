@@ -23,6 +23,8 @@ export const STORAGE_KEYS = {
   matchHistory: 'sobreviva-a-noite.match-history.v1',
 } as const
 
+export const MATCH_HISTORY_UPDATED_EVENT = 'sobreviva-a-noite:match-history-updated'
+
 function getBrowserStorage(): Storage | null {
   if (typeof window === 'undefined') return null
   try {
@@ -110,6 +112,9 @@ export class GamePersistence implements GamePersistencePort {
       } catch {
         this.storage = null
       }
+    }
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event(MATCH_HISTORY_UPDATED_EVENT))
     }
     return savedMatch
   }

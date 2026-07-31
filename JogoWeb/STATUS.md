@@ -14,7 +14,7 @@ Migração realinhada, validada e pronta na branch `feat/web`, criada diretament
 | 2. Planejamento | ✔ Concluída | `PLANO_MIGRACAO.md`, `AGENTS.md` |
 | 3. Arquitetura/scaffold | ✔ Concluída | React/TypeScript/Vite e assets validados |
 | 4. Portabilização | ✔ Concluída | Menu, histórico, persistência, esconderijo, batalha, áudio, HUD e resultados |
-| 5. Testes | ✔ Concluída | 55 testes, lint, tipagem, build, sete cenários visuais e PWA offline aprovados |
+| 5. Testes | ✔ Concluída | 66 testes, lint, tipagem, build, oito cenários visuais e PWA offline aprovados |
 | 6. Otimização | ✔ Concluída | WebP lossless, chunks, lazy loading, cache e PWA offline |
 | 7. Verificação | ✔ Concluída | `MATRIZ_EQUIVALENCIA.md` e inspeção real |
 | 8. Documentação final | ✔ Concluída | README, execução, arquitetura e migração |
@@ -27,17 +27,17 @@ Migração realinhada, validada e pronta na branch `feat/web`, criada diretament
 - ✔ 42 drawables, 21 MP3 e ícones Android copiados.
 - ✔ Menu/lore com textos, imagens, fades e retorno.
 - ✔ Esconderijo com alvos corrigidos, clique estável, tensão interrompível, retorno ao menu e restart.
-- ✔ Batalha com teclado, IA, parry, novo combo 250→175→100, recorde e sequência remota de vitória.
+- ✔ Batalha com setas, teclado, mouse, IA, parry, combo 250→175→100, recorde e sequência de vitória refinada.
 - ✔ Música e GIF do Rat Dance idênticos aos arquivos da `master` atualizada.
 - ✔ Histórico persistente com estatísticas e detalhes dos dois modos.
 - ✔ Áudio com preload real, sobreposição e dez vozes.
-- ✔ Palco responsivo 390/480 px e laterais temáticas.
+- ✔ Palco responsivo 390/480 px, arte de abertura em cobertura e laterais preenchidas.
 - ✔ Spring do assassino equivalente ao padrão Compose.
 - ✔ 36 WebPs lossless validados: 28,3 MiB → 16,4 MiB.
 - ✔ PWA com manifest, ícones, service worker e cache sob demanda.
 - ✔ Abertura, esconderijo, batalha, histórico e áudios aprovados offline.
-- ✔ 55 testes em 16 arquivos aprovados no ciclo funcional.
-- ✔ Sete cenários visuais reais aprovados, incluindo o novo histórico no celular.
+- ✔ 66 testes em 16 arquivos aprovados no ciclo funcional.
+- ✔ Oito cenários visuais reais aprovados, incluindo histórico e abertura 546×866.
 - ✔ Matriz Android/Web atualizada com os refinamentos explicitamente autorizados.
 - ✔ Código Android preservado exatamente como na `origin/master` usada como baseline.
 - ✔ Documentos obrigatórios finalizados.

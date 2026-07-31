@@ -57,10 +57,10 @@ Cada módulo recebeu teste focado antes do seguinte.
 
 ### 5. Testes
 
-- 55 testes em 16 arquivos.
+- 66 testes em 16 arquivos.
 - Fake timers para janelas e contadores.
 - Randomização injetada para resultados determinísticos.
-- Inspeção real via Chrome em sete casos visuais/interativos.
+- Inspeção real via Chrome em oito casos visuais/interativos.
 
 ### 6. Otimização
 
@@ -87,9 +87,15 @@ A matriz final está em `MATRIZ_EQUIVALENCIA.md`.
 - O resultado do esconderijo passou a oferecer `Voltar ao Menu` além de `Jogar Novamente`.
 - A música de tensão agora é interrompida seletivamente assim que termina a inspeção do esconderijo do jogador, inclusive quando ele escapa.
 - A batalha aceita `A`/seta esquerda e `D`/seta direita para esquiva.
+- A batalha aceita `Espaço` e clique esquerdo em qualquer área livre para atacar; os botões de esquiva mostram apenas setas.
 - A dança do Fortnite deixou de ser referenciada; a vitória usa apenas `rat_dance.gif`.
 - HP zero agora trava imediatamente ataques e esquivas, cancela timers concorrentes e fixa o sprite derrotado antes do joinha e da dança.
 - A vitória possui cenário de teste com inimigo iniciado em 1 HP e usa o `rat_dance_music.mp3` oficial da `master` atualizada.
+- `Voltar ao Menu` nos resultados limpa o hash da lore e retorna à abertura real.
+- A espera do sprite derrotado foi ampliada de 2.500 para 4.000 ms antes do joinha, conforme solicitado para a Web.
+- A música é preparada muda durante o golpe final e retomada audível com o joinha, evitando o bloqueio de autoplay após o timer.
+- A arte da abertura usa cobertura responsiva e o mesmo fundo fora do palco, eliminando as faixas azuis laterais.
+- O histórico dispara atualização local imediata, é testado após reload e o servidor de desenvolvimento fixa a origem em `localhost:5173`.
 
 ### 7.2. Sincronização com a `master` remota
 

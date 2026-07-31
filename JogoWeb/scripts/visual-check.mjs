@@ -45,6 +45,7 @@ const cases = [
   },
   { name: 'mobile-battle', hash: '#/battle', width: 390, height: 844, wait: 150 },
   { name: 'mobile-history', hash: '#/history', width: 390, height: 844, wait: 150 },
+  { name: 'tablet-opening', hash: '', width: 546, height: 866, wait: 150 },
   { name: 'desktop-opening', hash: '', width: 1_440, height: 900, wait: 150 },
 ]
 
@@ -115,6 +116,12 @@ try {
         frame: { left: rect.left, right: rect.right, width: rect.width, height: rect.height },
         scrollWidth: document.documentElement.scrollWidth,
         brokenImages,
+        shellBackgroundImage: getComputedStyle(document.querySelector('main')).backgroundImage,
+        openingVisible:
+          document.querySelector('img[alt="Tela de Início"]') instanceof HTMLImageElement &&
+          [...document.querySelectorAll('button')].some(
+            (button) => button.textContent?.trim() === 'Iniciar Jogo',
+          ),
       }
     })
 
@@ -131,6 +138,15 @@ try {
     }
     if (metrics.brokenImages.length > 0) {
       errors.push(`Imagens quebradas: ${metrics.brokenImages.join(', ')}`)
+    }
+    if (visualCase.hash === '' && !metrics.openingVisible) {
+      errors.push('A arte ou o botão da abertura não ficou visível.')
+    }
+    if (
+      visualCase.hash === '' &&
+      (metrics.shellBackgroundImage === 'none' || metrics.shellBackgroundImage.includes('/assets/assets/'))
+    ) {
+      errors.push(`Fundo lateral inválido: ${metrics.shellBackgroundImage}`)
     }
 
     const screenshot = path.join(outputDirectory, `${visualCase.name}.png`)

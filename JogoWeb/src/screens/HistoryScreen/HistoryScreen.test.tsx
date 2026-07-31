@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 
 import { GamePersistence } from '../../persistence/gamePersistence'
 import { HistoryScreen } from './HistoryScreen'
@@ -42,5 +42,25 @@ describe('HistoryScreen', () => {
     )
     expect(screen.getByText('Vida Final: 10 | Parrys: 3')).toBeInTheDocument()
     expect(screen.getByText('31/07/2026 às 13:45')).toBeInTheDocument()
+  })
+
+  it('atualiza a lista no mesmo navegador assim que a batalha é registrada', () => {
+    const persistence = new GamePersistence(localStorage)
+    render(<HistoryScreen onBack={vi.fn()} persistence={persistence} />)
+    expect(screen.getByText('Nenhuma partida jogada ainda.')).toBeInTheDocument()
+
+    act(() => {
+      persistence.saveMatch({
+        gameMode: 'Batalha',
+        wasVictory: true,
+        finalPlayerHp: 70,
+        parryCount: 4,
+      })
+    })
+
+    expect(screen.getByLabelText('Estatísticas de Batalha')).toHaveTextContent(
+      'Vitórias: 1 | Derrotas: 0',
+    )
+    expect(screen.getByText('Vida Final: 70 | Parrys: 4')).toBeInTheDocument()
   })
 })

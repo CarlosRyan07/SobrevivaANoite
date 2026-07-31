@@ -29,12 +29,13 @@ Não há React Router porque quatro rotas por hash resolvem integralmente o flux
 ### Áudio
 
 - `audioCatalog.ts`: associa nomes tipados aos 21 MP3.
-- `AudioService.ts`: preload, play, parada seletiva, sobreposição, limite de sete streams e release.
+- `AudioService.ts`: preload, play, preparação muda para áudio tardio, parada seletiva, sobreposição, limite de dez streams e release.
 - `AudioContext.tsx`: ciclo de vida global.
 - `audioContextValue.ts`: contexto e hook de consumo.
 
 Cada efeito cria um novo `HTMLAudioElement`, permitindo sobreposição como `SoundPool`. Ao atingir dez vozes, a mais antiga é interrompida.
 As vozes guardam a chave lógica do som, permitindo encerrar apenas a tensão ou a música de vitória sem cortar os demais efeitos.
+O Rat Dance cria uma voz muda no gesto do golpe final e torna a mesma voz audível após os timers, contornando políticas de autoplay sem antecipar o som.
 
 ### Menu
 
@@ -64,8 +65,8 @@ O hook usa `AbortController` para equivaler ao cancelamento de `Job`. Um ref gua
 - `battleConstants.ts`: HP, dano, velocidade e delays.
 - `battleEngine.ts`: resolução de ataque, dano, velocidade e paletas.
 - `useBattleGame.ts`: IA, jobs concorrentes, input e sequência de resultado.
-- `battleKeyboard.ts`: mapeamento testável de `A`/← e `D`/→.
-- `BattleScreen.tsx`: sprites, controles touch/teclado, HUD e overlays.
+- `battleKeyboard.ts`: mapeamento testável de `A`/←, `D`/→ e `Espaço`.
+- `BattleScreen.tsx`: sprites, controles touch/teclado/mouse, HUD e overlays.
 - `HpBar`: componente compartilhado de barra animada.
 
 Controllers independentes reproduzem os jobs Android:
@@ -104,7 +105,7 @@ BattleResult: null → win | lose
 ## Responsividade
 
 - Palco: `100dvh`, largura 100%, máximo 480 px.
-- Desktop: centralizado, sombra e fundo temático nas laterais.
+- Desktop/tablet: centralizado, com a arte da abertura cobrindo o palco e o fundo externo.
 - Mobile: ocupa toda a largura, respeita safe areas.
 - Telas baixas: HUD e sprites usam breakpoint de altura.
 - Telas abaixo de 350 px: mapa de esconderijo reduzido proporcionalmente.
@@ -134,9 +135,9 @@ Workbox gera o service worker:
 - Engines: constantes, probabilidade, dano, velocidade, paletas.
 - Hooks: fake timers, parry, hits, combo, contador e resultados.
 - Componentes: elementos, controles e acessibilidade.
-- Áudio: sete streams e cleanup.
-- Visual: Chrome real em sete casos, incluindo histórico e seleção com botão mantido pressionado.
-- PWA: Chrome real offline.
+- Áudio: dez streams, preparação do Rat Dance e cleanup.
+- Visual: Chrome real em oito casos, incluindo histórico, abertura 546×866 e seleção com botão mantido pressionado.
+- PWA: Chrome real com reload persistente e funcionamento offline.
 
 ## Dependências
 

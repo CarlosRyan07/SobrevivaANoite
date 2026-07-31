@@ -23,17 +23,11 @@ export function useGameNavigation() {
 
   const navigate = useCallback((nextRoute: GameRoute) => {
     const nextHash = hashForRoute(nextRoute)
-    if (window.location.hash === nextHash) {
-      setRoute(nextRoute)
-      return
-    }
-    window.location.hash = nextHash
+    setRoute(nextRoute)
+    if (window.location.hash !== nextHash) window.location.hash = nextHash
   }, [])
 
-  const backToMenu = useCallback(() => {
-    setRoute('menu')
-    window.location.hash = '#/lore'
-  }, [])
+  const backToMenu = useCallback(() => navigate('menu'), [navigate])
 
   return { route, navigate, backToMenu }
 }

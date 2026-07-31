@@ -10,10 +10,10 @@ O desenvolvimento e o build do jogo não exigem Android Studio, Java, Kotlin ou 
 
 ## Primeira instalação
 
-No terminal, entre em `JogoWeb`:
+No terminal, entre em `JogoWeb` a partir da raiz do repositório:
 
 ```powershell
-cd C:\Users\Ryan\Desktop\SobrevivaANoite\JogoWeb
+cd .\JogoWeb
 npm install
 ```
 
@@ -29,7 +29,7 @@ npm ci
 npm run dev
 ```
 
-O Vite exibe a URL local. Alterações em TSX/CSS atualizam automaticamente.
+O Vite exibe a URL local. Alterações em TSX/CSS atualizam automaticamente. O endereço padrão é fixo em `http://localhost:5173` para que o histórico e o recorde permaneçam na mesma origem entre execuções.
 
 Rotas úteis:
 
@@ -37,6 +37,7 @@ Rotas úteis:
 - `/#/lore` — lore;
 - `/#/hide` — esconderijo;
 - `/#/battle` — batalha.
+- `/#/history` — histórico persistido.
 
 ## Testes e qualidade
 
@@ -57,7 +58,8 @@ npm run visual:check
 
 Ela gera arquivos ignorados pelo Git em `.artifacts/visual` e valida:
 
-- 390×844: abertura, lore, esconderijo e batalha;
+- 390×844: abertura, lore, esconderijo, batalha e histórico;
+- 546×866: abertura com preenchimento lateral;
 - 1440×900: abertura e palco central;
 - largura/centralização do palco;
 - overflow horizontal;
@@ -76,7 +78,7 @@ Verificação PWA/offline:
 npm run pwa:check
 ```
 
-O teste instala o service worker em Chrome headless, visita os modos online, desliga a rede e confirma abertura, esconderijo, batalha, imagens e áudio de clique.
+O teste instala o service worker em Chrome headless, confirma o histórico após recarregar, visita os modos online, desliga a rede e valida abertura, esconderijo, batalha, histórico, imagens e os áudios — incluindo Rat Dance.
 
 ## Recriar assets otimizados
 
@@ -151,4 +153,4 @@ Defina `CHROME_PATH` com o executável correto.
 
 ### Porta ocupada
 
-`dev` escolhe outra porta automaticamente. Os verificadores usam preview local e também podem selecionar a próxima porta livre.
+`dev` usa intencionalmente a porta fixa `5173`, pois o armazenamento do navegador é separado por origem/porta. Se ela estiver ocupada, encerre o processo anterior antes de iniciar o jogo novamente. Os verificadores automatizados usam portas próprias de preview.

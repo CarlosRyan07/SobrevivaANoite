@@ -23,9 +23,10 @@ describe('BattleScreen', () => {
       'aria-valuenow',
       '100',
     )
-    expect(screen.getByRole('button', { name: 'Esquivar Esquerda' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Esquivar Esquerda' })).toHaveTextContent('←')
     expect(screen.getByRole('button', { name: 'Atacar' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Esquivar Direita' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Esquivar Direita' })).toHaveTextContent('→')
+    expect(screen.queryByText('Esquivar', { exact: false })).not.toBeInTheDocument()
   })
 
   it('aciona a esquiva pelo teclado', () => {
@@ -42,6 +43,47 @@ describe('BattleScreen', () => {
       'src',
       expect.stringMatching(/sobrevivente_esquivando_esquerda1?\.webp$/),
     )
+    vi.useRealTimers()
+  })
+
+  it('ataca pela barra de espaço', () => {
+    vi.useFakeTimers()
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    render(
+      <AudioContext value={audio}>
+        <BattleScreen onBackToMenu={vi.fn()} />
+      </AudioContext>,
+    )
+
+    fireEvent.keyDown(window, { key: ' ', code: 'Space' })
+
+    expect(screen.getByRole('meter', { name: 'Vida de Psicopata' })).toHaveAttribute(
+      'aria-valuenow',
+      '697',
+    )
+    expect(audio.play).toHaveBeenCalledWith('punch')
+    vi.useRealTimers()
+  })
+
+  it('ataca com o botão esquerdo do mouse em qualquer área livre da batalha', () => {
+    vi.useFakeTimers()
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    render(
+      <AudioContext value={audio}>
+        <BattleScreen onBackToMenu={vi.fn()} />
+      </AudioContext>,
+    )
+
+    fireEvent.pointerDown(screen.getByLabelText('Modo batalha'), {
+      pointerType: 'mouse',
+      button: 0,
+    })
+
+    expect(screen.getByRole('meter', { name: 'Vida de Psicopata' })).toHaveAttribute(
+      'aria-valuenow',
+      '697',
+    )
+    expect(audio.play).toHaveBeenCalledWith('punch')
     vi.useRealTimers()
   })
 
@@ -65,7 +107,7 @@ describe('BattleScreen', () => {
       expect.stringContaining('psicopata_atordoado.webp'),
     )
     expect(screen.queryByRole('button', { name: 'Atacar' })).not.toBeInTheDocument()
-    expect(audio.play).not.toHaveBeenCalledWith('ratDanceMusic')
+    expect(audio.play).toHaveBeenCalledWith('ratDanceMusic', { prepareMuted: true })
 
     await act(async () => vi.advanceTimersByTimeAsync(1_000))
     expect(screen.getByRole('img', { name: 'Psicopata' })).toHaveAttribute(
@@ -74,11 +116,17 @@ describe('BattleScreen', () => {
     )
 
     await act(async () => vi.advanceTimersByTimeAsync(2_500))
+    expect(screen.getByRole('img', { name: 'Sobrevivente' })).not.toHaveAttribute(
+      'src',
+      expect.stringContaining('sobrevivente_vitoria.webp'),
+    )
+
+    await act(async () => vi.advanceTimersByTimeAsync(1_500))
     expect(screen.getByRole('img', { name: 'Sobrevivente' })).toHaveAttribute(
       'src',
       expect.stringContaining('sobrevivente_vitoria.webp'),
     )
-    expect(audio.play).toHaveBeenCalledWith('ratDanceMusic')
+    expect(audio.play).toHaveBeenCalledWith('ratDanceMusic', { resumePrepared: true })
 
     await act(async () => vi.advanceTimersByTimeAsync(2_500))
     expect(screen.getByRole('img', { name: 'Sobrevivente' })).toHaveAttribute(
