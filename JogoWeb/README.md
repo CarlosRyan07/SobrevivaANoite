@@ -13,13 +13,13 @@ Concluído e validado:
 - vitória atualizada com bloqueio imediato, espera maior no derrotado, joinha, Rat Dance e música preparada contra bloqueio de autoplay;
 - recorde de combo persistido entre sessões;
 - histórico de partidas com estatísticas dos dois modos e detalhes de batalha;
-- todos os assets Android preservados;
+- assets Android sincronizados, com a imagem da lore corrigida e o GIF não utilizado do Fortnite removido;
 - layout vertical responsivo, com a arte preenchendo as laterais da abertura;
 - PWA e funcionamento offline após o cache dos modos;
 - 66 testes aprovados em 16 arquivos;
 - lint, TypeScript estrito, build, verificação visual e verificação offline aprovados.
 
-O aplicativo Android fora de `JogoWeb` não foi modificado pela migração.
+A lógica do aplicativo Android fora de `JogoWeb` não foi modificada pela migração. A imagem `lore_fogueira.jpg` corrigida pelo usuário foi sincronizada entre Android e Web, e o GIF não utilizado do Fortnite foi removido das duas versões.
 
 ## Execução rápida
 
@@ -71,9 +71,9 @@ Publique o conteúdo de `dist/`. Para instalar a PWA e ativar service worker for
 
 ## Assets
 
-- `public/assets/images`: cópias originais de imagens/XML Android.
+- `public/assets/images`: imagens/XML sincronizados com o Android, incluindo a lore corrigida.
 - `public/assets/audio`: todos os 21 MP3 da versão Android atualizada.
-- `public/assets/gif`: os dois GIFs originais preservados; somente `rat_dance.gif` é usado pelo jogo.
+- `public/assets/gif`: somente `rat_dance.gif`, usado na vitória da batalha.
 - `public/assets/android-icons`: mipmaps/ícones Android preservados.
 - `public/assets/optimized`: 36 WebPs lossless usados pelo jogo.
 - `public/icons`: ícones 192/512 da PWA.

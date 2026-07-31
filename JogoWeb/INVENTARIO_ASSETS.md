@@ -1,12 +1,12 @@
 # Inventário de assets Android
 
-Todos os recursos abaixo serão copiados, sem mover ou alterar os originais. Recursos não referenciados pelo fluxo atual também serão preservados no projeto Web para garantir uma migração integral.
+Os recursos usados pelo jogo foram copiados para a Web. A imagem da lore foi atualizada com a correção fornecida pelo usuário, e o GIF não utilizado do Fortnite foi removido das duas versões.
 
 ## Resumo
 
 | Categoria | Quantidade | Tamanho aproximado |
 |---|---:|---:|
-| Drawables (incluindo XML) | 42 | 29,82 MiB |
+| Drawables (incluindo XML) | 41 | 28,90 MiB |
 | Áudios MP3 | 20 | 0,70 MiB |
 | APK Android de referência | 1 | 31,26 MiB |
 
@@ -68,7 +68,6 @@ Todos os sprites abaixo têm 680×654:
 | Arquivo | Dimensões | Frames | Duração |
 |---|---:|---:|---:|
 | `rat_dance.gif` | 148×218 | 17 | 1,02 s |
-| `fortnite-dance.gif` | 295×348 | 73 | 7,30 s |
 
 ## Áudios
 

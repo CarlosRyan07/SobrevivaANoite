@@ -37,7 +37,7 @@ Esta implementação nasceu como portabilização do jogo Android existente e fo
 ### 3. Scaffold
 
 - React, TypeScript estrito, Vite, CSS Modules, ESLint e Vitest configurados.
-- Assets copiados mecanicamente; originais Android preservados.
+- Assets copiados mecanicamente; posteriormente, a imagem da lore corrigida pelo usuário foi sincronizada e o GIF não utilizado do Fortnite foi removido das duas versões.
 - Primeiro lint/typecheck/test/build aprovado.
 
 ### 4. Portabilização
@@ -88,7 +88,7 @@ A matriz final está em `MATRIZ_EQUIVALENCIA.md`.
 - A música de tensão agora é interrompida seletivamente assim que termina a inspeção do esconderijo do jogador, inclusive quando ele escapa.
 - A batalha aceita `A`/seta esquerda e `D`/seta direita para esquiva.
 - A batalha aceita `Espaço` e clique esquerdo em qualquer área livre para atacar; os botões de esquiva mostram apenas setas.
-- A dança do Fortnite deixou de ser referenciada; a vitória usa apenas `rat_dance.gif`.
+- A dança do Fortnite foi removida dos assets Android e Web; a vitória usa apenas `rat_dance.gif`.
 - HP zero agora trava imediatamente ataques e esquivas, cancela timers concorrentes e fixa o sprite derrotado antes do joinha e da dança.
 - A vitória possui cenário de teste com inimigo iniciado em 1 HP e usa o `rat_dance_music.mp3` oficial da `master` atualizada.
 - `Voltar ao Menu` nos resultados limpa o hash da lore e retorna à abertura real.
@@ -148,14 +148,14 @@ Precaching de todos os assets tornaria a primeira instalação pesada. O shell (
 
 ## Integridade do Android
 
-Antes da migração, o worktree já continha seis arquivos Android modificados e vários arquivos não rastreados. Eles foram preservados.
+Antes da migração, o worktree já continha seis arquivos Android modificados e vários arquivos não rastreados. Eles foram preservados na criação da branch.
 
 No encerramento:
 
-- o diff Android continua com os mesmos seis arquivos;
-- o diff stat continua `122 insertions, 79 deletions`;
-- nenhuma edição Android foi feita;
-- toda nova implementação está em `JogoWeb/`.
+- a lógica Android permaneceu igual à baseline; no Kotlin, foi removido apenas o comentário que citava o GIF excluído;
+- `lore_fogueira.jpg` foi substituída pela correção fornecida pelo usuário;
+- `fortnite_dance.gif`, que não era usado, foi removido por decisão do usuário;
+- a implementação da versão Web permanece isolada em `JogoWeb/`.
 
 ## Manutenção futura
 

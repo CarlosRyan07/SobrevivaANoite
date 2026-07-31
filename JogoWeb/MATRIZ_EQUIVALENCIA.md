@@ -108,9 +108,9 @@ A versão Web preserva o baseline Android, acrescido dos refinamentos explicitam
 
 ## Assets e renderização
 
-- Todos os 42 drawables e 21 MP3 da `master` atualizada foram copiados.
+- Os drawables usados e os 21 MP3 da `master` atualizada foram copiados; `lore_fogueira.jpg` recebeu a correção do usuário.
 - Todos os mipmaps/ícones Android foram preservados.
-- Os dois GIFs originais permanecem preservados, mas `fortnite-dance.gif` não é mais referenciado pelo jogo.
+- Somente `rat_dance.gif` permanece; o GIF não utilizado do Fortnite foi removido do Android e da Web.
 - 36 PNGs possuem derivados WebP lossless.
 - A validação exige alfa idêntico e RGB idêntico em todo pixel visível.
 - Economia: 28,3 MiB → 16,4 MiB nos recursos convertidos.

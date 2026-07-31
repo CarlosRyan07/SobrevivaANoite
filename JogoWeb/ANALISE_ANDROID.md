@@ -244,7 +244,7 @@ Vitória:
 1. Ao chegar a zero HP, salva a vitória, cancela a IA, bloqueia ações e mantém `psicopata_atordoado.png` por 1.000 ms.
 2. Mostra `psicopata_derrotado.png` por 2.500 ms.
 3. Inicia `rat_dance_music.mp3` e mostra `sobrevivente_vitoria.png` por 2.500 ms.
-4. Mostra somente `rat_dance.gif`; o Fortnite está comentado na lista de danças.
+4. Mostra somente `rat_dance.gif`; o GIF não utilizado do Fortnite foi removido.
 5. Define resultado `win`, oculta HUD e exibe `VOCÊ VENCEU!`, `Tentar Novamente` e `Voltar ao Menu`.
 
 Derrota:

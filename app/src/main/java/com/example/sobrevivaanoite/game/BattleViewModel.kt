@@ -58,7 +58,7 @@ class BattleViewModel(application: Application) : AndroidViewModel(application) 
     private val playerDodgeRightImages = listOf(R.drawable.sobrevivente_esquivando_direita, R.drawable.sobrevivente_esquivando_direita1)
     private val playerAttackImages = listOf(R.drawable.sobrevivente_ataque1, R.drawable.sobrevivente_ataque2, R.drawable.sobrevivente_ataque3, R.drawable.sobrevivente_ataque4, R.drawable.sobrevivente_ataque5, R.drawable.sobrevivente_ataque6)
     private val enemyHitImages = listOf(R.drawable.psicopata_atingido1, R.drawable.psicopata_atingido2, R.drawable.psicopata_atingido3, R.drawable.psicopata_atingido4)
-    private val victoryDances = listOf(R.drawable.rat_dance)//, R.drawable.fortnite_dance)
+    private val victoryDances = listOf(R.drawable.rat_dance)
     val victoryDancesList: List<Int> = victoryDances
     private var attackSpeed: Long = 250L
 

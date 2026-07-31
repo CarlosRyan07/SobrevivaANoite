@@ -24,7 +24,7 @@ Migração realinhada, validada e pronta na branch `feat/web`, criada diretament
 - ✔ Todos os fontes Kotlin, configurações e assets analisados.
 - ✔ Quatro telas, três ViewModels e camada de dados portados.
 - ✔ Estados, HP, dano, combo, IA, probabilidades e timers preservados; coordenadas refinadas pela referência do usuário.
-- ✔ 42 drawables, 21 MP3 e ícones Android copiados.
+- ✔ 41 drawables, 21 MP3 e ícones Android copiados; lore corrigida e GIF não utilizado do Fortnite removido.
 - ✔ Menu/lore com textos, imagens, fades e retorno.
 - ✔ Esconderijo com alvos corrigidos, clique estável, tensão interrompível, retorno ao menu e restart.
 - ✔ Batalha com setas, teclado, mouse, IA, parry, combo 250→175→100, recorde e sequência de vitória refinada.
@@ -39,7 +39,7 @@ Migração realinhada, validada e pronta na branch `feat/web`, criada diretament
 - ✔ 66 testes em 16 arquivos aprovados no ciclo funcional.
 - ✔ Oito cenários visuais reais aprovados, incluindo histórico e abertura 546×866.
 - ✔ Matriz Android/Web atualizada com os refinamentos explicitamente autorizados.
-- ✔ Código Android preservado exatamente como na `origin/master` usada como baseline.
+- ✔ Código Android preservado; somente a lore corrigida pelo usuário e a remoção do GIF não utilizado alteram os assets da baseline.
 - ✔ Documentos obrigatórios finalizados.
 
 ## Em andamento
