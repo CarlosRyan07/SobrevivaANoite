@@ -77,4 +77,28 @@ describe('AudioService', () => {
     expect(created[0]?.currentTime).toBe(0)
     expect(created[0]?.play).toHaveBeenCalledOnce()
   })
+
+  it('inicia o fade após o atraso e reduz o volume até interromper o áudio', () => {
+    vi.useFakeTimers()
+    const audio = new FakeAudio()
+    audio.volume = 1
+    const service = new AudioService(10, () => audio as unknown as HTMLAudioElement)
+
+    service.play('pidaoEnding')
+    service.fadeOut('pidaoEnding', { delay: 10_000, duration: 3_000 })
+
+    vi.advanceTimersByTime(10_000)
+    expect(audio.volume).toBe(1)
+    expect(audio.pause).not.toHaveBeenCalled()
+
+    vi.advanceTimersByTime(1_500)
+    expect(audio.volume).toBeCloseTo(0.5)
+    expect(audio.pause).not.toHaveBeenCalled()
+
+    vi.advanceTimersByTime(1_500)
+    expect(audio.volume).toBe(0)
+    expect(audio.pause).toHaveBeenCalledOnce()
+    expect(service.activeStreamCount).toBe(0)
+    vi.useRealTimers()
+  })
 })

@@ -98,10 +98,7 @@ describe('BattleScreen', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Atacar' }))
 
-    expect(screen.getByRole('meter', { name: 'Vida de Psicopata' })).toHaveAttribute(
-      'aria-valuenow',
-      '0',
-    )
+    expect(screen.queryByRole('meter', { name: 'Vida de Psicopata' })).not.toBeInTheDocument()
     expect(screen.getByRole('img', { name: 'Psicopata' })).toHaveAttribute(
       'src',
       expect.stringContaining('psicopata_atordoado.webp'),
@@ -120,7 +117,6 @@ describe('BattleScreen', () => {
       'src',
       expect.stringContaining('sobrevivente_vitoria.webp'),
     )
-
     await act(async () => vi.advanceTimersByTimeAsync(1))
     expect(screen.getByRole('img', { name: 'Sobrevivente' })).toHaveAttribute(
       'src',
@@ -134,6 +130,7 @@ describe('BattleScreen', () => {
       expect.stringContaining('rat_dance.gif'),
     )
     expect(screen.getByText('VOCÊ VENCEU!')).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Você liberou o código:ligeirinho')
     expect(document.body.innerHTML).not.toContain('fortnite-dance.gif')
     vi.useRealTimers()
   })
@@ -148,5 +145,71 @@ describe('BattleScreen', () => {
     )
 
     expect(screen.getByLabelText('Recorde de combo 12')).toHaveTextContent('RECORDE: 12')
+  })
+
+  it('oferece o final do Pidão após a Rat Dance e inicia o áudio antes da revelação', async () => {
+    vi.useFakeTimers()
+    const audio = {
+      play: vi.fn(),
+      stop: vi.fn(),
+      fadeOut: vi.fn(),
+    } as unknown as AudioService
+    render(
+      <AudioContext value={audio}>
+        <BattleScreen
+          onBackToMenu={vi.fn()}
+          gameOptions={{ initialEnemyHp: 1, initialPlayerHp: 35 }}
+        />
+      </AudioContext>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Atacar' }))
+    await act(async () => vi.advanceTimersByTimeAsync(5_500))
+
+    expect(screen.getByText('VOCÊ VENCEU!')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Prosseguir' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Tentar Novamente' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Voltar ao Menu' })).toBeInTheDocument()
+    expect(audio.play).toHaveBeenCalledWith('ratDanceMusic', { resumePrepared: true })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Prosseguir' }))
+    expect(audio.stop).toHaveBeenCalledWith('ratDanceMusic')
+    expect(screen.getByRole('dialog', { name: 'Final: A Maldição do Pidão' }))
+      .toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /Sobrevivente ferido/ })).toHaveAttribute(
+      'src',
+      expect.stringContaining('vitoria_sobrevivente_machucado.png'),
+    )
+    expect(screen.getByLabelText('História do final do Pidão')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Feridas no braço do sobrevivente' }))
+      .toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    expect(screen.getByText('Você virou...')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    expect(audio.play).toHaveBeenCalledWith('pidaoEnding')
+    expect(screen.getByLabelText('A revelação está chegando')).toBeInTheDocument()
+    expect(screen.queryByRole('img', { name: 'O sobrevivente transformado no Pidão' }))
+      .not.toBeInTheDocument()
+
+    await act(async () => vi.advanceTimersByTimeAsync(1_999))
+    expect(screen.queryByRole('img', { name: 'O sobrevivente transformado no Pidão' }))
+      .not.toBeInTheDocument()
+    await act(async () => vi.advanceTimersByTimeAsync(1))
+
+    expect(screen.getByRole('img', { name: 'O sobrevivente transformado no Pidão' }))
+      .toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'UM PIDÃO!!!' })).toBeInTheDocument()
+    expect(screen.getByRole('status', { name: 'Final obtido' })).toHaveTextContent(
+      'Você se tornou um Lobisomem Pidão',
+    )
+    expect(audio.fadeOut).toHaveBeenCalledWith('pidaoEnding', {
+      delay: 10_000,
+      duration: 3_000,
+    })
+    expect(screen.queryByRole('button', { name: 'Tentar Novamente' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Voltar ao Menu' })).toBeInTheDocument()
+    vi.useRealTimers()
   })
 })

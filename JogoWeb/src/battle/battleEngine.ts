@@ -1,12 +1,11 @@
 import { images } from '../services/assetPaths'
 import {
-  ATTACK_SPEED_STEP,
+  DEFAULT_ATTACK_SPEED_PROFILE,
   ENEMY_MAX_HP,
-  INITIAL_ATTACK_SPEED,
-  MINIMUM_ATTACK_SPEED,
   NORMAL_ATTACK_DAMAGE,
   PLAYER_MAX_HP,
   STUNNED_ATTACK_DAMAGE,
+  type AttackSpeedProfile,
 } from './battleConstants'
 import type { AttackDirection, BattleState, DodgeTiming, EnemyAction } from './battleTypes'
 
@@ -16,9 +15,10 @@ export function createInitialBattleState(
   round = 0,
   enemyHp = ENEMY_MAX_HP,
   highCombo = 0,
+  playerHp = PLAYER_MAX_HP,
 ): BattleState {
   return {
-    playerHp: PLAYER_MAX_HP,
+    playerHp: Math.min(Math.max(playerHp, 0), PLAYER_MAX_HP),
     playerImage: images.survivor.idle,
     playerState: 'idle',
     enemyHp: Math.min(Math.max(enemyHp, 0), ENEMY_MAX_HP),
@@ -28,6 +28,8 @@ export function createInitialBattleState(
     playerComboStep: 0,
     highCombo,
     round,
+    rewardCode: null,
+    victoryEnding: null,
   }
 }
 
@@ -47,9 +49,13 @@ export function attackDamage(enemyIsStunned: boolean): number {
   return enemyIsStunned ? STUNNED_ATTACK_DAMAGE : NORMAL_ATTACK_DAMAGE
 }
 
-export function nextAttackSpeed(currentSpeed: number, comboStep: number): number {
+export function nextAttackSpeed(
+  currentSpeed: number,
+  comboStep: number,
+  profile: AttackSpeedProfile = DEFAULT_ATTACK_SPEED_PROFILE,
+): number {
   if (comboStep < 2) return currentSpeed
-  return Math.max(currentSpeed - ATTACK_SPEED_STEP, MINIMUM_ATTACK_SPEED)
+  return Math.max(currentSpeed - profile.reduction, profile.minimum)
 }
 
 export interface HpPalette {
@@ -72,4 +78,4 @@ export function comboColor(comboCount: number): string {
   return '#ffffff'
 }
 
-export const DEFAULT_ATTACK_SPEED = INITIAL_ATTACK_SPEED
+export const DEFAULT_ATTACK_SPEED = DEFAULT_ATTACK_SPEED_PROFILE.initial

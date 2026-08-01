@@ -11,6 +11,11 @@ export const images = {
   houseWithDoor: optimized('planta_casa_portainteira'),
   house: optimized('planta_casa'),
   blood: optimized('sangue'),
+  endings: {
+    woundedVictory: image('vitoria_sobrevivente_machucado.png'),
+    woundedArm: image('mao_machucada.jpg'),
+    pidao: image('lobo_pidao.jpg'),
+  },
   killers: [optimized('terrifier'), optimized('lobisomem'), optimized('ghostface')] as const,
   enemy: {
     idle: optimized('psicopata_parado'),

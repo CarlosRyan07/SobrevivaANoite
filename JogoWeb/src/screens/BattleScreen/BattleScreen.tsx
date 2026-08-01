@@ -1,14 +1,22 @@
-import { useCallback, useEffect, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
+} from 'react'
 
 import { ENEMY_MAX_HP, PLAYER_MAX_HP } from '../../battle/battleConstants'
 import { comboColor } from '../../battle/battleEngine'
 import { battleActionForKey } from '../../battle/battleKeyboard'
 import { useBattleGame, type BattleGameOptions } from '../../battle/useBattleGame'
+import { GAME_CODES } from '../../codes/gameCodes'
 import { HpBar } from '../../components/HpBar/HpBar'
 import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
 import { images, preloadImages } from '../../services/assetPaths'
 import styles from './BattleScreen.module.css'
+import { PidaoEnding } from './PidaoEnding'
 
 interface BattleScreenProps {
   onBackToMenu: () => void
@@ -20,8 +28,20 @@ type ComboStyle = CSSProperties & { '--combo-color': string }
 export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
   const audio = useAudio()
   const { state, attack, dodgeLeft, dodgeRight, retry } = useBattleGame(audio, gameOptions)
+  const [showPidaoStory, setShowPidaoStory] = useState(false)
   const comboStyle: ComboStyle = { '--combo-color': comboColor(state.playerComboStep) }
   const victorySequenceActive = state.enemyAction.kind === 'defeated'
+  const pidaoVictory = state.gameResult === 'win' && state.victoryEnding === 'pidao'
+
+  const handleRetry = useCallback(() => {
+    setShowPidaoStory(false)
+    retry()
+  }, [retry])
+
+  const handleProceedToPidaoStory = useCallback(() => {
+    audio.stop('ratDanceMusic')
+    setShowPidaoStory(true)
+  }, [audio])
 
   const handlePointerAttack = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -53,6 +73,9 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
       images.survivor.parryRight,
       images.survivor.victory,
       images.survivor.dance,
+      images.endings.woundedVictory,
+      images.endings.woundedArm,
+      images.endings.pidao,
     ])
   }, [])
 
@@ -86,7 +109,7 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
         </div>
       )}
 
-      {state.gameResult !== 'win' && (
+      {state.enemyHp > 0 && state.gameResult !== 'win' && (
         <div className={styles.topUi}>
           <HpBar name="Psicopata" currentHp={state.enemyHp} maxHp={ENEMY_MAX_HP} />
         </div>
@@ -159,12 +182,46 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
         </div>
       )}
 
-      {state.gameResult === 'win' && (
+      {pidaoVictory && showPidaoStory && (
+        <PidaoEnding
+          rewardCode={state.rewardCode}
+          onBackToMenu={onBackToMenu}
+        />
+      )}
+
+      {state.gameResult === 'win' && !showPidaoStory && (
         <div className={styles.winOverlay}>
+          {state.rewardCode && (
+            <p className={styles.codeReward} role="status">
+              Você liberou o código:
+              <strong>{GAME_CODES[state.rewardCode].code.toLowerCase()}</strong>
+            </p>
+          )}
           <h1>VOCÊ VENCEU!</h1>
-          <div className={styles.winActions}>
-            <WordButton type="button" onClick={retry}>Tentar Novamente</WordButton>
-            <WordButton type="button" onClick={onBackToMenu}>Voltar ao Menu</WordButton>
+          <div className={`${styles.winActions} ${pidaoVictory ? styles.storyChoiceActions : ''}`}>
+            {pidaoVictory && (
+              <WordButton
+                className={styles.proceedButton}
+                type="button"
+                onClick={handleProceedToPidaoStory}
+              >
+                Prosseguir
+              </WordButton>
+            )}
+            <WordButton
+              className={pidaoVictory ? styles.storyRetryButton : undefined}
+              type="button"
+              onClick={handleRetry}
+            >
+              Tentar Novamente
+            </WordButton>
+            <WordButton
+              className={pidaoVictory ? styles.storyMenuButton : undefined}
+              type="button"
+              onClick={onBackToMenu}
+            >
+              Voltar ao Menu
+            </WordButton>
           </div>
         </div>
       )}

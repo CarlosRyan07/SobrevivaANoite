@@ -2,22 +2,38 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
+import {
+  CODE_PROGRESS_UPDATED_EVENT,
+  gamePersistence,
+  type GamePersistencePort,
+} from '../../persistence/gamePersistence'
 import { images, preloadImages } from '../../services/assetPaths'
+import { CodesPanel } from './CodesPanel'
 import styles from './MenuScreen.module.css'
 
 interface MenuScreenProps {
   onBattle: () => void
   onHide: () => void
   onHistory: () => void
+  persistence?: GamePersistencePort
 }
 
 function hashShowsLore() {
   return window.location.hash === '#/lore'
 }
 
-export function MenuScreen({ onBattle, onHide, onHistory }: MenuScreenProps) {
+export function MenuScreen({
+  onBattle,
+  onHide,
+  onHistory,
+  persistence = gamePersistence,
+}: MenuScreenProps) {
   const audio = useAudio()
   const [showLore, setShowLore] = useState(hashShowsLore)
+  const [showCodes, setShowCodes] = useState(false)
+  const [codeProgress, setCodeProgress] = useState(() => persistence.getCodeProgress())
+  const codesAvailable =
+    codeProgress.discoveredCodes.length > 0 || codeProgress.redeemedCodes.length > 0
 
   useEffect(() => {
     preloadImages([images.start])
@@ -30,18 +46,32 @@ export function MenuScreen({ onBattle, onHide, onHistory }: MenuScreenProps) {
   }, [])
 
   useEffect(() => {
+    const refreshCodes = () => setCodeProgress(persistence.getCodeProgress())
+    window.addEventListener(CODE_PROGRESS_UPDATED_EVENT, refreshCodes)
+    window.addEventListener('storage', refreshCodes)
+    return () => {
+      window.removeEventListener(CODE_PROGRESS_UPDATED_EVENT, refreshCodes)
+      window.removeEventListener('storage', refreshCodes)
+    }
+  }, [persistence])
+
+  useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showLore) {
+      if (event.key !== 'Escape') return
+      if (showCodes) {
+        setShowCodes(false)
+      } else if (showLore) {
         window.location.hash = ''
         setShowLore(false)
       }
     }
     window.addEventListener('keydown', handleEscape)
     return () => window.removeEventListener('keydown', handleEscape)
-  }, [showLore])
+  }, [showCodes, showLore])
 
   const openLore = useCallback(() => {
     audio.play('buttonClick')
+    setShowCodes(false)
     window.location.hash = '#/lore'
     setShowLore(true)
   }, [audio])
@@ -58,21 +88,44 @@ export function MenuScreen({ onBattle, onHide, onHistory }: MenuScreenProps) {
     <div className={styles.root}>
       <section
         className={`${styles.opening} ${showLore ? styles.openingHidden : ''}`}
-        aria-hidden={showLore}
+        aria-hidden={showLore || showCodes}
       >
         <img className={styles.startImage} src={images.start} alt="Tela de Início" fetchPriority="high" />
         <WordButton
           className={styles.historyButton}
           type="button"
           onClick={() => chooseMode(onHistory)}
-          tabIndex={showLore ? -1 : 0}
+          tabIndex={showLore || showCodes ? -1 : 0}
         >
           Histórico
         </WordButton>
-        <WordButton className={styles.startButton} type="button" onClick={openLore} tabIndex={showLore ? -1 : 0}>
+        {codesAvailable && (
+          <WordButton
+            className={styles.codesButton}
+            type="button"
+            onClick={() => {
+              audio.play('buttonClick')
+              setShowCodes(true)
+            }}
+            tabIndex={showLore || showCodes ? -1 : 0}
+          >
+            Códigos
+          </WordButton>
+        )}
+        <WordButton className={styles.startButton} type="button" onClick={openLore} tabIndex={showLore || showCodes ? -1 : 0}>
           Iniciar Jogo
         </WordButton>
       </section>
+
+      {showCodes && (
+        <CodesPanel
+          persistence={persistence}
+          onClose={() => {
+            audio.play('buttonClick')
+            setShowCodes(false)
+          }}
+        />
+      )}
 
       <section
         className={`${styles.lore} ${showLore ? styles.loreVisible : ''}`}

@@ -10,13 +10,13 @@ Concluído e validado:
 - modo esconder com seis locais reposicionados pela referência visual, IA, probabilidades, timers e sons;
 - resultado do esconderijo com reinício ou retorno ao menu;
 - modo batalha com dano, esquiva por setas/teclado, ataque por botão/Espaço/mouse, parry, combo, HUD e resultados;
-- vitória atualizada com bloqueio imediato, espera de 2 segundos no derrotado, joinha, Rat Dance e música preparada contra bloqueio de autoplay;
+- vitória atualizada com bloqueio imediato, final normal com Rat Dance e final alternativo do Pidão abaixo de 40% de vida;
 - recorde de combo persistido entre sessões;
 - histórico de partidas com estatísticas dos dois modos e detalhes de batalha;
 - assets Android sincronizados, com a imagem da lore corrigida e o GIF não utilizado do Fortnite removido;
 - layout vertical responsivo, com a arte preenchendo e escurecendo as laterais da abertura;
 - PWA e funcionamento offline após o cache dos modos;
-- 67 testes aprovados em 16 arquivos;
+- 80 testes aprovados em 17 arquivos;
 - lint, TypeScript estrito, build, verificação visual e verificação offline aprovados.
 
 A lógica do aplicativo Android fora de `JogoWeb` não foi modificada pela migração. A imagem `lore_fogueira.jpg` corrigida pelo usuário foi sincronizada entre Android e Web, e o GIF não utilizado do Fortnite foi removido das duas versões.
@@ -56,6 +56,16 @@ Os arquivos finais ficam em `dist/` e podem ser hospedados como site estático.
 | `npm run visual:check` | Build + screenshots/asserts em 14 casos visuais/interativos, incluindo extremos de zoom |
 | `npm run pwa:check` | Build + teste real de persistência e funcionamento offline de telas/áudio |
 
+### Teste manual rápido do final Pidão
+
+Com o servidor de desenvolvimento aberto por `npm run dev`, acesse:
+
+```text
+http://localhost:5173/?battleTest=pidao#/battle
+```
+
+Esse modo de teste deixa o sobrevivente com 35 de vida e o monstro com 1 de vida. Dê um único golpe, aguarde a queda do monstro, clique em **Prosseguir** e depois em **Continuar** para conferir toda a sequência. O atalho existe somente durante o desenvolvimento e não altera a versão de produção.
+
 ## Publicação
 
 O projeto usa `base: './'`, portanto `dist/` funciona tanto na raiz de um domínio quanto numa subpasta. Exemplos de destinos:
@@ -72,7 +82,7 @@ Publique o conteúdo de `dist/`. Para instalar a PWA e ativar service worker for
 ## Assets
 
 - `public/assets/images`: imagens/XML sincronizados com o Android, incluindo a lore corrigida.
-- `public/assets/audio`: todos os 21 MP3 da versão Android atualizada.
+- `public/assets/audio`: os 21 MP3 da versão Android atualizada e o áudio do final Pidão.
 - `public/assets/gif`: somente `rat_dance.gif`, usado na vitória da batalha.
 - `public/assets/android-icons`: mipmaps/ícones Android preservados.
 - `public/assets/optimized`: 36 WebPs lossless usados pelo jogo.

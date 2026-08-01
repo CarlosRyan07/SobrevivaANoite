@@ -1,3 +1,5 @@
+import type { GameCodeId } from '../codes/gameCodes'
+
 export type AttackDirection = 'left' | 'right'
 
 export type EnemyAction =
@@ -11,6 +13,7 @@ export type EnemyAction =
 export type DodgeTiming = 'none' | 'early' | 'perfect'
 export type PlayerState = 'idle' | 'attacking' | 'dodging' | 'stunned'
 export type BattleResult = 'win' | 'lose' | null
+export type VictoryEnding = 'standard' | 'pidao'
 
 export interface BattleState {
   playerHp: number
@@ -23,4 +26,6 @@ export interface BattleState {
   playerComboStep: number
   highCombo: number
   round: number
+  rewardCode: GameCodeId | null
+  victoryEnding: VictoryEnding | null
 }

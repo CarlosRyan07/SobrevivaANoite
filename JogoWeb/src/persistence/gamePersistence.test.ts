@@ -62,4 +62,40 @@ describe('persistência do jogo', () => {
       { gameMode: 'Batalha', wasVictory: true, finalPlayerHp: 85, parryCount: 2 },
     ])
   })
+
+  it('persiste descoberta, resgate e ativação dos códigos', () => {
+    const persistence = new GamePersistence(localStorage)
+
+    expect(persistence.discoverCode('ligeirinho')).toBe(true)
+    expect(persistence.discoverCode('ligeirinho')).toBe(false)
+    expect(persistence.redeemCode('ligeirinho')).toBe(true)
+    expect(persistence.isCodeActive('ligeirinho')).toBe(true)
+
+    const nextSession = new GamePersistence(localStorage)
+    expect(nextSession.getCodeProgress()).toEqual({
+      discoveredCodes: ['ligeirinho'],
+      redeemedCodes: ['ligeirinho'],
+      activeCodes: ['ligeirinho'],
+    })
+
+    expect(nextSession.setCodeActive('ligeirinho', false)).toBe(true)
+    expect(new GamePersistence(localStorage).isCodeActive('ligeirinho')).toBe(false)
+  })
+
+  it('ignora códigos desconhecidos ou ativos sem resgate no armazenamento', () => {
+    localStorage.setItem(
+      STORAGE_KEYS.codeProgress,
+      JSON.stringify({
+        discoveredCodes: ['ligeirinho', 'inexistente'],
+        redeemedCodes: [],
+        activeCodes: ['ligeirinho', 'inexistente'],
+      }),
+    )
+
+    expect(new GamePersistence(localStorage).getCodeProgress()).toEqual({
+      discoveredCodes: ['ligeirinho'],
+      redeemedCodes: [],
+      activeCodes: [],
+    })
+  })
 })

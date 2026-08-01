@@ -10,7 +10,9 @@ import { abortableDelay, abortController, isAbortError } from '../utils/abortabl
 import { defaultRandom, type RandomSource } from '../utils/random'
 import {
   BATTLE_TIMINGS,
-  INITIAL_ATTACK_SPEED,
+  DEFAULT_ATTACK_SPEED_PROFILE,
+  LIGEIRINHO_ATTACK_SPEED_PROFILE,
+  PIDAO_ENDING_HP_THRESHOLD,
   PLAYER_DAMAGE,
 } from './battleConstants'
 import {
@@ -27,6 +29,7 @@ export interface BattleGameOptions {
   random?: RandomSource
   delay?: DelayFunction
   initialEnemyHp?: number
+  initialPlayerHp?: number
   persistence?: GamePersistencePort
 }
 
@@ -38,9 +41,15 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
   const random = options.random ?? defaultRandom
   const delay = options.delay ?? abortableDelay
   const initialEnemyHp = options.initialEnemyHp
+  const initialPlayerHp = options.initialPlayerHp
   const persistence = options.persistence ?? gamePersistence
+  const [attackSpeedProfile] = useState(() =>
+    persistence.isCodeActive('ligeirinho')
+      ? LIGEIRINHO_ATTACK_SPEED_PROFILE
+      : DEFAULT_ATTACK_SPEED_PROFILE,
+  )
   const [state, setRenderedState] = useState<BattleState>(() =>
-    createInitialBattleState(0, initialEnemyHp, persistence.getHighCombo()),
+    createInitialBattleState(0, initialEnemyHp, persistence.getHighCombo(), initialPlayerHp),
   )
   const stateRef = useRef(state)
   const aiController = useRef<AbortController | null>(null)
@@ -53,7 +62,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
   const comboStep = useRef(0)
   const parryCount = useRef(0)
   const resultSaved = useRef(false)
-  const attackSpeed = useRef(INITIAL_ATTACK_SPEED)
+  const attackSpeed = useRef(attackSpeedProfile.initial)
 
   const commit = useCallback((update: (current: BattleState) => BattleState) => {
     const nextState = update(stateRef.current)
@@ -62,8 +71,8 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
   }, [])
 
   const resetComboSpeed = useCallback(() => {
-    attackSpeed.current = INITIAL_ATTACK_SPEED
-  }, [])
+    attackSpeed.current = attackSpeedProfile.initial
+  }, [attackSpeedProfile])
 
   const saveBattleResult = useCallback(
     (wasVictory: boolean) => {
@@ -94,7 +103,11 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
     comboStep.current = 0
     resetComboSpeed()
     saveBattleResult(true)
+    const rewardCode = persistence.discoverCode('ligeirinho') ? 'ligeirinho' : null
+    const victoryEnding =
+      stateRef.current.playerHp < PIDAO_ENDING_HP_THRESHOLD ? 'pidao' : 'standard'
     audio.stop('ratDanceMusic')
+    audio.stop('pidaoEnding')
     audio.play('ratDanceMusic', { prepareMuted: true })
 
     const controller = new AbortController()
@@ -107,6 +120,8 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
       enemyImage: images.enemy.stunned,
       playerState: 'idle',
       playerComboStep: 0,
+      rewardCode,
+      victoryEnding,
     }))
 
     const runVictory = async () => {
@@ -132,7 +147,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
         if (!isAbortError(error)) throw error
       })
       .finally(() => victoryControllers.current.delete(controller))
-  }, [audio, commit, delay, resetComboSpeed, saveBattleResult])
+  }, [audio, commit, delay, persistence, resetComboSpeed, saveBattleResult])
 
   const checkGameResult = useCallback(() => {
     const current = stateRef.current
@@ -299,6 +314,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
       activeVictoryControllers.forEach(abortController)
       activeVictoryControllers.clear()
       audio.stop('ratDanceMusic')
+      audio.stop('pidaoEnding')
     }
   }, [audio, startEnemyAi])
 
@@ -398,7 +414,11 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
       if (!isAbortError(error)) throw error
     })
 
-    attackSpeed.current = nextAttackSpeed(attackSpeed.current, currentCombo)
+    attackSpeed.current = nextAttackSpeed(
+      attackSpeed.current,
+      currentCombo,
+      attackSpeedProfile,
+    )
 
     const nextComboController = new AbortController()
     comboController.current = nextComboController
@@ -440,7 +460,15 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
     }
 
     checkGameResult()
-  }, [audio, checkGameResult, commit, delay, persistence, resetComboSpeed])
+  }, [
+    attackSpeedProfile,
+    audio,
+    checkGameResult,
+    commit,
+    delay,
+    persistence,
+    resetComboSpeed,
+  ])
 
   const retry = useCallback(() => {
     abortController(playerActionController.current)
@@ -450,6 +478,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
     victoryControllers.current.forEach(abortController)
     victoryControllers.current.clear()
     audio.stop('ratDanceMusic')
+    audio.stop('pidaoEnding')
     comboStep.current = 0
     parryCount.current = 0
     resultSaved.current = false
@@ -461,11 +490,12 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
       stateRef.current.round + 1,
       initialEnemyHp,
       persistence.getHighCombo(),
+      initialPlayerHp,
     )
     stateRef.current = nextState
     setRenderedState(nextState)
     startEnemyAi()
-  }, [audio, initialEnemyHp, persistence, resetComboSpeed, startEnemyAi])
+  }, [audio, initialEnemyHp, initialPlayerHp, persistence, resetComboSpeed, startEnemyAi])
 
   return {
     state,

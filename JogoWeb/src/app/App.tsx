@@ -37,6 +37,9 @@ function LoadingScreen() {
 
 export function App() {
   const { route, navigate, backToMenu } = useGameNavigation()
+  const battleTest = import.meta.env.DEV
+    ? new URLSearchParams(window.location.search).get('battleTest')
+    : null
   const frameLayout =
     route === 'menu'
       ? 'menu'
@@ -58,7 +61,19 @@ export function App() {
             />
           )}
           {route === 'hide' && <HideScreen onBackToMenu={backToMenu} />}
-          {route === 'battle' && <BattleScreen onBackToMenu={backToMenu} />}
+          {route === 'battle' && (
+            <BattleScreen
+              onBackToMenu={backToMenu}
+              {...(battleTest
+                ? {
+                    gameOptions: {
+                      initialEnemyHp: 1,
+                      ...(battleTest === 'pidao' ? { initialPlayerHp: 35 } : {}),
+                    },
+                  }
+                : {})}
+            />
+          )}
           {route === 'history' && <HistoryScreen onBack={() => navigate('menu')} />}
         </Suspense>
       </GameFrame>

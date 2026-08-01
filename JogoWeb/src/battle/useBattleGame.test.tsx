@@ -115,6 +115,8 @@ describe('useBattleGame', () => {
 
     expect(result.current.state.enemyHp).toBe(0)
     expect(result.current.state.enemyAction).toEqual({ kind: 'defeated' })
+    expect(result.current.state.rewardCode).toBe('ligeirinho')
+    expect(result.current.state.victoryEnding).toBe('standard')
     expect(result.current.state.enemyImage).toContain('psicopata_atordoado.webp')
     expect(result.current.state.gameResult).toBeNull()
     expect(audio.play).toHaveBeenCalledWith('ratDanceMusic', { prepareMuted: true })
@@ -147,6 +149,63 @@ describe('useBattleGame', () => {
     unmount()
   })
 
+  it('ativa o final do Pidão somente quando a vitória ocorre abaixo de 40% de vida', async () => {
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const { result, unmount } = renderHook(() =>
+      useBattleGame(audio, {
+        random: leftAttackRandom,
+        initialEnemyHp: 1,
+        initialPlayerHp: 39,
+      }),
+    )
+
+    act(() => result.current.attack())
+
+    expect(result.current.state.victoryEnding).toBe('pidao')
+    expect(audio.play).toHaveBeenCalledWith('ratDanceMusic', { prepareMuted: true })
+
+    await act(async () => vi.advanceTimersByTimeAsync(5_500))
+    expect(result.current.state.gameResult).toBe('win')
+    expect(result.current.state.playerImage).toContain('rat_dance.gif')
+    expect(audio.play).toHaveBeenCalledWith('ratDanceMusic', { resumePrepared: true })
+    expect(gamePersistence.getMatches()).toMatchObject([
+      { gameMode: 'Batalha', wasVictory: true, finalPlayerHp: 39 },
+    ])
+    unmount()
+
+    localStorage.clear()
+    const boundaryBattle = renderHook(() =>
+      useBattleGame(audio, {
+        random: leftAttackRandom,
+        initialEnemyHp: 1,
+        initialPlayerHp: 40,
+      }),
+    )
+    act(() => boundaryBattle.result.current.attack())
+    expect(boundaryBattle.result.current.state.victoryEnding).toBe('standard')
+    boundaryBattle.unmount()
+  })
+
+  it('ativa o final do Pidão na batalha normal após a vida cair abaixo de 40%', async () => {
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const { result, unmount } = renderHook(() =>
+      useBattleGame(audio, {
+        random: leftAttackRandom,
+        initialEnemyHp: 1,
+      }),
+    )
+
+    await act(async () => vi.advanceTimersByTimeAsync(16_600))
+    expect(result.current.state.playerHp).toBe(25)
+
+    act(() => result.current.attack())
+
+    expect(result.current.state.victoryEnding).toBe('pidao')
+    await act(async () => vi.advanceTimersByTimeAsync(5_500))
+    expect(result.current.state.gameResult).toBe('win')
+    unmount()
+  })
+
   it('persiste o recorde conforme o combo acelera desde o segundo golpe', async () => {
     const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
     const { result, unmount } = renderHook(() =>
@@ -154,7 +213,7 @@ describe('useBattleGame', () => {
     )
 
     act(() => result.current.attack())
-    await act(async () => vi.advanceTimersByTimeAsync(250))
+    await act(async () => vi.advanceTimersByTimeAsync(300))
     act(() => result.current.attack())
 
     expect(result.current.state.highCombo).toBe(2)
@@ -164,5 +223,39 @@ describe('useBattleGame', () => {
     const nextRound = renderHook(() => useBattleGame(audio, { random: leftAttackRandom }))
     expect(nextRound.result.current.state.highCombo).toBe(2)
     nextRound.unmount()
+  })
+
+  it('exibe a recompensa somente na primeira vitória', () => {
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    gamePersistence.discoverCode('ligeirinho')
+    const { result, unmount } = renderHook(() =>
+      useBattleGame(audio, { random: leftAttackRandom, initialEnemyHp: 1 }),
+    )
+
+    act(() => result.current.attack())
+
+    expect(result.current.state.enemyHp).toBe(0)
+    expect(result.current.state.rewardCode).toBeNull()
+    unmount()
+  })
+
+  it('aplica a velocidade rápida somente quando LIGEIRINHO está ativo', async () => {
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const normalBattle = renderHook(() => useBattleGame(audio, { random: leftAttackRandom }))
+
+    act(() => normalBattle.result.current.attack())
+    await act(async () => vi.advanceTimersByTimeAsync(250))
+    expect(normalBattle.result.current.state.playerState).toBe('attacking')
+    await act(async () => vi.advanceTimersByTimeAsync(50))
+    expect(normalBattle.result.current.state.playerState).toBe('idle')
+    normalBattle.unmount()
+
+    gamePersistence.redeemCode('ligeirinho')
+    const fastBattle = renderHook(() => useBattleGame(audio, { random: leftAttackRandom }))
+    act(() => fastBattle.result.current.attack())
+    await act(async () => vi.advanceTimersByTimeAsync(250))
+
+    expect(fastBattle.result.current.state.playerState).toBe('idle')
+    fastBattle.unmount()
   })
 })

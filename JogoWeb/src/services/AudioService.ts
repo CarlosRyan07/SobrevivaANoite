@@ -7,11 +7,18 @@ interface ActiveVoice {
   audio: HTMLAudioElement
   prepared: boolean
   cleanup: () => void
+  fadeDelayTimer: number | null
+  fadeStepTimer: number | null
 }
 
 export interface PlaySoundOptions {
   prepareMuted?: boolean
   resumePrepared?: boolean
+}
+
+export interface FadeOutOptions {
+  delay?: number
+  duration?: number
 }
 
 export class AudioService {
@@ -63,15 +70,57 @@ export class AudioService {
       audio.removeEventListener('ended', cleanup)
       audio.removeEventListener('error', cleanup)
       const index = this.activeVoices.findIndex((voice) => voice.audio === audio)
-      if (index >= 0) this.activeVoices.splice(index, 1)
+      if (index >= 0) {
+        this.clearFadeTimers(this.activeVoices[index])
+        this.activeVoices.splice(index, 1)
+      }
     }
 
-    const voice = { key, audio, prepared: options.prepareMuted === true, cleanup }
+    const voice = {
+      key,
+      audio,
+      prepared: options.prepareMuted === true,
+      cleanup,
+      fadeDelayTimer: null,
+      fadeStepTimer: null,
+    }
     audio.addEventListener('ended', cleanup, { once: true })
     audio.addEventListener('error', cleanup, { once: true })
     this.activeVoices.push(voice)
 
     void audio.play().catch(cleanup)
+  }
+
+  fadeOut(key: SoundKey, options: FadeOutOptions = {}): void {
+    const delay = Math.max(options.delay ?? 0, 0)
+    const duration = Math.max(options.duration ?? 3_000, 0)
+
+    this.activeVoices
+      .filter((voice) => voice.key === key)
+      .forEach((voice) => {
+        this.clearFadeTimers(voice)
+
+        const beginFade = () => {
+          voice.fadeDelayTimer = null
+          if (!this.activeVoices.includes(voice)) return
+          if (duration === 0) {
+            this.stopVoice(voice)
+            return
+          }
+
+          const initialVolume = voice.audio.volume
+          const stepMilliseconds = 50
+          let elapsed = 0
+          voice.fadeStepTimer = window.setInterval(() => {
+            elapsed = Math.min(elapsed + stepMilliseconds, duration)
+            voice.audio.volume = initialVolume * (1 - elapsed / duration)
+            if (elapsed >= duration) this.stopVoice(voice)
+          }, stepMilliseconds)
+        }
+
+        if (delay === 0) beginFade()
+        else voice.fadeDelayTimer = window.setTimeout(beginFade, delay)
+      })
   }
 
   stopAll(): void {
@@ -95,8 +144,17 @@ export class AudioService {
 
   private stopVoice(voice: ActiveVoice | undefined): void {
     if (!voice) return
+    this.clearFadeTimers(voice)
     voice.audio.pause()
     voice.audio.currentTime = 0
     voice.cleanup()
+  }
+
+  private clearFadeTimers(voice: ActiveVoice | undefined): void {
+    if (!voice) return
+    if (voice.fadeDelayTimer !== null) window.clearTimeout(voice.fadeDelayTimer)
+    if (voice.fadeStepTimer !== null) window.clearInterval(voice.fadeStepTimer)
+    voice.fadeDelayTimer = null
+    voice.fadeStepTimer = null
   }
 }

@@ -6,6 +6,7 @@ import {
   nextAttackSpeed,
   resolveEnemyAttack,
 } from './battleEngine'
+import { LIGEIRINHO_ATTACK_SPEED_PROFILE } from './battleConstants'
 
 describe('engine da batalha', () => {
   it('mantém HP e estado inicial do Android', () => {
@@ -33,11 +34,16 @@ describe('engine da batalha', () => {
     expect(attackDamage(true)).toBe(10)
   })
 
-  it('acelera exatamente 250, 175 e 100 ms desde o segundo golpe', () => {
-    expect(nextAttackSpeed(250, 1)).toBe(250)
-    expect(nextAttackSpeed(250, 2)).toBe(175)
-    expect(nextAttackSpeed(175, 3)).toBe(100)
-    expect(nextAttackSpeed(100, 4)).toBe(100)
+  it('usa o ritmo antigo por padrão e o ritmo rápido com LIGEIRINHO', () => {
+    expect(nextAttackSpeed(300, 1)).toBe(300)
+    expect(nextAttackSpeed(300, 2)).toBe(235)
+    expect(nextAttackSpeed(235, 3)).toBe(170)
+    expect(nextAttackSpeed(170, 4)).toBe(135)
+    expect(nextAttackSpeed(135, 5)).toBe(135)
+
+    expect(nextAttackSpeed(250, 2, LIGEIRINHO_ATTACK_SPEED_PROFILE)).toBe(175)
+    expect(nextAttackSpeed(175, 3, LIGEIRINHO_ATTACK_SPEED_PROFILE)).toBe(100)
+    expect(nextAttackSpeed(100, 4, LIGEIRINHO_ATTACK_SPEED_PROFILE)).toBe(100)
   })
 
   it('mantém limites estritos das cores de HP e combo', () => {

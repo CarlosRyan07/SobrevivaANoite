@@ -10,6 +10,7 @@ export const audioCatalog = {
   hideWin: audio('win_hide'),
   hideLose: audio('lose_hide'),
   ratDanceMusic: audio('rat_dance_music'),
+  pidaoEnding: audio('final_pidao'),
   punch: audio('soco'),
   strongPunch: audio('soco_forte'),
   parry: audio('parry'),
