@@ -32,8 +32,11 @@ button {
   padding: 10px 24px;
   background: var(--color-primary);
   color: var(--color-on-primary);
-  font: inherit;
-  font-weight: 600;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: inherit;
+  font-weight: 400;
+  letter-spacing: 0.35px;
+  line-height: 1.2;
   cursor: pointer;
   touch-action: manipulation;
   transition: background-color 120ms ease, transform 80ms ease;

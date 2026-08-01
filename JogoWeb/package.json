@@ -16,6 +16,7 @@
     "pwa:check": "npm run build && node scripts/pwa-check.mjs"
   },
   "dependencies": {
+    "@fontsource/bungee": "^5.3.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },

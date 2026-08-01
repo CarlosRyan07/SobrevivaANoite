@@ -1,0 +1,31 @@
+.button {
+  border: 2px solid #000000;
+  background: #032c80;
+}
+
+.button:hover:not(:disabled) {
+  background: #003ca4;
+}
+
+.button:active:not(:disabled) {
+  background: #172b52;
+  box-shadow: 0 2px 0 #0d1938;
+  transform: translateY(2px) scale(0.97);
+}
+
+.label {
+  display: inline-block;
+  color: #fff1bd;
+  background: linear-gradient(
+    180deg,
+    #fffdf2 0%,
+    #fff1bd 45%,
+    #ffc568 68%,
+    #ee7540 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px #092389;
+  paint-order: stroke fill;
+}

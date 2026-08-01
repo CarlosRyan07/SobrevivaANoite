@@ -5,6 +5,7 @@ import { comboColor } from '../../battle/battleEngine'
 import { battleActionForKey } from '../../battle/battleKeyboard'
 import { useBattleGame, type BattleGameOptions } from '../../battle/useBattleGame'
 import { HpBar } from '../../components/HpBar/HpBar'
+import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
 import { images, preloadImages } from '../../services/assetPaths'
 import styles from './BattleScreen.module.css'
@@ -107,36 +108,45 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
         <div className={styles.bottomUi}>
           <HpBar name="Sobrevivente" currentHp={state.playerHp} maxHp={PLAYER_MAX_HP} />
           <div className={styles.controls}>
-            <button
-              className={styles.dodgeButton}
-              type="button"
-              onClick={dodgeLeft}
-              aria-label="Esquivar Esquerda"
-              aria-keyshortcuts="ArrowLeft A"
-              title="Seta esquerda ou A"
-            >
-              <span aria-hidden="true">←</span>
-            </button>
-            <button
-              className={styles.attackButton}
-              type="button"
-              onClick={attack}
-              aria-label="Atacar"
-              aria-keyshortcuts="Space"
-              title="Barra de espaço ou clique na tela"
-            >
-              👊🏻
-            </button>
-            <button
-              className={styles.dodgeButton}
-              type="button"
-              onClick={dodgeRight}
-              aria-label="Esquivar Direita"
-              aria-keyshortcuts="ArrowRight D"
-              title="Seta direita ou D"
-            >
-              <span aria-hidden="true">→</span>
-            </button>
+            <div className={styles.controlGroup}>
+              <kbd className={styles.controlHint}>A</kbd>
+              <button
+                className={styles.dodgeButton}
+                type="button"
+                onClick={dodgeLeft}
+                aria-label="Esquivar Esquerda"
+                aria-keyshortcuts="ArrowLeft A"
+                title="Seta esquerda ou A"
+              >
+                <span aria-hidden="true">←</span>
+              </button>
+            </div>
+            <div className={styles.controlGroup}>
+              <kbd className={styles.controlHint}>ESPAÇO</kbd>
+              <button
+                className={styles.attackButton}
+                type="button"
+                onClick={attack}
+                aria-label="Atacar"
+                aria-keyshortcuts="Space"
+                title="Barra de espaço ou clique na tela"
+              >
+                👊🏻
+              </button>
+            </div>
+            <div className={styles.controlGroup}>
+              <kbd className={styles.controlHint}>D</kbd>
+              <button
+                className={styles.dodgeButton}
+                type="button"
+                onClick={dodgeRight}
+                aria-label="Esquivar Direita"
+                aria-keyshortcuts="ArrowRight D"
+                title="Seta direita ou D"
+              >
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -144,8 +154,8 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
       {state.gameResult === 'lose' && (
         <div className={styles.loseOverlay} role="dialog" aria-modal="true">
           <h1>VOCÊ MORREU!</h1>
-          <button type="button" onClick={retry}>Tentar Novamente</button>
-          <button type="button" onClick={onBackToMenu}>Voltar ao Menu</button>
+          <WordButton type="button" onClick={retry}>Tentar Novamente</WordButton>
+          <WordButton type="button" onClick={onBackToMenu}>Voltar ao Menu</WordButton>
         </div>
       )}
 
@@ -153,8 +163,8 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
         <div className={styles.winOverlay}>
           <h1>VOCÊ VENCEU!</h1>
           <div className={styles.winActions}>
-            <button type="button" onClick={retry}>Tentar Novamente</button>
-            <button type="button" onClick={onBackToMenu}>Voltar ao Menu</button>
+            <WordButton type="button" onClick={retry}>Tentar Novamente</WordButton>
+            <WordButton type="button" onClick={onBackToMenu}>Voltar ao Menu</WordButton>
           </div>
         </div>
       )}

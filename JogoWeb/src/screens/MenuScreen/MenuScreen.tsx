@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
+import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
 import { images, preloadImages } from '../../services/assetPaths'
 import styles from './MenuScreen.module.css'
@@ -60,17 +61,17 @@ export function MenuScreen({ onBattle, onHide, onHistory }: MenuScreenProps) {
         aria-hidden={showLore}
       >
         <img className={styles.startImage} src={images.start} alt="Tela de Início" fetchPriority="high" />
-        <button
+        <WordButton
           className={styles.historyButton}
           type="button"
           onClick={() => chooseMode(onHistory)}
           tabIndex={showLore ? -1 : 0}
         >
           Histórico
-        </button>
-        <button className={styles.startButton} type="button" onClick={openLore} tabIndex={showLore ? -1 : 0}>
+        </WordButton>
+        <WordButton className={styles.startButton} type="button" onClick={openLore} tabIndex={showLore ? -1 : 0}>
           Iniciar Jogo
-        </button>
+        </WordButton>
       </section>
 
       <section
@@ -129,12 +130,12 @@ export function MenuScreen({ onBattle, onHide, onHistory }: MenuScreenProps) {
           <div className={styles.choice}>
             <p className={styles.question}>O que você faz?</p>
             <div className={styles.actions}>
-              <button type="button" onClick={() => chooseMode(onHide)} tabIndex={showLore ? 0 : -1}>
+              <WordButton type="button" onClick={() => chooseMode(onHide)} tabIndex={showLore ? 0 : -1}>
                 Esconder
-              </button>
-              <button type="button" onClick={() => chooseMode(onBattle)} tabIndex={showLore ? 0 : -1}>
+              </WordButton>
+              <WordButton type="button" onClick={() => chooseMode(onBattle)} tabIndex={showLore ? 0 : -1}>
                 Lutar
-              </button>
+              </WordButton>
             </div>
           </div>
         </article>

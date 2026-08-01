@@ -22,7 +22,7 @@
 .topUi {
   position: absolute;
   z-index: 3;
-  top: 180px;
+  top: 120px;
   right: 0;
   left: 0;
 }
@@ -30,11 +30,15 @@
 .highScore {
   position: absolute;
   z-index: 5;
-  top: calc(16px + env(safe-area-inset-top, 0px));
+  top: calc(24px + env(safe-area-inset-top, 0px));
   right: calc(16px + env(safe-area-inset-right, 0px));
   color: #ffeb3b;
+
+  paint-order: stroke fill;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 400;
+  letter-spacing: 0.5px;
 }
 
 .combo {
@@ -88,7 +92,7 @@
   position: absolute;
   z-index: 5;
   right: 0;
-  bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   left: 0;
   display: flex;
   align-items: center;
@@ -98,10 +102,33 @@
 .controls {
   display: flex;
   width: 100%;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-evenly;
   gap: 6px;
   margin-top: 24px;
+}
+
+.controlGroup {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.controlHint {
+  min-width: 32px;
+  padding: 3px 7px;
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 6px;
+  background: rgb(8 21 52 / 88%);
+  color: #fff;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.4px;
+  line-height: 1.2;
+  text-align: center;
+  text-shadow: 0 2px 0 #000;
 }
 
 .controls button {
@@ -139,9 +166,17 @@
 .loseOverlay h1 {
   margin: 0;
   color: #f44336;
+  -webkit-text-stroke: 2px #000;
+  paint-order: stroke fill;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
   font-size: 48px;
+  font-weight: 400;
+  letter-spacing: 1px;
   line-height: 1.1;
   text-align: center;
+  text-shadow:
+    0 1px 0 #000,
+    0 5px 0 rgb(0 0 0 / 42%);
 }
 
 .loseOverlay button:first-of-type {
@@ -160,20 +195,28 @@
 
 .winOverlay h1 {
   position: absolute;
-  top: 260px;
+  top: 210px;
   right: 0;
   left: 0;
   margin: 0;
-  color: #00c853;
+  color: #22c94f;
+  -webkit-text-stroke: 2px #000;
+  paint-order: stroke fill;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
   font-size: 40px;
+  font-weight: 400;
+  letter-spacing: 1px;
   line-height: 1.1;
   text-align: center;
+  text-shadow:
+    0 1px 0 #000,
+    0 5px 0 rgb(0 0 0 / 42%);
 }
 
 .winActions {
   position: absolute;
   right: 0;
-  bottom: calc(160px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   left: 0;
   display: flex;
   align-items: center;
@@ -187,7 +230,7 @@
   to { opacity: 1; }
 }
 
-@media (max-height: 760px) {
+@media (max-height: 760px) and (max-width: 599px) {
   .topUi {
     top: 100px;
   }
@@ -197,7 +240,7 @@
   }
 
   .bottomUi {
-    bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   }
 
   .enemy {
@@ -209,11 +252,11 @@
   }
 
   .winOverlay h1 {
-    top: 160px;
+    top: 120px;
   }
 
   .winActions {
-    bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(40px + env(safe-area-inset-bottom, 0px));
   }
 }
 

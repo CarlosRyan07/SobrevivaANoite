@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 
+import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
 import { HIDING_SPOT_COORDINATES, ROOMS } from '../../hide/hideConstants'
 import type { Position } from '../../hide/hideTypes'
@@ -124,7 +125,7 @@ export function HideScreen({ onBackToMenu }: HideScreenProps) {
             </>
           )}
           <div className={styles.resultActions}>
-            <button
+            <WordButton
               type="button"
               onClick={() => {
                 audio.play('buttonClick')
@@ -132,8 +133,8 @@ export function HideScreen({ onBackToMenu }: HideScreenProps) {
               }}
             >
               Jogar Novamente
-            </button>
-            <button
+            </WordButton>
+            <WordButton
               type="button"
               onClick={() => {
                 audio.play('buttonClick')
@@ -141,7 +142,7 @@ export function HideScreen({ onBackToMenu }: HideScreenProps) {
               }}
             >
               Voltar ao Menu
-            </button>
+            </WordButton>
           </div>
         </div>
       )}

@@ -5,12 +5,12 @@
   --color-surface: #151515;
   --color-text: #ffffff;
   --color-lore: #e0e0e0;
-  --color-primary: #6750a4;
-  --color-primary-hover: #7965af;
+  --color-primary: #047699;
+  --color-primary-hover: #218e45;
   --color-on-primary: #ffffff;
   --color-win: #00c853;
   --color-lose: #f44336;
   --game-max-width: 480px;
   --button-radius: 20px;
-  --focus-ring: 0 0 0 3px rgb(208 188 255 / 55%);
+  --focus-ring: 0 0 0 3px rgb(94 232 126 / 58%);
 }

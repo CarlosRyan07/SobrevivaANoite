@@ -47,6 +47,7 @@ const cases = [
   { name: 'mobile-history', hash: '#/history', width: 390, height: 844, wait: 150 },
   { name: 'tablet-opening', hash: '', width: 546, height: 866, wait: 150 },
   { name: 'desktop-opening', hash: '', width: 1_440, height: 900, wait: 150 },
+  { name: 'menu-80-percent-width', hash: '', width: 384, height: 800, wait: 150 },
   { name: 'desktop-hide-zoom-90', hash: '#/hide', width: 2_133, height: 1_000, wait: 150 },
   {
     name: 'desktop-hide-zoom-100',
@@ -58,8 +59,32 @@ const cases = [
   },
   { name: 'desktop-hide-zoom-67', hash: '#/hide', width: 2_866, height: 1_343, wait: 150 },
   { name: 'desktop-battle-zoom-80', hash: '#/battle', width: 2_400, height: 1_125, wait: 150 },
+  {
+    name: 'desktop-battle-normal',
+    hash: '#/battle',
+    width: 1_031,
+    height: 866,
+    wait: 150,
+    highCombo: 105,
+  },
   { name: 'desktop-battle-zoom-110', hash: '#/battle', width: 1_745, height: 818, wait: 150 },
   { name: 'desktop-battle-zoom-150', hash: '#/battle', width: 1_280, height: 600, wait: 150 },
+  {
+    name: 'battle-reference-spacing',
+    hash: '#/battle',
+    width: 473,
+    height: 817,
+    wait: 150,
+    highCombo: 105,
+  },
+  {
+    name: 'desktop-battle-zoom-175',
+    hash: '#/battle',
+    width: 1_097,
+    height: 514,
+    wait: 150,
+    interaction: 'battle-scroll',
+  },
 ]
 
 const report = []
@@ -72,6 +97,13 @@ try {
     page.on('requestfailed', (request) =>
       errors.push(`${request.url()}: ${request.failure()?.errorText ?? 'falha de rede'}`),
     )
+    if (visualCase.highCombo) {
+      await page.evaluateOnNewDocument((highCombo) => {
+        if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+          localStorage.setItem('sobreviva-a-noite.high-combo.v1', String(highCombo))
+        }
+      }, visualCase.highCombo)
+    }
     await page.setViewport({
       width: visualCase.width,
       height: visualCase.height,
@@ -144,6 +176,22 @@ try {
         }
       }
     }
+    if (visualCase.interaction === 'battle-scroll') {
+      const before = await page.$eval('main > section', (frame) => ({
+        scrollTop: frame.scrollTop,
+        scrollHeight: frame.scrollHeight,
+        clientHeight: frame.clientHeight,
+      }))
+      await page.$eval('main > section', (frame) => frame.scrollTo({ top: frame.scrollHeight }))
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      const after = await page.$eval('main > section', (frame) => ({
+        scrollTop: frame.scrollTop,
+        scrollHeight: frame.scrollHeight,
+        clientHeight: frame.clientHeight,
+      }))
+      interaction = { before, after }
+      if (after.scrollTop <= 0) errors.push('A batalha não permitiu rolagem vertical em 175%.')
+    }
 
     const metrics = await page.evaluate(() => {
       const frame = document.querySelector('main > section')
@@ -164,6 +212,28 @@ try {
           height: rect.height,
         },
         layout: frame.dataset.layout,
+        frameScroll: {
+          scrollHeight: frame.scrollHeight,
+          clientHeight: frame.clientHeight,
+          overflowY: getComputedStyle(frame).overflowY,
+          scrollbarWidth: getComputedStyle(frame).scrollbarWidth,
+        },
+        battleSpacing: (() => {
+          const record = document.querySelector('[aria-label^="Recorde de combo"]')
+          const enemyMeter = document.querySelector('[aria-label="Vida de Psicopata"]')
+          const survivorMeter = document.querySelector('[aria-label="Vida de Sobrevivente"]')
+          const enemyBlock = enemyMeter?.parentElement
+          const bottomBlock = survivorMeter?.parentElement?.parentElement
+          if (!(record instanceof HTMLElement) || !enemyBlock || !bottomBlock) return null
+          const recordRect = record.getBoundingClientRect()
+          const enemyRect = enemyBlock.getBoundingClientRect()
+          const bottomRect = bottomBlock.getBoundingClientRect()
+          return {
+            recordTop: recordRect.top,
+            enemyTop: enemyRect.top,
+            bottomGap: window.innerHeight - bottomRect.bottom,
+          }
+        })(),
         scrollWidth: document.documentElement.scrollWidth,
         brokenImages,
         shellBackgroundImage: getComputedStyle(document.querySelector('main')).backgroundImage,
@@ -187,13 +257,15 @@ try {
     })
 
     const fixedGameplay = metrics.layout === 'gameplay'
-    const gameplayScale = Math.min(visualCase.width / 480, visualCase.height / 1_000)
+    const menuLayout = metrics.layout === 'menu'
+    const battleLayout = metrics.layout === 'battle'
+    const gameplayScale = Math.min(visualCase.width / 480, visualCase.height / 850)
     const expectedFrameWidth = fixedGameplay
       ? 480 * gameplayScale
-      : Math.min(visualCase.width, 480)
-    const expectedFrameHeight = fixedGameplay ? 1_000 * gameplayScale : visualCase.height
+      : Math.min(visualCase.width, menuLayout ? 432 : 480)
+    const expectedFrameHeight = fixedGameplay ? 850 * gameplayScale : visualCase.height
     const expectedLeft = (visualCase.width - expectedFrameWidth) / 2
-    const expectedTop = (visualCase.height - expectedFrameHeight) / 2
+    const expectedTop = fixedGameplay ? 0 : (visualCase.height - expectedFrameHeight) / 2
     if (Math.abs(metrics.frame.width - expectedFrameWidth) > 1) {
       errors.push(`Palco com ${metrics.frame.width}px; esperado ${expectedFrameWidth}px.`)
     }
@@ -208,9 +280,55 @@ try {
     }
     if (
       fixedGameplay &&
-      Math.abs(metrics.frame.width / metrics.frame.height - 480 / 1_000) > 0.001
+      Math.abs(metrics.frame.width / metrics.frame.height - 480 / 850) > 0.001
     ) {
       errors.push(`Proporção do gameplay mudou: ${metrics.frame.width}×${metrics.frame.height}.`)
+    }
+    if (battleLayout && metrics.frameScroll.overflowY !== 'auto') {
+      errors.push(`Batalha sem overflow vertical automático: ${metrics.frameScroll.overflowY}.`)
+    }
+    if (battleLayout && metrics.frameScroll.scrollbarWidth !== 'none') {
+      errors.push(`Barra visual da batalha continua ativa: ${metrics.frameScroll.scrollbarWidth}.`)
+    }
+    if (
+      battleLayout &&
+      visualCase.width >= 600 &&
+      visualCase.height <= 620 &&
+      metrics.frameScroll.scrollHeight < 899
+    ) {
+      errors.push(`Conteúdo rolável da batalha possui somente ${metrics.frameScroll.scrollHeight}px.`)
+    }
+    if (visualCase.name === 'battle-reference-spacing') {
+      if (!metrics.battleSpacing) {
+        errors.push('Não foi possível medir o espaçamento de referência da batalha.')
+      } else {
+        if (Math.abs(metrics.battleSpacing.recordTop - 24) > 1) {
+          errors.push(`Recorde iniciou em ${metrics.battleSpacing.recordTop}px; esperado 24px.`)
+        }
+        if (Math.abs(metrics.battleSpacing.enemyTop - 150) > 1) {
+          errors.push(`HUD do psicopata iniciou em ${metrics.battleSpacing.enemyTop}px; esperado 150px.`)
+        }
+        if (Math.abs(metrics.battleSpacing.bottomGap - 16) > 1) {
+          errors.push(`HUD inferior terminou a ${metrics.battleSpacing.bottomGap}px; esperado 16px.`)
+        }
+      }
+    }
+    if (visualCase.name === 'desktop-battle-normal') {
+      if (metrics.frameScroll.scrollHeight !== metrics.frameScroll.clientHeight) {
+        errors.push(
+          `A batalha normal abriu com rolagem: ${metrics.frameScroll.clientHeight}px de ${metrics.frameScroll.scrollHeight}px.`,
+        )
+      }
+      if (!metrics.battleSpacing) {
+        errors.push('Não foi possível medir os elementos da batalha normal.')
+      } else {
+        if (metrics.battleSpacing.recordTop < 23) {
+          errors.push(`O recorde ficou cortado no topo: ${metrics.battleSpacing.recordTop}px.`)
+        }
+        if (metrics.battleSpacing.bottomGap < 15) {
+          errors.push(`Os controles ficaram cortados na base: ${metrics.battleSpacing.bottomGap}px.`)
+        }
+      }
     }
     if (metrics.scrollWidth > visualCase.width) {
       errors.push(`Overflow horizontal: ${metrics.scrollWidth}px em viewport ${visualCase.width}px.`)
