@@ -68,7 +68,13 @@ export function App() {
                 ? {
                     gameOptions: {
                       initialEnemyHp: 1,
-                      ...(battleTest === 'pidao' ? { initialPlayerHp: 35 } : {}),
+                      ...(battleTest === 'perfect'
+                        ? { initialPlayerHp: 100, initialParryCount: 3 }
+                        : battleTest === 'pidao'
+                        ? { initialPlayerHp: 35 }
+                        : battleTest === 'raca'
+                          ? { initialPlayerHp: 70 }
+                          : {}),
                     },
                   }
                 : {})}

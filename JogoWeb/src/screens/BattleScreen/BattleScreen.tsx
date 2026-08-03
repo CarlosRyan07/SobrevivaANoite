@@ -16,7 +16,9 @@ import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
 import { images, preloadImages } from '../../services/assetPaths'
 import styles from './BattleScreen.module.css'
+import { PerfectEnding } from './PerfectEnding'
 import { PidaoEnding } from './PidaoEnding'
+import { RacaEnding } from './RacaEnding'
 
 interface BattleScreenProps {
   onBackToMenu: () => void
@@ -28,19 +30,22 @@ type ComboStyle = CSSProperties & { '--combo-color': string }
 export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
   const audio = useAudio()
   const { state, attack, dodgeLeft, dodgeRight, retry } = useBattleGame(audio, gameOptions)
-  const [showPidaoStory, setShowPidaoStory] = useState(false)
+  const [showEndingStory, setShowEndingStory] = useState(false)
   const comboStyle: ComboStyle = { '--combo-color': comboColor(state.playerComboStep) }
   const victorySequenceActive = state.enemyAction.kind === 'defeated'
+  const perfectVictory = state.gameResult === 'win' && state.victoryEnding === 'perfect'
   const pidaoVictory = state.gameResult === 'win' && state.victoryEnding === 'pidao'
+  const racaVictory = state.gameResult === 'win' && state.victoryEnding === 'raca'
+  const hasStoryEnding = perfectVictory || pidaoVictory || racaVictory
 
   const handleRetry = useCallback(() => {
-    setShowPidaoStory(false)
+    setShowEndingStory(false)
     retry()
   }, [retry])
 
-  const handleProceedToPidaoStory = useCallback(() => {
+  const handleProceedToEnding = useCallback(() => {
     audio.stop('ratDanceMusic')
-    setShowPidaoStory(true)
+    setShowEndingStory(true)
   }, [audio])
 
   const handlePointerAttack = useCallback(
@@ -73,6 +78,9 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
       images.survivor.parryRight,
       images.survivor.victory,
       images.survivor.dance,
+      images.endings.normalVictory,
+      images.endings.pathetic,
+      images.endings.perfectVictory,
       images.endings.woundedVictory,
       images.endings.woundedArm,
       images.endings.pidao,
@@ -182,14 +190,28 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
         </div>
       )}
 
-      {pidaoVictory && showPidaoStory && (
+      {pidaoVictory && showEndingStory && (
         <PidaoEnding
           rewardCode={state.rewardCode}
           onBackToMenu={onBackToMenu}
         />
       )}
 
-      {state.gameResult === 'win' && !showPidaoStory && (
+      {perfectVictory && showEndingStory && (
+        <PerfectEnding
+          rewardCode={state.rewardCode}
+          onBackToMenu={onBackToMenu}
+        />
+      )}
+
+      {racaVictory && showEndingStory && (
+        <RacaEnding
+          rewardCode={state.rewardCode}
+          onBackToMenu={onBackToMenu}
+        />
+      )}
+
+      {state.gameResult === 'win' && !showEndingStory && (
         <div className={styles.winOverlay}>
           {state.rewardCode && (
             <p className={styles.codeReward} role="status">
@@ -198,25 +220,25 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
             </p>
           )}
           <h1>VOCÊ VENCEU!</h1>
-          <div className={`${styles.winActions} ${pidaoVictory ? styles.storyChoiceActions : ''}`}>
-            {pidaoVictory && (
+          <div className={`${styles.winActions} ${hasStoryEnding ? styles.storyChoiceActions : ''}`}>
+            {hasStoryEnding && (
               <WordButton
                 className={styles.proceedButton}
                 type="button"
-                onClick={handleProceedToPidaoStory}
+                onClick={handleProceedToEnding}
               >
                 Prosseguir
               </WordButton>
             )}
             <WordButton
-              className={pidaoVictory ? styles.storyRetryButton : undefined}
+              className={hasStoryEnding ? styles.storyRetryButton : undefined}
               type="button"
               onClick={handleRetry}
             >
               Tentar Novamente
             </WordButton>
             <WordButton
-              className={pidaoVictory ? styles.storyMenuButton : undefined}
+              className={hasStoryEnding ? styles.storyMenuButton : undefined}
               type="button"
               onClick={onBackToMenu}
             >

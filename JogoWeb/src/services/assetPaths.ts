@@ -12,6 +12,9 @@ export const images = {
   house: optimized('planta_casa'),
   blood: optimized('sangue'),
   endings: {
+    normalVictory: optimized('vitoria_normal'),
+    pathetic: optimized('patetico'),
+    perfectVictory: optimized('vitoria_perfeita'),
     woundedVictory: image('vitoria_sobrevivente_machucado.png'),
     woundedArm: image('mao_machucada.jpg'),
     pidao: image('lobo_pidao.jpg'),

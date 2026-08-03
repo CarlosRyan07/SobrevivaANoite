@@ -3,11 +3,19 @@ import {
   DEFAULT_ATTACK_SPEED_PROFILE,
   ENEMY_MAX_HP,
   NORMAL_ATTACK_DAMAGE,
+  PIDAO_ENDING_HP_THRESHOLD,
   PLAYER_MAX_HP,
+  RACA_ENDING_HP_THRESHOLD,
   STUNNED_ATTACK_DAMAGE,
   type AttackSpeedProfile,
 } from './battleConstants'
-import type { AttackDirection, BattleState, DodgeTiming, EnemyAction } from './battleTypes'
+import type {
+  AttackDirection,
+  BattleState,
+  DodgeTiming,
+  EnemyAction,
+  VictoryEnding,
+} from './battleTypes'
 
 export type EnemyAttackResolution = 'parry' | 'early-dodge' | 'hit'
 
@@ -47,6 +55,23 @@ export function resolveEnemyAttack(
 
 export function attackDamage(enemyIsStunned: boolean): number {
   return enemyIsStunned ? STUNNED_ATTACK_DAMAGE : NORMAL_ATTACK_DAMAGE
+}
+
+interface VictoryPerformance {
+  playerHp: number
+  parryCount: number
+  hitsReceived: number
+}
+
+export function victoryEndingForPerformance({
+  playerHp,
+  parryCount,
+  hitsReceived,
+}: VictoryPerformance): VictoryEnding {
+  if (playerHp === PLAYER_MAX_HP && hitsReceived === 0 && parryCount >= 3) return 'perfect'
+  if (playerHp < PIDAO_ENDING_HP_THRESHOLD) return 'pidao'
+  if (playerHp < RACA_ENDING_HP_THRESHOLD) return 'raca'
+  return 'standard'
 }
 
 export function nextAttackSpeed(

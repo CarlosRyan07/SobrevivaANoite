@@ -212,4 +212,102 @@ describe('BattleScreen', () => {
     expect(screen.getByRole('button', { name: 'Voltar ao Menu' })).toBeInTheDocument()
     vi.useRealTimers()
   })
+
+  it('oferece o final Venceu na Raça com vida entre 40% e menos de 80%', async () => {
+    vi.useFakeTimers()
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    render(
+      <AudioContext value={audio}>
+        <BattleScreen
+          onBackToMenu={vi.fn()}
+          gameOptions={{ initialEnemyHp: 1, initialPlayerHp: 70 }}
+        />
+      </AudioContext>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Atacar' }))
+    await act(async () => vi.advanceTimersByTimeAsync(5_500))
+
+    expect(screen.getByText('VOCÊ VENCEU!')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Prosseguir' })).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Prosseguir' }))
+    expect(audio.stop).toHaveBeenCalledWith('ratDanceMusic')
+    expect(screen.getByRole('dialog', { name: 'Final: Venceu na Raça' })).toBeInTheDocument()
+    expect(screen.getByText('Não foi uma batalha fácil.')).toBeInTheDocument()
+    expect(screen.getByText(/você conseguiu se sobressair/)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+
+    expect(screen.getByRole('img', { name: /Sobrevivente celebrando/ })).toHaveAttribute(
+      'src',
+      expect.stringContaining('vitoria_normal.webp'),
+    )
+    expect(screen.getByRole('heading', { name: 'VENCEU NA RAÇA!' })).toBeInTheDocument()
+    expect(screen.getByRole('status', { name: 'Final obtido' })).toHaveTextContent(
+      'VOCÊ PEGOU O FINAL:VENCEU NA RAÇA!',
+    )
+    expect(screen.getByText(/Seus amigos, surpresos/)).toBeInTheDocument()
+    expect(screen.getByText('Você conseguiu se sobressair e vencer.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Tentar Novamente' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Voltar ao Menu' })).toBeInTheDocument()
+    vi.useRealTimers()
+  })
+
+  it('oferece o final perfeito e toca Sopa de Lobo ao revelar a imagem final', async () => {
+    vi.useFakeTimers()
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    render(
+      <AudioContext value={audio}>
+        <BattleScreen
+          onBackToMenu={vi.fn()}
+          gameOptions={{ initialEnemyHp: 1, initialParryCount: 3 }}
+        />
+      </AudioContext>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Atacar' }))
+    await act(async () => vi.advanceTimersByTimeAsync(5_500))
+
+    expect(screen.getByText('VOCÊ VENCEU!')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Prosseguir' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Prosseguir' }))
+
+    expect(screen.getByRole('dialog', { name: 'Final: Sopa de Lobo' })).toBeInTheDocument()
+    expect(screen.getByText(/Contra qualquer lógica/)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    expect(screen.getByRole('img', { name: /olhando com desprezo/ })).toHaveAttribute(
+      'src',
+      expect.stringContaining('patetico.webp'),
+    )
+    expect(screen.getByText('— É só isso?')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    expect(screen.getByText('— Relaxa, rapaziada...')).toBeInTheDocument()
+    expect(screen.getByText('Hoje vai ter sopa.')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    expect(screen.getByText('— Sopa? De quê mesmo?')).toBeInTheDocument()
+    expect(audio.play).toHaveBeenCalledWith('perfectEnding')
+    const perfectAudioPlayCount = vi.mocked(audio.play).mock.calls.filter(
+      ([sound]) => sound === 'perfectEnding',
+    ).length
+
+    fireEvent.click(screen.getByRole('button', { name: 'Sopa de lobo!' }))
+    expect(
+      vi.mocked(audio.play).mock.calls.filter(([sound]) => sound === 'perfectEnding'),
+    ).toHaveLength(perfectAudioPlayCount)
+    expect(screen.getByRole('img', { name: /amigo observa a cena, chocado/ })).toHaveAttribute(
+      'src',
+      expect.stringContaining('vitoria_perfeita.webp'),
+    )
+    expect(screen.getByRole('heading', { name: 'SOPA DE LOBO!' })).toBeInTheDocument()
+    expect(screen.getByRole('status', { name: 'Final obtido' })).toHaveTextContent(
+      'VOCÊ PEGOU O FINAL:SOPA DE LOBO!',
+    )
+    expect(screen.queryByRole('button', { name: 'Tentar Novamente' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Voltar ao Menu' })).toBeInTheDocument()
+    vi.useRealTimers()
+  })
 })

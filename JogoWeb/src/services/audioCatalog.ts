@@ -11,6 +11,7 @@ export const audioCatalog = {
   hideLose: audio('lose_hide'),
   ratDanceMusic: audio('rat_dance_music'),
   pidaoEnding: audio('final_pidao'),
+  perfectEnding: audio('sopa_lobo_audio'),
   punch: audio('soco'),
   strongPunch: audio('soco_forte'),
   parry: audio('parry'),

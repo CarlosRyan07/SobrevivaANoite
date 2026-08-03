@@ -5,6 +5,7 @@ import {
   hpPalette,
   nextAttackSpeed,
   resolveEnemyAttack,
+  victoryEndingForPerformance,
 } from './battleEngine'
 import { LIGEIRINHO_ATTACK_SPEED_PROFILE } from './battleConstants'
 
@@ -32,6 +33,22 @@ describe('engine da batalha', () => {
   it('preserva dano normal e dano durante stun', () => {
     expect(attackDamage(false)).toBe(3)
     expect(attackDamage(true)).toBe(10)
+  })
+
+  it('seleciona o final pela vida restante na vitória', () => {
+    const ending = (playerHp: number, parryCount = 0, hitsReceived = 0) =>
+      victoryEndingForPerformance({ playerHp, parryCount, hitsReceived })
+
+    expect(ending(100)).toBe('standard')
+    expect(ending(80)).toBe('standard')
+    expect(ending(79)).toBe('raca')
+    expect(ending(40)).toBe('raca')
+    expect(ending(39)).toBe('pidao')
+    expect(ending(0)).toBe('pidao')
+    expect(ending(100, 3)).toBe('perfect')
+    expect(ending(100, 2)).toBe('standard')
+    expect(ending(85, 3)).toBe('standard')
+    expect(ending(100, 3, 1)).toBe('standard')
   })
 
   it('usa o ritmo antigo por padrão e o ritmo rápido com LIGEIRINHO', () => {

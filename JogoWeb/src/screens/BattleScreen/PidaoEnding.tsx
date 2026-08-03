@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { GAME_CODES, type GameCodeId } from '../../codes/gameCodes'
+import { EndingToast } from '../../components/EndingToast/EndingToast'
 import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
 import { images } from '../../services/assetPaths'
@@ -102,10 +103,7 @@ export function PidaoEnding({ rewardCode, onBackToMenu }: PidaoEndingProps) {
           />
           <div className={styles.revealShade} />
           <h1>UM PIDÃO!!!</h1>
-          <aside className={styles.endingToast} role="status" aria-label="Final obtido">
-            <span>FINAL OBTIDO</span>
-            <strong>Você se tornou um Lobisomem Pidão</strong>
-          </aside>
+          <EndingToast label="FINAL OBTIDO" title="Você se tornou um Lobisomem Pidão" />
           {rewardCode && (
             <p className={styles.codeReward} role="status">
               Você liberou o código:

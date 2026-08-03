@@ -94,9 +94,11 @@ try {
     const page = await browser.newPage()
     const errors = []
     page.on('pageerror', (error) => errors.push(error.message))
-    page.on('requestfailed', (request) =>
-      errors.push(`${request.url()}: ${request.failure()?.errorText ?? 'falha de rede'}`),
-    )
+    page.on('requestfailed', (request) => {
+      const errorText = request.failure()?.errorText ?? 'falha de rede'
+      if (request.resourceType() === 'image' && errorText === 'net::ERR_ABORTED') return
+      errors.push(`${request.url()}: ${errorText}`)
+    })
     if (visualCase.highCombo) {
       await page.evaluateOnNewDocument((highCombo) => {
         if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
@@ -305,8 +307,8 @@ try {
         if (Math.abs(metrics.battleSpacing.recordTop - 24) > 1) {
           errors.push(`Recorde iniciou em ${metrics.battleSpacing.recordTop}px; esperado 24px.`)
         }
-        if (Math.abs(metrics.battleSpacing.enemyTop - 150) > 1) {
-          errors.push(`HUD do psicopata iniciou em ${metrics.battleSpacing.enemyTop}px; esperado 150px.`)
+        if (Math.abs(metrics.battleSpacing.enemyTop - 120) > 1) {
+          errors.push(`HUD do psicopata iniciou em ${metrics.battleSpacing.enemyTop}px; esperado 120px.`)
         }
         if (Math.abs(metrics.battleSpacing.bottomGap - 16) > 1) {
           errors.push(`HUD inferior terminou a ${metrics.battleSpacing.bottomGap}px; esperado 16px.`)

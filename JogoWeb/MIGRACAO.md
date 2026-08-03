@@ -97,6 +97,12 @@ A matriz final está em `MATRIZ_EQUIVALENCIA.md`.
 - A arte da abertura usa cobertura responsiva e uma versão escurecida do mesmo fundo fora do palco, eliminando as faixas azuis sem competir com o conteúdo central.
 - O histórico dispara atualização local imediata, é testado após reload e o servidor de desenvolvimento fixa a origem em `localhost:5173`.
 - Esconderijo e batalha usam um palco lógico fixo de `480×1000`; o palco inteiro é escalado para caber no viewport, preservando posições em qualquer zoom.
+- A vitória da batalha passou a selecionar finais pela vida restante: Pidão abaixo de 40%, Venceu na Raça entre 40% e menos de 80% e fluxo padrão a partir de 80%.
+- Venceu na Raça possui uma página narrativa e uma revelação final com a arte `vitoria_normal`; o atalho de desenvolvimento `?battleTest=raca#/battle` prepara o teste com 70 HP.
+- Os avisos de final obtido compartilham um popup que surge à direita e desliza até repousar à esquerda, mantendo o mesmo padrão visual entre os finais.
+- O final perfeito Sopa de Lobo possui prioridade quando o sobrevivente termina ileso e realiza pelo menos três parries; suas etapas usam `patetico`, `vitoria_perfeita` e o áudio `sopa_lobo_audio`, iniciado na página da pergunta e mantido durante a revelação.
+- O atalho de desenvolvimento `?battleTest=perfect#/battle` prepara o inimigo com 1 HP e registra três parries iniciais sem pular a sequência normal de vitória.
+- A primeira vitória revela o código `ligeirinho`; o menu permite ativá-lo para trocar a progressão de ataques de `300→235→170→135 ms` por `250→175→100 ms`.
 
 ### 7.2. Sincronização com a `master` remota
 

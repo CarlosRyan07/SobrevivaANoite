@@ -13,7 +13,7 @@ export type EnemyAction =
 export type DodgeTiming = 'none' | 'early' | 'perfect'
 export type PlayerState = 'idle' | 'attacking' | 'dodging' | 'stunned'
 export type BattleResult = 'win' | 'lose' | null
-export type VictoryEnding = 'standard' | 'pidao'
+export type VictoryEnding = 'standard' | 'perfect' | 'raca' | 'pidao'
 
 export interface BattleState {
   playerHp: number

@@ -182,8 +182,39 @@ describe('useBattleGame', () => {
       }),
     )
     act(() => boundaryBattle.result.current.attack())
-    expect(boundaryBattle.result.current.state.victoryEnding).toBe('standard')
+    expect(boundaryBattle.result.current.state.victoryEnding).toBe('raca')
     boundaryBattle.unmount()
+  })
+
+  it('ativa o final Venceu na Raça entre 40% e menos de 80% de vida', () => {
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const middleBattle = renderHook(() =>
+      useBattleGame(audio, {
+        random: leftAttackRandom,
+        initialEnemyHp: 1,
+        initialPlayerHp: 70,
+      }),
+    )
+
+    act(() => middleBattle.result.current.attack())
+    expect(middleBattle.result.current.state.victoryEnding).toBe('raca')
+    middleBattle.unmount()
+  })
+
+  it('prioriza o final perfeito com três parries e nenhum golpe recebido', () => {
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const perfectBattle = renderHook(() =>
+      useBattleGame(audio, {
+        random: leftAttackRandom,
+        initialEnemyHp: 1,
+        initialParryCount: 3,
+      }),
+    )
+
+    act(() => perfectBattle.result.current.attack())
+    expect(perfectBattle.result.current.state.playerHp).toBe(100)
+    expect(perfectBattle.result.current.state.victoryEnding).toBe('perfect')
+    perfectBattle.unmount()
   })
 
   it('ativa o final do Pidão na batalha normal após a vida cair abaixo de 40%', async () => {
