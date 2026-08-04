@@ -13,6 +13,7 @@ import { useBattleGame, type BattleGameOptions } from '../../battle/useBattleGam
 import { HpBar } from '../../components/HpBar/HpBar'
 import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
+import { useModalFocus } from '../../hooks/useModalFocus'
 import { gamePersistence } from '../../persistence/gamePersistence'
 import { images, preloadImages } from '../../services/assetPaths'
 import styles from './BattleScreen.module.css'
@@ -44,6 +45,11 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
   const pidaoVictory = state.gameResult === 'win' && state.victoryEnding === 'pidao'
   const racaVictory = state.gameResult === 'win' && state.victoryEnding === 'raca'
   const hasStoryEnding = perfectVictory || pidaoVictory || racaVictory
+  const tutorialDialogRef = useModalFocus<HTMLElement>(showTutorial, firstTutorial)
+  const resultDialogRef = useModalFocus<HTMLDivElement>(
+    state.gameResult !== null && !showEndingStory,
+    state.gameResult,
+  )
 
   const handleRetry = useCallback(() => {
     setShowEndingStory(false)
@@ -101,14 +107,24 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
       images.survivor.parryRight,
       images.survivor.victory,
       images.survivor.dance,
-      images.endings.normalVictory,
-      images.endings.pathetic,
-      images.endings.perfectVictory,
-      images.endings.woundedVictory,
-      images.endings.woundedArm,
-      images.endings.pidao,
     ])
   }, [])
+
+  useEffect(() => {
+    if (state.gameResult !== 'win') return
+
+    if (state.victoryEnding === 'perfect') {
+      preloadImages([images.endings.pathetic, images.endings.perfectVictory])
+    } else if (state.victoryEnding === 'pidao') {
+      preloadImages([
+        images.endings.woundedVictory,
+        images.endings.woundedArm,
+        images.endings.pidao,
+      ])
+    } else if (state.victoryEnding === 'raca') {
+      preloadImages([images.endings.normalVictory])
+    }
+  }, [state.gameResult, state.victoryEnding])
 
   useEffect(() => {
     const handleBattleKey = (event: KeyboardEvent) => {
@@ -133,20 +149,31 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
 
   return (
     <div className={styles.root} aria-label="Modo batalha" onPointerDown={handlePointerAttack}>
-      <img className={styles.background} src={images.cabin} alt="Fundo da Cabana" />
+      <img
+        className={styles.background}
+        src={images.cabin}
+        alt={showTutorial ? '' : 'Fundo da Cabana'}
+      />
 
       {state.highCombo > 0 && (
-        <div className={styles.highScore} aria-label={`Recorde de combo ${state.highCombo}`}>
+        <div
+          className={styles.highScore}
+          aria-label={`Recorde de combo ${state.highCombo}`}
+          aria-hidden={showTutorial}
+        >
           RECORDE: {state.highCombo}
         </div>
       )}
 
-      {state.gameResult === null && !victorySequenceActive && !showTutorial && (
+      {state.gameResult === null && !victorySequenceActive && (
         <button
           className={styles.helpButton}
           type="button"
           onClick={handleOpenTutorial}
           aria-label="Como jogar"
+          aria-hidden={showTutorial}
+          tabIndex={showTutorial ? -1 : 0}
+          hidden={showTutorial}
           title="Ver controles e dica de parry"
         >
           ?
@@ -154,25 +181,34 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
       )}
 
       {state.enemyHp > 0 && state.gameResult !== 'win' && (
-        <div className={styles.topUi}>
+        <div className={styles.topUi} aria-hidden={showTutorial}>
           <HpBar name="Psicopata" currentHp={state.enemyHp} maxHp={ENEMY_MAX_HP} />
         </div>
       )}
 
       {!victorySequenceActive && state.playerComboStep > 1 && (
-        <div className={styles.combo} style={comboStyle} aria-label={`Combo ${state.playerComboStep}`}>
+        <div
+          className={styles.combo}
+          style={comboStyle}
+          aria-label={`Combo ${state.playerComboStep}`}
+          aria-hidden={showTutorial}
+        >
           <strong>{state.playerComboStep}x</strong>
           <span>Combo</span>
         </div>
       )}
 
-      <div className={styles.centerStage}>
+      <div className={styles.centerStage} aria-hidden={showTutorial}>
         <img className={styles.enemy} src={state.enemyImage} alt="Psicopata" />
         <img className={styles.survivor} src={state.playerImage} alt="Sobrevivente" />
       </div>
 
       {state.gameResult === null && !victorySequenceActive && (
-        <div className={styles.bottomUi}>
+        <div
+          className={styles.bottomUi}
+          aria-hidden={showTutorial}
+          inert={showTutorial ? true : undefined}
+        >
           <HpBar name="Sobrevivente" currentHp={state.playerHp} maxHp={PLAYER_MAX_HP} />
           <div className={styles.controls}>
             <div className={styles.controlGroup}>
@@ -219,7 +255,14 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
       )}
 
       {state.gameResult === 'lose' && (
-        <div className={styles.loseOverlay} role="dialog" aria-modal="true">
+        <div
+          ref={resultDialogRef}
+          className={styles.loseOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Derrota"
+          tabIndex={-1}
+        >
           <h1>VOCÊ MORREU!</h1>
           <WordButton type="button" onClick={retry}>Tentar Novamente</WordButton>
           <WordButton type="button" onClick={onBackToMenu}>Voltar ao Menu</WordButton>
@@ -248,7 +291,14 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
       )}
 
       {state.gameResult === 'win' && !showEndingStory && (
-        <div className={styles.winOverlay}>
+        <div
+          ref={resultDialogRef}
+          className={styles.winOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Vitória"
+          tabIndex={-1}
+        >
           <h1>VOCÊ VENCEU!</h1>
           <div className={`${styles.winActions} ${hasStoryEnding ? styles.storyChoiceActions : ''}`}>
             {hasStoryEnding && (
@@ -280,10 +330,12 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
 
       {showTutorial && (
         <section
+          ref={tutorialDialogRef}
           className={styles.tutorialOverlay}
           role="dialog"
           aria-modal="true"
           aria-label="Como jogar a batalha"
+          tabIndex={-1}
         >
           <div className={styles.tutorialPanel}>
             <h1>COMO JOGAR</h1>
@@ -323,7 +375,7 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
             <p className={styles.parryTip}>
                Recomendo usar a <strong>opção 2</strong>.
             </p>
-            <WordButton type="button" onClick={handleStartBattle}>
+            <WordButton type="button" onClick={handleStartBattle} data-modal-autofocus>
               {firstTutorial ? 'Começar Batalha' : 'Continuar Batalha'}
             </WordButton>
           </div>

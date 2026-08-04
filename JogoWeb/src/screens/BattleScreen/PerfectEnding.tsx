@@ -4,6 +4,7 @@ import { GAME_CODES, type GameCodeId } from '../../codes/gameCodes'
 import { EndingToast } from '../../components/EndingToast/EndingToast'
 import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
+import { useModalFocus } from '../../hooks/useModalFocus'
 import { images } from '../../services/assetPaths'
 import styles from './PerfectEnding.module.css'
 
@@ -17,6 +18,7 @@ interface PerfectEndingProps {
 export function PerfectEnding({ rewardCode, onBackToMenu }: PerfectEndingProps) {
   const audio = useAudio()
   const [stage, setStage] = useState<PerfectEndingStage>('intro')
+  const dialogRef = useModalFocus<HTMLElement>(true, stage)
 
   useEffect(() => () => audio.stop('perfectEnding'), [audio])
 
@@ -28,10 +30,12 @@ export function PerfectEnding({ rewardCode, onBackToMenu }: PerfectEndingProps) 
 
   return (
     <section
+      ref={dialogRef}
       className={styles.root}
       role="dialog"
       aria-modal="true"
       aria-label="Final: Sopa de Lobo"
+      tabIndex={-1}
     >
       {stage === 'intro' && (
         <div className={styles.textPage} aria-label="Introdução do final perfeito">

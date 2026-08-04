@@ -30,14 +30,16 @@ describe('BattleScreen', () => {
       'Dica: Se esquive na direção que o inimigo levantar a mão.',
     )
     expect(tutorial).toHaveTextContent('Recomendo usar a opção 2.')
+    expect(screen.getByRole('button', { name: 'Começar Batalha' })).toHaveFocus()
+    expect(screen.queryByRole('button', { name: 'Atacar' })).not.toBeInTheDocument()
 
     fireEvent.keyDown(window, { key: ' ', code: 'Space' })
     await act(async () => vi.advanceTimersByTimeAsync(20_000))
-    expect(screen.getByRole('meter', { name: 'Vida de Psicopata' })).toHaveAttribute(
+    expect(document.querySelector('[aria-label="Vida de Psicopata"]')).toHaveAttribute(
       'aria-valuenow',
       '700',
     )
-    expect(screen.getByRole('meter', { name: 'Vida de Sobrevivente' })).toHaveAttribute(
+    expect(document.querySelector('[aria-label="Vida de Sobrevivente"]')).toHaveAttribute(
       'aria-valuenow',
       '100',
     )
@@ -253,7 +255,7 @@ describe('BattleScreen', () => {
       .toBeInTheDocument()
     expect(screen.getByRole('img', { name: /Sobrevivente ferido/ })).toHaveAttribute(
       'src',
-      expect.stringContaining('vitoria_sobrevivente_machucado.png'),
+      expect.stringContaining('vitoria_sobrevivente_machucado.webp'),
     )
     expect(screen.getByLabelText('História do final do Pidão')).toBeInTheDocument()
     expect(screen.getByRole('img', { name: 'Feridas no braço do sobrevivente' }))

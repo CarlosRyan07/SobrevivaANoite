@@ -106,7 +106,7 @@ BattleResult: null → win | lose
 ## Responsividade
 
 - Menu, lore e histórico: `100dvh`, largura 100% e máximo 480 px.
-- Esconderijo e batalha: palco lógico imutável de `480×1000`, escalado uniformemente para caber na área visível.
+- Esconderijo: palco lógico imutável de `480×850`, escalado uniformemente para caber na área visível; batalha: quadro vertical de referência com rolagem quando necessária.
 - A escala considera largura e altura; redimensionamento e zoom não alteram a proporção `0,48` nem as coordenadas internas.
 - Desktop/tablet: palco centralizado, com margens temáticas quando a proporção da tela é diferente.
 - Mobile: palco inteiro reduzido como uma unidade, sem cortar personagens ou reposicionar controles isoladamente.
@@ -125,9 +125,9 @@ BattleResult: null → win | lose
 
 Workbox gera o service worker:
 
-- precache de shell, JS, CSS, manifest e ícones (~835 KiB);
-- `CacheFirst` para imagens, até 100 entradas por um ano;
-- `CacheFirst` para MP3, até 30 entradas por um ano;
+- precache de shell, JS, CSS, manifest e ícones (~900 KiB);
+- `NetworkFirst` para imagens, com timeout de um segundo e até 100 entradas por um ano;
+- `NetworkFirst` para MP3, com timeout de um segundo, suporte a range e até 30 entradas por um ano;
 - suporte a range requests de áudio;
 - atualização automática e limpeza de caches antigos.
 
@@ -137,8 +137,10 @@ Workbox gera o service worker:
 - Hooks: fake timers, parry, hits, combo, contador e resultados.
 - Componentes: elementos, controles e acessibilidade.
 - Áudio: dez streams, preparação do Rat Dance e cleanup.
-- Visual: Chrome real em 14 casos, incluindo histórico, abertura 546×866, seleção mantida e equivalentes de zoom entre 67% e 150%.
+- Cobertura: limites globais de 85% de statements, 75% de branches, 85% de funções e 88% de linhas.
+- Visual: Chrome real em 26 casos, incluindo os três finais completos, histórico, abertura 546×866, seleção mantida e equivalentes de zoom entre 67% e 175%.
 - PWA: Chrome real com reload persistente e funcionamento offline.
+- CI: GitHub Actions executa a suíte de qualidade e os testes de navegador em pushes e pull requests.
 
 ## Dependências
 

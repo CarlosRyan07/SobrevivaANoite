@@ -103,6 +103,7 @@ Para cada módulo:
    - `npm run lint`;
    - `npm run typecheck`;
    - `npm test -- --run`;
+   - `npm run test:coverage`;
    - `npm run build`.
 6. Executar `npm run visual:check` para alteração visual/responsiva.
 7. Executar `npm run pwa:check` para alteração em assets/cache/PWA.

@@ -3,6 +3,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { findGameCode, GAME_CODES } from '../../codes/gameCodes'
 import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
+import { useModalFocus } from '../../hooks/useModalFocus'
 import {
   CODE_PROGRESS_UPDATED_EVENT,
   type GamePersistencePort,
@@ -18,6 +19,7 @@ type Feedback = { kind: 'success' | 'error'; message: string } | null
 
 export function CodesPanel({ onClose, persistence }: CodesPanelProps) {
   const audio = useAudio()
+  const dialogRef = useModalFocus<HTMLElement>(true)
   const [codeInput, setCodeInput] = useState('')
   const [feedback, setFeedback] = useState<Feedback>(null)
   const [progress, setProgress] = useState(() => persistence.getCodeProgress())
@@ -59,7 +61,14 @@ export function CodesPanel({ onClose, persistence }: CodesPanelProps) {
   }
 
   return (
-    <section className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="codes-title">
+    <section
+      ref={dialogRef}
+      className={styles.overlay}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="codes-title"
+      tabIndex={-1}
+    >
       <div className={styles.panel}>
         <button className={styles.closeButton} type="button" onClick={onClose} aria-label="Fechar códigos">
           <span aria-hidden="true">×</span>
@@ -78,6 +87,7 @@ export function CodesPanel({ onClose, persistence }: CodesPanelProps) {
             autoComplete="off"
             autoCapitalize="characters"
             spellCheck={false}
+            data-modal-autofocus
           />
           <WordButton type="submit">Ativar</WordButton>
         </form>

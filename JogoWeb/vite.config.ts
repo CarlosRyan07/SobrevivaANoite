@@ -42,9 +42,10 @@ export default defineConfig({
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.destination === 'image',
-            handler: 'CacheFirst',
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'sobreviva-images-v1',
+              networkTimeoutSeconds: 1,
               expiration: { maxEntries: 100, maxAgeSeconds: 31_536_000 },
               cacheableResponse: { statuses: [0, 200] },
             },
@@ -52,9 +53,10 @@ export default defineConfig({
           {
             urlPattern: ({ request, url }) =>
               request.destination === 'audio' || url.pathname.endsWith('.mp3'),
-            handler: 'CacheFirst',
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'sobreviva-audio-v1',
+              networkTimeoutSeconds: 1,
               expiration: { maxEntries: 30, maxAgeSeconds: 31_536_000 },
               cacheableResponse: { statuses: [0, 200] },
               rangeRequests: true,
@@ -74,5 +76,19 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     css: true,
     restoreMocks: true,
+    testTimeout: 15_000,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json-summary', 'html'],
+      reportsDirectory: './coverage',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/main.tsx', 'src/vite-env.d.ts', 'src/test/**'],
+      thresholds: {
+        statements: 85,
+        branches: 75,
+        functions: 85,
+        lines: 88,
+      },
+    },
   },
 })

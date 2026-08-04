@@ -57,17 +57,17 @@ Cada módulo recebeu teste focado antes do seguinte.
 
 ### 5. Testes
 
-- 67 testes em 16 arquivos.
+- 103 testes em 20 arquivos, com limites mínimos de cobertura.
 - Fake timers para janelas e contadores.
 - Randomização injetada para resultados determinísticos.
-- Inspeção real via Chrome em 14 casos visuais/interativos.
+- Inspeção real via Chrome em 26 casos visuais/interativos, incluindo os três finais completos.
 
 ### 6. Otimização
 
 - Code splitting por tela.
 - Preload prioritário de abertura e seletivo por modo.
-- 36 WebPs lossless, economizando 11,9 MiB.
-- PWA, manifest, ícones, precache leve e cache sob demanda.
+- 40 WebPs lossless, economizando 16,0 MiB.
+- PWA, manifest, ícones, precache leve e cache sob demanda com atualização pela rede.
 - Teste offline real de telas e áudio.
 
 ### 7. Equivalência
@@ -96,7 +96,7 @@ A matriz final está em `MATRIZ_EQUIVALENCIA.md`.
 - A música é preparada muda durante o golpe final e retomada audível com o joinha, evitando o bloqueio de autoplay após o timer.
 - A arte da abertura usa cobertura responsiva e uma versão escurecida do mesmo fundo fora do palco, eliminando as faixas azuis sem competir com o conteúdo central.
 - O histórico dispara atualização local imediata, é testado após reload e o servidor de desenvolvimento fixa a origem em `localhost:5173`.
-- Esconderijo e batalha usam um palco lógico fixo de `480×1000`; o palco inteiro é escalado para caber no viewport, preservando posições em qualquer zoom.
+- O esconderijo usa um palco lógico fixo de `480×850`; o palco inteiro é escalado para caber no viewport, preservando posições em qualquer zoom. A batalha mantém o mesmo quadro de referência em seu layout vertical rolável.
 - A vitória da batalha passou a selecionar um final narrativo em todos os casos: Pidão abaixo de 40%, Sopa de Lobo quando o jogador termina ileso com ao menos dois parries e Venceu na Raça nas demais vitórias.
 - Venceu na Raça possui uma página narrativa e uma revelação final com a arte `vitoria_normal`; o atalho de desenvolvimento `?battleTest=raca#/battle` prepara o teste com 70 HP.
 - Os avisos de final obtido compartilham um popup que surge à direita e desliza até repousar à esquerda, mantendo o mesmo padrão visual entre os finais.
@@ -154,7 +154,7 @@ O primeiro codificador testado recusou metadados `sBIT` antigos. Sharp foi adota
 
 ### Cache progressivo
 
-Precaching de todos os assets tornaria a primeira instalação pesada. O shell (~835 KiB) é precacheado; sprites e áudios entram em CacheFirst ao visitar cada modo.
+Precaching de todos os assets tornaria a primeira instalação pesada. O shell (~900 KiB) é precacheado; sprites e áudios são consultados na rede e usam o cache como fallback offline. As artes narrativas são pré-carregadas somente depois que o final da vitória é definido.
 
 ## Integridade do Android
 

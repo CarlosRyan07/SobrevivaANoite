@@ -5,6 +5,7 @@ import { useAudio } from '../../contexts/audioContextValue'
 import { HIDING_SPOT_COORDINATES, ROOMS } from '../../hide/hideConstants'
 import type { Position } from '../../hide/hideTypes'
 import { useHideGame } from '../../hide/useHideGame'
+import { useModalFocus } from '../../hooks/useModalFocus'
 import { useSpringPosition } from '../../hooks/useSpringPosition'
 import { images, preloadImages } from '../../services/assetPaths'
 import styles from './HideScreen.module.css'
@@ -24,6 +25,10 @@ export function HideScreen({ onBackToMenu }: HideScreenProps) {
   const { state, chooseHidingSpot, playAgain } = useHideGame(audio)
   const isChoosing = state.phase.kind === 'choosing'
   const animatedPsychopathPosition = useSpringPosition(state.psychopathPosition)
+  const resultDialogRef = useModalFocus<HTMLDivElement>(
+    state.phase.kind === 'result',
+    state.phase.kind === 'result' ? state.phase.didPlayerWin : null,
+  )
 
   useEffect(() => {
     preloadImages([
@@ -105,7 +110,13 @@ export function HideScreen({ onBackToMenu }: HideScreenProps) {
       )}
 
       {state.phase.kind === 'result' && (
-        <div className={styles.resultOverlay} role="dialog" aria-modal="true">
+        <div
+          ref={resultDialogRef}
+          className={styles.resultOverlay}
+          role="dialog"
+          aria-modal="true"
+          tabIndex={-1}
+        >
           {state.phase.didPlayerWin ? (
             <>
               <h1 className={styles.win}>UFA!</h1>

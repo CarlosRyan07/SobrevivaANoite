@@ -17,9 +17,10 @@ Concluído e validado:
 - galeria de finais no menu, com nome e arte dos finais obtidos e três dicas progressivas para cada final ainda bloqueado;
 - assets Android sincronizados, com a imagem da lore corrigida e o GIF não utilizado do Fortnite removido;
 - layout vertical responsivo, com a arte preenchendo e escurecendo as laterais da abertura;
-- PWA e funcionamento offline após o cache dos modos;
-- 97 testes aprovados em 18 arquivos;
-- lint, TypeScript estrito, build, verificação visual e verificação offline aprovados.
+- PWA com consulta de assets atualizados na rede e fallback offline pelo cache;
+- 103 testes aprovados em 20 arquivos, com limites automáticos de cobertura;
+- lint, TypeScript estrito, build, 26 cenários de navegador e verificação offline aprovados;
+- CI no GitHub executando qualidade, cobertura, build, fluxos visuais e PWA em pushes e pull requests.
 
 A lógica do aplicativo Android fora de `JogoWeb` não foi modificada pela migração. A imagem `lore_fogueira.jpg` corrigida pelo usuário foi sincronizada entre Android e Web, e o GIF não utilizado do Fortnite foi removido das duas versões.
 
@@ -54,8 +55,9 @@ Os arquivos finais ficam em `dist/` e podem ser hospedados como site estático.
 | `npm run typecheck` | TypeScript estrito |
 | `npm run test` | Vitest em modo interativo |
 | `npm run test:run` | Suíte completa uma vez |
+| `npm run test:coverage` | Suíte completa com relatório e limites mínimos de cobertura |
 | `npm run assets:optimize` | Recria WebPs lossless e ícones PWA |
-| `npm run visual:check` | Build + screenshots/asserts em 23 casos visuais/interativos, incluindo tutorial, ajuda da batalha, galeria de finais e extremos de zoom |
+| `npm run visual:check` | Build + screenshots/asserts em 26 casos visuais/interativos, incluindo o fluxo completo dos três finais, tutorial, galeria e extremos de zoom |
 | `npm run pwa:check` | Build + teste real de persistência e funcionamento offline de telas/áudio |
 
 ### Teste manual rápido dos finais
@@ -99,10 +101,10 @@ Publique o conteúdo de `dist/`. Para instalar a PWA e ativar service worker for
 - `public/assets/audio`: os 21 MP3 da versão Android atualizada e os áudios dos finais Pidão e Sopa de Lobo.
 - `public/assets/gif`: somente `rat_dance.gif`, usado na vitória da batalha.
 - `public/assets/android-icons`: mipmaps/ícones Android preservados.
-- `public/assets/optimized`: 36 WebPs lossless usados pelo jogo.
+- `public/assets/optimized`: 40 WebPs lossless usados pelo jogo.
 - `public/icons`: ícones 192/512 da PWA.
 
-Os WebPs reduziram 28,3 MiB de PNGs para 16,4 MiB. A conversão é automaticamente recusada se alfa ou qualquer pixel visível mudar.
+Os WebPs reduziram 36,9 MiB de PNGs para 20,9 MiB. A conversão é automaticamente recusada se alfa ou qualquer pixel visível mudar.
 
 ## Dados locais
 

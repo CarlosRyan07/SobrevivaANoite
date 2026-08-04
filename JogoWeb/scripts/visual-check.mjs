@@ -21,7 +21,7 @@ const server = await preview({
 const baseUrl = server.resolvedUrls?.local?.[0]
 
 if (!baseUrl) {
-  server.httpServer.close()
+  await server.close()
   throw new Error('O Vite não informou a URL local do preview.')
 }
 
@@ -31,7 +31,7 @@ const browser = await puppeteer.launch({
   args: ['--disable-gpu', '--no-first-run'],
 })
 
-const cases = [
+const visualCases = [
   { name: 'mobile-opening', hash: '', width: 390, height: 844, wait: 150 },
   { name: 'mobile-lore', hash: '#/lore', width: 390, height: 844, wait: 1_600 },
   { name: 'mobile-hide', hash: '#/hide', width: 390, height: 844, wait: 150 },
@@ -69,6 +69,36 @@ const cases = [
     height: 844,
     wait: 150,
     endings: ['raca', 'perfect'],
+  },
+  {
+    name: 'mobile-ending-raca',
+    query: '?battleTest=raca',
+    hash: '#/battle',
+    width: 390,
+    height: 844,
+    wait: 150,
+    interaction: 'battle-ending',
+    ending: 'raca',
+  },
+  {
+    name: 'mobile-ending-pidao',
+    query: '?battleTest=pidao',
+    hash: '#/battle',
+    width: 390,
+    height: 844,
+    wait: 150,
+    interaction: 'battle-ending',
+    ending: 'pidao',
+  },
+  {
+    name: 'mobile-ending-perfect',
+    query: '?battleTest=perfect',
+    hash: '#/battle',
+    width: 390,
+    height: 844,
+    wait: 150,
+    interaction: 'battle-ending',
+    ending: 'perfect',
   },
   { name: 'tablet-opening', hash: '', width: 546, height: 866, wait: 150 },
   { name: 'desktop-opening', hash: '', width: 1_440, height: 900, wait: 150 },
@@ -120,6 +150,18 @@ const cases = [
   },
 ]
 
+const requestedCase = process.env.VISUAL_CASE
+const requestedCases = requestedCase?.split(',').map((name) => name.trim()).filter(Boolean)
+const cases = requestedCase
+  ? visualCases.filter((visualCase) => requestedCases?.includes(visualCase.name))
+  : visualCases
+
+if (cases.length === 0) {
+  await browser.close()
+  await server.close()
+  throw new Error(`Nenhum cenário visual corresponde a VISUAL_CASE=${requestedCase}.`)
+}
+
 const report = []
 
 try {
@@ -134,6 +176,7 @@ try {
     })
     await page.evaluateOnNewDocument((showBattleTutorial) => {
       if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+        localStorage.clear()
         const key = 'sobreviva-a-noite.battle-tutorial-seen.v1'
         if (showBattleTutorial) localStorage.removeItem(key)
         else localStorage.setItem(key, 'true')
@@ -163,8 +206,27 @@ try {
       isMobile: visualCase.width < 600,
       hasTouch: visualCase.width < 600,
     })
-    await page.goto(`${baseUrl}${visualCase.hash}`, { waitUntil: 'networkidle0' })
+    await page.goto(`${baseUrl}${visualCase.query ?? ''}${visualCase.hash}`, {
+      waitUntil: 'domcontentloaded',
+      timeout: 60_000,
+    })
     await new Promise((resolve) => setTimeout(resolve, visualCase.wait))
+    const routeSelectors = {
+      '': 'img[alt="Tela de Início"]',
+      '#/lore': '[aria-label="História"]',
+      '#/hide': '[aria-label="Modo esconder"]',
+      '#/battle': '[aria-label="Modo batalha"]',
+      '#/history': '[aria-label="Histórico de Partidas"]',
+      '#/endings': '[aria-label="Finais"]',
+    }
+    const routeSelector = routeSelectors[visualCase.hash]
+    if (routeSelector) {
+      try {
+        await page.waitForSelector(routeSelector, { timeout: 20_000 })
+      } catch {
+        errors.push(`A rota ${visualCase.hash || 'inicial'} não terminou de abrir.`)
+      }
+    }
 
     let interaction = null
     if (visualCase.interaction === 'hide-selection') {
@@ -263,6 +325,185 @@ try {
         if (!tutorial) errors.push('O botão de ajuda não abriu o tutorial.')
         if (!continueVisible) errors.push('O tutorial reaberto não mostrou Continuar Batalha.')
       }
+    }
+    if (visualCase.interaction === 'battle-ending') {
+      const endingDefinitions = {
+        raca: {
+          dialog: 'Final: Venceu na Raça',
+          stages: ['História do final Venceu na Raça'],
+          actions: ['Continuar'],
+          finalImage: 'Sobrevivente celebrando sobre o monstro derrotado com seus amigos',
+          finalTitle: 'VENCEU NA RAÇA!',
+        },
+        pidao: {
+          dialog: 'Final: A Maldição do Pidão',
+          stages: ['História do final do Pidão', 'Transformação do Pidão'],
+          actions: ['Continuar', 'Continuar'],
+          finalImage: 'O sobrevivente transformado no Pidão',
+          finalTitle: 'UM PIDÃO!!!',
+        },
+        perfect: {
+          dialog: 'Final: Sopa de Lobo',
+          stages: [
+            'Introdução do final perfeito',
+            'O pensamento do sobrevivente',
+            'Conversa com os amigos',
+            'A pergunta sobre a sopa',
+          ],
+          actions: ['Continuar', 'Continuar', 'Continuar', 'Sopa de lobo!'],
+          finalImage: 'Sobrevivente vitorioso enquanto seu amigo observa a cena, chocado',
+          finalTitle: 'SOPA DE LOBO!',
+        },
+      }
+      const definition = endingDefinitions[visualCase.ending]
+      if (!definition) {
+        errors.push(`Final visual desconhecido: ${visualCase.ending}.`)
+      } else {
+        await page.waitForSelector('button[aria-label="Atacar"]', { timeout: 20_000 }).catch(() => undefined)
+        const attackButton = await page.$('button[aria-label="Atacar"]')
+        if (!attackButton) {
+          errors.push('Botão de ataque não encontrado no teste do final.')
+        } else {
+          await attackButton.click()
+          try {
+            await page.waitForFunction(
+              () => [...document.querySelectorAll('button')].some(
+                (button) => button.textContent?.trim() === 'Prosseguir',
+              ),
+              { timeout: 20_000 },
+            )
+          } catch {
+            errors.push('A sequência de vitória não exibiu Prosseguir.')
+          }
+
+          const rewardShownTooEarly = await page.evaluate(
+            () => document.body.textContent?.includes('Você liberou o código:') ?? false,
+          )
+          if (rewardShownTooEarly) {
+            errors.push('A recompensa do código apareceu antes da história do final.')
+          }
+
+          const clickDialogButton = async (buttonText) => {
+            const clicked = await page.evaluate(
+              ({ dialogLabel, text }) => {
+                const dialog = document.querySelector(`[aria-label="${dialogLabel}"]`)
+                const button = [...(dialog?.querySelectorAll('button') ?? [])].find(
+                  (candidate) => candidate.textContent?.trim() === text,
+                )
+                button?.click()
+                return button !== undefined
+              },
+              { dialogLabel: definition.dialog, text: buttonText },
+            )
+            if (!clicked) errors.push(`Botão ${buttonText} não encontrado em ${definition.dialog}.`)
+            await new Promise((resolve) => setTimeout(resolve, 150))
+          }
+
+          const proceeded = await page.evaluate(() => {
+            const button = [...document.querySelectorAll('button')].find(
+              (candidate) => candidate.textContent?.trim() === 'Prosseguir',
+            )
+            button?.click()
+            return button !== undefined
+          })
+          if (!proceeded) errors.push('Não foi possível abrir a história do final.')
+
+          try {
+            await page.waitForSelector(`[aria-label="${definition.dialog}"]`, { timeout: 5_000 })
+          } catch {
+            errors.push(`O diálogo ${definition.dialog} não foi aberto.`)
+          }
+
+          const visitedStages = []
+          for (let index = 0; index < definition.actions.length; index += 1) {
+            const stageLabel = definition.stages[index]
+            if (stageLabel) {
+              try {
+                await page.waitForSelector(`[aria-label="${stageLabel}"]`, { timeout: 5_000 })
+                visitedStages.push(stageLabel)
+                await page.waitForFunction(
+                  (label) => {
+                    const stage = document.querySelector(`[aria-label="${label}"]`)
+                    return [...(stage?.querySelectorAll('img') ?? [])].every((image) => image.complete)
+                  },
+                  { timeout: 5_000 },
+                  stageLabel,
+                )
+                const brokenStageImages = await page.$$eval(
+                  `[aria-label="${stageLabel}"] img`,
+                  (images) => images
+                    .filter((image) => image.complete && image.naturalWidth === 0)
+                    .map((image) => image.getAttribute('alt') ?? image.getAttribute('src')),
+                )
+                if (brokenStageImages.length > 0) {
+                  errors.push(
+                    `Imagens quebradas em ${stageLabel}: ${brokenStageImages.join(', ')}.`,
+                  )
+                }
+              } catch {
+                errors.push(`Etapa narrativa ausente: ${stageLabel}.`)
+              }
+            }
+            await clickDialogButton(definition.actions[index])
+          }
+
+          try {
+            await page.waitForSelector(`img[alt="${definition.finalImage}"]`, { timeout: 5_000 })
+            await page.waitForFunction(
+              (imageAlt) => {
+                const image = document.querySelector(`img[alt="${imageAlt}"]`)
+                return image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0
+              },
+              { timeout: 5_000 },
+              definition.finalImage,
+            )
+          } catch {
+            errors.push(`Imagem final não carregou: ${definition.finalImage}.`)
+          }
+          await new Promise((resolve) => setTimeout(resolve, 2_000))
+
+          const finalState = await page.evaluate(
+            ({ dialogLabel, finalImage, finalTitle }) => {
+              const dialog = document.querySelector(`[aria-label="${dialogLabel}"]`)
+              const image = document.querySelector(`img[alt="${finalImage}"]`)
+              const menuButton = [...(dialog?.querySelectorAll('button') ?? [])].find(
+                (button) => button.textContent?.trim() === 'Voltar ao Menu',
+              )
+              const title = [...(dialog?.querySelectorAll('h1') ?? [])].find(
+                (heading) => heading.textContent?.trim() === finalTitle,
+              )
+              const imageRect = image?.getBoundingClientRect()
+              const titleRect = title?.getBoundingClientRect()
+              const menuRect = menuButton?.getBoundingClientRect()
+              return {
+                titleVisible: Boolean(titleRect && titleRect.width > 0 && titleRect.height > 0),
+                menuButtonVisible: Boolean(menuRect && menuRect.width > 0 && menuRect.height > 0),
+                imageVisible: Boolean(imageRect && imageRect.width > 0 && imageRect.height > 0),
+                horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth,
+              }
+            },
+            {
+              dialogLabel: definition.dialog,
+              finalImage: definition.finalImage,
+              finalTitle: definition.finalTitle,
+            },
+          )
+          interaction = { ending: visualCase.ending, visitedStages, finalState }
+          if (!finalState.titleVisible) errors.push(`Título final ausente: ${definition.finalTitle}.`)
+          if (!finalState.menuButtonVisible) errors.push('Final sem o botão Voltar ao Menu.')
+          if (!finalState.imageVisible) errors.push('Imagem final sem área visível.')
+          if (finalState.horizontalOverflow) errors.push('Final criou overflow horizontal.')
+        }
+      }
+    }
+
+    try {
+      await page.waitForFunction(
+        () => [...document.images].every((image) => image.complete),
+        { timeout: 20_000 },
+      )
+    } catch {
+      errors.push('As imagens visíveis não terminaram de carregar em 20 segundos.')
     }
 
     const metrics = await page.evaluate(() => {
@@ -463,7 +704,7 @@ try {
   }
 } finally {
   await browser.close()
-  server.httpServer.close()
+  await server.close()
 }
 
 const reportPath = path.join(outputDirectory, 'report.json')

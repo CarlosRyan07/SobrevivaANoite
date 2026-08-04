@@ -285,7 +285,7 @@ Reiniciar cancela jobs de jogador, impacto, combo e IA, para a música, zera par
 
 - O Android usa retrato e muitos deslocamentos absolutos em dp.
 - Menu, lore e histórico usam um palco vertical central de no máximo 480 CSS px e altura do viewport.
-- Esconderijo e batalha usam um palco lógico de `480×1000`, escalado uniformemente como uma única unidade.
+- O esconderijo usa um palco lógico de `480×850`, escalado uniformemente como uma única unidade; a batalha preserva o mesmo quadro vertical em layout rolável.
 - Em telas grandes, o palco permanece vertical e as laterais recebem fundo derivado do jogo.
 - Em telas menores ou com zoom, todos os elementos e offsets do gameplay são reduzidos juntos, sem alterar a proporção.
 - O conteúdo da lore continua rolável.

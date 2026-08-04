@@ -113,7 +113,7 @@ A versão Web preserva o baseline Android, acrescido dos refinamentos explicitam
 - Somente `rat_dance.gif` permanece; o GIF não utilizado do Fortnite foi removido do Android e da Web.
 - 36 PNGs possuem derivados WebP lossless.
 - A validação exige alfa idêntico e RGB idêntico em todo pixel visível.
-- Economia: 28,3 MiB → 16,4 MiB nos recursos convertidos.
+- Economia: 36,9 MiB → 20,9 MiB nos recursos convertidos.
 - JPGs, GIFs, MP3s e originais PNG permanecem sem modificação.
 
 ## Correções feitas durante a comparação
@@ -126,7 +126,7 @@ A versão Web preserva o baseline Android, acrescido dos refinamentos explicitam
 6. Os botões de esconderijo preservam a centralização durante `:active` e permanecem acessíveis nas bordas.
 7. O áudio passou a aceitar parada por chave e a respeitar `BASE_URL` também em hospedagem por subpasta.
 8. A vitória cancela timers de ação/impacto/combo antes de fixar o estado `defeated`.
-9. Esconderijo e batalha passaram a usar um palco lógico `480×1000`, escalado por inteiro para impedir deformação por viewport ou zoom.
+9. O esconderijo passou a usar um palco lógico `480×850`, escalado por inteiro para impedir deformação por viewport ou zoom; a batalha preserva esse quadro de referência em layout rolável.
 
 ## Diferenças inevitáveis de plataforma
 
@@ -136,16 +136,16 @@ A versão Web preserva o baseline Android, acrescido dos refinamentos explicitam
 | Material 3 dinâmico vs paleta fixa | Android pode derivar cores do wallpaper | Web usa o roxo Material equivalente e consistente |
 | Corrotinas vs timers/event loop | Runtimes diferentes | Mesmos tempos solicitados; variação de scheduling depende do dispositivo |
 | Navigation Compose vs hash | Ambiente Web | Mesmo fluxo e suporte nativo ao botão Voltar |
-| Retrato forçado vs palco vertical | Browser desktop não deve girar a tela | Gameplay preserva proporção `480:1000`, centralizado e com laterais temáticas |
+| Retrato forçado vs palco vertical | Browser desktop não deve girar a tela | Esconderijo preserva proporção `480:850`; batalha mantém quadro vertical centralizado e laterais temáticas |
 
 As diferenças de plataforma não alteram HP, dano, probabilidade, escolha, IA ou combo. As mudanças de controles, coordenadas, áudio e vitória listadas acima foram solicitadas explicitamente pelo usuário.
 
 ## Evidências de verificação
 
-- 67 testes em 16 arquivos.
+- 103 testes em 20 arquivos, com limites mínimos de cobertura.
 - ESLint sem erros/avisos.
 - TypeScript estrito sem erros.
 - Build Vite/PWA concluído.
-- 14 casos visuais/interativos reais, incluindo histórico, viewport 546×866, pressão mantida e zoom equivalente de 67% a 150%.
+- 26 casos visuais/interativos reais, incluindo os três finais, histórico, viewport 546×866, pressão mantida e zoom equivalente de 67% a 175%.
 - Abertura, esconderijo, batalha e áudio verificados offline.
 - A lógica Android permanece equivalente; alterações de assets autorizadas pelo usuário estão registradas em `MIGRACAO.md`.

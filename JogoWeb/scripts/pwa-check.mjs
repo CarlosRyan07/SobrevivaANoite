@@ -20,7 +20,7 @@ const server = await preview({
 })
 const baseUrl = server.resolvedUrls?.local?.[0]
 if (!baseUrl) {
-  server.httpServer.close()
+  await server.close()
   throw new Error('URL do preview não encontrada.')
 }
 
@@ -129,7 +129,7 @@ try {
 } finally {
   await page.setOfflineMode(false)
   await browser.close()
-  server.httpServer.close()
+  await server.close()
 }
 
 const reportPath = path.join(artifactDirectory, 'pwa-report.json')

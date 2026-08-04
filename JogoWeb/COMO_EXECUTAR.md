@@ -47,6 +47,7 @@ Portão rápido:
 npm run lint
 npm run typecheck
 npm run test:run
+npm run test:coverage
 npm run build
 ```
 
@@ -62,7 +63,7 @@ Ela gera arquivos ignorados pelo Git em `.artifacts/visual` e valida:
 - 546×866: abertura com preenchimento lateral;
 - 1440×900: abertura e palco central;
 - equivalentes desktop de zoom em 67%, 80%, 90%, 100%, 110% e 150%;
-- largura, altura, centralização e proporção fixa `480:1000` do gameplay;
+- largura, altura, centralização e proporção fixa `480:850` do esconderijo, além do quadro rolável da batalha;
 - psicopata totalmente visível fora da casa durante a busca;
 - overflow horizontal;
 - imagens quebradas;

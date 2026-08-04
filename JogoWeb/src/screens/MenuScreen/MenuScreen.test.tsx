@@ -99,6 +99,7 @@ describe('MenuScreen', () => {
     await user.click(screen.getByRole('button', { name: 'Códigos' }))
 
     const input = screen.getByLabelText('Digite o código:')
+    expect(input).toHaveFocus()
     await user.type(input, 'errado')
     await user.click(screen.getByRole('button', { name: 'Ativar' }))
     expect(screen.getByText('Código inválido.')).toBeInTheDocument()
@@ -113,5 +114,9 @@ describe('MenuScreen', () => {
     await user.click(screen.getByRole('button', { name: 'Desativar' }))
     expect(screen.getByText('Código desativado.')).toBeInTheDocument()
     expect(gamePersistence.isCodeActive('ligeirinho')).toBe(false)
+
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog', { name: 'CÓDIGOS' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Códigos' })).toHaveFocus()
   })
 })

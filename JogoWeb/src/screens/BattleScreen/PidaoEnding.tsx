@@ -4,6 +4,7 @@ import { GAME_CODES, type GameCodeId } from '../../codes/gameCodes'
 import { EndingToast } from '../../components/EndingToast/EndingToast'
 import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
+import { useModalFocus } from '../../hooks/useModalFocus'
 import { images } from '../../services/assetPaths'
 import styles from './PidaoEnding.module.css'
 
@@ -17,6 +18,7 @@ interface PidaoEndingProps {
 export function PidaoEnding({ rewardCode, onBackToMenu }: PidaoEndingProps) {
   const audio = useAudio()
   const [stage, setStage] = useState<EndingStage>('story')
+  const dialogRef = useModalFocus<HTMLElement>(true, stage)
 
   useEffect(() => () => audio.stop('pidaoEnding'), [audio])
 
@@ -35,10 +37,12 @@ export function PidaoEnding({ rewardCode, onBackToMenu }: PidaoEndingProps) {
 
   return (
     <section
+      ref={dialogRef}
       className={styles.root}
       role="dialog"
       aria-modal="true"
       aria-label="Final: A Maldição do Pidão"
+      tabIndex={-1}
     >
       {stage === 'story' && (
         <div className={styles.storyScroll} aria-label="História do final do Pidão">
@@ -80,7 +84,7 @@ export function PidaoEnding({ rewardCode, onBackToMenu }: PidaoEndingProps) {
       )}
 
       {stage === 'transformation' && (
-        <div className={styles.transformationContent}>
+        <div className={styles.transformationContent} aria-label="Transformação do Pidão">
           <p>Então, na lua cheia seguinte, você sente que alguma coisa está errada.</p>
           <p>Seu corpo começa a mudar.</p>
           <p>Cada osso estala. Cada músculo se estica e se retorce.</p>

@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { GAME_CODES, type GameCodeId } from '../../codes/gameCodes'
 import { EndingToast } from '../../components/EndingToast/EndingToast'
 import { WordButton } from '../../components/WordButton/WordButton'
+import { useModalFocus } from '../../hooks/useModalFocus'
 import { images } from '../../services/assetPaths'
 import styles from './RacaEnding.module.css'
 
@@ -13,13 +14,16 @@ interface RacaEndingProps {
 
 export function RacaEnding({ rewardCode, onBackToMenu }: RacaEndingProps) {
   const [showReveal, setShowReveal] = useState(false)
+  const dialogRef = useModalFocus<HTMLElement>(true, showReveal)
 
   return (
     <section
+      ref={dialogRef}
       className={styles.root}
       role="dialog"
       aria-modal="true"
       aria-label="Final: Venceu na Raça"
+      tabIndex={-1}
     >
       {!showReveal && (
         <div className={styles.storyContent} aria-label="História do final Venceu na Raça">

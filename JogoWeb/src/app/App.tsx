@@ -40,7 +40,7 @@ function LoadingScreen() {
 
 export function App() {
   const { route, navigate, backToMenu } = useGameNavigation()
-  const battleTest = import.meta.env.DEV
+  const battleTest = import.meta.env.DEV || import.meta.env.MODE === 'visual'
     ? new URLSearchParams(window.location.search).get('battleTest')
     : null
   const frameLayout =
