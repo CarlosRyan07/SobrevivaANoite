@@ -43,8 +43,33 @@ const cases = [
     wait: 150,
     interaction: 'hide-selection',
   },
+  {
+    name: 'mobile-battle-tutorial',
+    hash: '#/battle',
+    width: 390,
+    height: 844,
+    wait: 150,
+    showBattleTutorial: true,
+  },
   { name: 'mobile-battle', hash: '#/battle', width: 390, height: 844, wait: 150 },
+  {
+    name: 'mobile-battle-help',
+    hash: '#/battle',
+    width: 390,
+    height: 844,
+    wait: 150,
+    interaction: 'open-battle-help',
+  },
   { name: 'mobile-history', hash: '#/history', width: 390, height: 844, wait: 150 },
+  { name: 'mobile-endings-locked', hash: '#/endings', width: 390, height: 844, wait: 150 },
+  {
+    name: 'mobile-endings-unlocked',
+    hash: '#/endings',
+    width: 390,
+    height: 844,
+    wait: 150,
+    endings: ['raca', 'perfect'],
+  },
   { name: 'tablet-opening', hash: '', width: 546, height: 866, wait: 150 },
   { name: 'desktop-opening', hash: '', width: 1_440, height: 900, wait: 150 },
   { name: 'menu-80-percent-width', hash: '', width: 384, height: 800, wait: 150 },
@@ -69,6 +94,14 @@ const cases = [
   },
   { name: 'desktop-battle-zoom-110', hash: '#/battle', width: 1_745, height: 818, wait: 150 },
   { name: 'desktop-battle-zoom-150', hash: '#/battle', width: 1_280, height: 600, wait: 150 },
+  {
+    name: 'battle-tutorial-short-screen',
+    hash: '#/battle',
+    width: 1_280,
+    height: 600,
+    wait: 150,
+    showBattleTutorial: true,
+  },
   {
     name: 'battle-reference-spacing',
     hash: '#/battle',
@@ -99,12 +132,29 @@ try {
       if (request.resourceType() === 'image' && errorText === 'net::ERR_ABORTED') return
       errors.push(`${request.url()}: ${errorText}`)
     })
+    await page.evaluateOnNewDocument((showBattleTutorial) => {
+      if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+        const key = 'sobreviva-a-noite.battle-tutorial-seen.v1'
+        if (showBattleTutorial) localStorage.removeItem(key)
+        else localStorage.setItem(key, 'true')
+      }
+    }, visualCase.showBattleTutorial === true)
     if (visualCase.highCombo) {
       await page.evaluateOnNewDocument((highCombo) => {
         if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
           localStorage.setItem('sobreviva-a-noite.high-combo.v1', String(highCombo))
         }
       }, visualCase.highCombo)
+    }
+    if (visualCase.endings) {
+      await page.evaluateOnNewDocument((endings) => {
+        if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+          localStorage.setItem(
+            'sobreviva-a-noite.ending-progress.v1',
+            JSON.stringify({ discoveredEndings: endings }),
+          )
+        }
+      }, visualCase.endings)
     }
     await page.setViewport({
       width: visualCase.width,
@@ -194,6 +244,26 @@ try {
       interaction = { before, after }
       if (after.scrollTop <= 0) errors.push('A batalha não permitiu rolagem vertical em 175%.')
     }
+    if (visualCase.interaction === 'open-battle-help') {
+      const helpButton = await page.$('button[aria-label="Como jogar"]')
+      if (!helpButton) {
+        errors.push('Botão de ajuda da batalha não encontrado.')
+      } else {
+        await helpButton.click()
+        await new Promise((resolve) => setTimeout(resolve, 100))
+        const tutorial = await page.$('[aria-label="Como jogar a batalha"]')
+        const continueVisible = await page.$$eval(
+          'button',
+          (buttons) => buttons.some((button) => button.textContent?.includes('Continuar Batalha')),
+        )
+        interaction = {
+          tutorialVisible: tutorial !== null,
+          continueVisible,
+        }
+        if (!tutorial) errors.push('O botão de ajuda não abriu o tutorial.')
+        if (!continueVisible) errors.push('O tutorial reaberto não mostrou Continuar Batalha.')
+      }
+    }
 
     const metrics = await page.evaluate(() => {
       const frame = document.querySelector('main > section')
@@ -255,6 +325,16 @@ try {
           [...document.querySelectorAll('button')].some(
             (button) => button.textContent?.trim() === 'Iniciar Jogo',
           ),
+        endingsGallery: (() => {
+          const gallery = document.querySelector('[aria-label="Finais"]')
+          if (!(gallery instanceof HTMLElement)) return null
+          return {
+            cards: gallery.querySelectorAll('article').length,
+            images: gallery.querySelectorAll('article img').length,
+          }
+        })(),
+        battleTutorialVisible:
+          document.querySelector('[aria-label="Como jogar a batalha"]') instanceof HTMLElement,
       }
     })
 
@@ -340,6 +420,25 @@ try {
     }
     if (visualCase.hash === '' && !metrics.openingVisible) {
       errors.push('A arte ou o botão da abertura não ficou visível.')
+    }
+    if (visualCase.hash === '#/endings') {
+      const expectedImages = visualCase.endings?.length ?? 0
+      if (
+        !metrics.endingsGallery ||
+        metrics.endingsGallery.cards !== 3 ||
+        metrics.endingsGallery.images !== expectedImages
+      ) {
+        errors.push(
+          `Galeria de finais inesperada: ${JSON.stringify(metrics.endingsGallery)}; esperadas 3 cartas e ${expectedImages} imagens.`,
+        )
+      }
+    }
+    const tutorialExpected =
+      visualCase.showBattleTutorial === true || visualCase.interaction === 'open-battle-help'
+    if (metrics.battleTutorialVisible !== tutorialExpected) {
+      errors.push(
+        `Estado inesperado do tutorial da batalha: ${metrics.battleTutorialVisible}.`,
+      )
     }
     if (
       visualCase.hash === '' &&

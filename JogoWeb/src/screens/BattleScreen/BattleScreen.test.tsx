@@ -1,11 +1,61 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 
 import { AudioContext } from '../../contexts/audioContextValue'
+import { gamePersistence } from '../../persistence/gamePersistence'
 import type { AudioService } from '../../services/AudioService'
 import { BattleScreen } from './BattleScreen'
 
 describe('BattleScreen', () => {
-  beforeEach(() => localStorage.clear())
+  beforeEach(() => {
+    localStorage.clear()
+    gamePersistence.markBattleTutorialSeen()
+  })
+
+  it('pausa a primeira batalha e explica os dois esquemas de controles', async () => {
+    localStorage.removeItem('sobreviva-a-noite.battle-tutorial-seen.v1')
+    vi.useFakeTimers()
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const { unmount } = render(
+      <AudioContext value={audio}>
+        <BattleScreen onBackToMenu={vi.fn()} />
+      </AudioContext>,
+    )
+
+    const tutorial = screen.getByRole('dialog', { name: 'Como jogar a batalha' })
+    expect(tutorial).toBeInTheDocument()
+    expect(within(tutorial).getByText('CLIQUE DO MOUSE')).toBeInTheDocument()
+    expect(within(tutorial).getByText('ESPAÇO', { selector: 'kbd' })).toBeInTheDocument()
+    expect(within(tutorial).getByText(/deixando o inimigo vulnerável/)).toBeInTheDocument()
+    expect(tutorial).toHaveTextContent(
+      'Dica: Se esquive na direção que o inimigo levantar a mão.',
+    )
+    expect(tutorial).toHaveTextContent('Recomendo usar a opção 2.')
+
+    fireEvent.keyDown(window, { key: ' ', code: 'Space' })
+    await act(async () => vi.advanceTimersByTimeAsync(20_000))
+    expect(screen.getByRole('meter', { name: 'Vida de Psicopata' })).toHaveAttribute(
+      'aria-valuenow',
+      '700',
+    )
+    expect(screen.getByRole('meter', { name: 'Vida de Sobrevivente' })).toHaveAttribute(
+      'aria-valuenow',
+      '100',
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Começar Batalha' }))
+    expect(screen.queryByRole('dialog', { name: 'Como jogar a batalha' })).not.toBeInTheDocument()
+    expect(gamePersistence.hasSeenBattleTutorial()).toBe(true)
+    expect(audio.play).toHaveBeenCalledWith('buttonClick')
+
+    unmount()
+    render(
+      <AudioContext value={audio}>
+        <BattleScreen onBackToMenu={vi.fn()} />
+      </AudioContext>,
+    )
+    expect(screen.queryByRole('dialog', { name: 'Como jogar a batalha' })).not.toBeInTheDocument()
+    vi.useRealTimers()
+  })
 
   it('renderiza HUD, sprites e os três controles do combate', () => {
     const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
@@ -26,7 +76,32 @@ describe('BattleScreen', () => {
     expect(screen.getByRole('button', { name: 'Esquivar Esquerda' })).toHaveTextContent('←')
     expect(screen.getByRole('button', { name: 'Atacar' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Esquivar Direita' })).toHaveTextContent('→')
+    expect(screen.getByRole('button', { name: 'Como jogar' })).toHaveTextContent('?')
     expect(screen.queryByText('Esquivar', { exact: false })).not.toBeInTheDocument()
+  })
+
+  it('reabre o tutorial pelo botão de ajuda e permite continuar a batalha', () => {
+    vi.useFakeTimers()
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    render(
+      <AudioContext value={audio}>
+        <BattleScreen onBackToMenu={vi.fn()} />
+      </AudioContext>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Como jogar' }))
+
+    const tutorial = screen.getByRole('dialog', { name: 'Como jogar a batalha' })
+    expect(tutorial).toHaveTextContent(
+      'Dica: Se esquive na direção que o inimigo levantar a mão.',
+    )
+    expect(screen.getByRole('button', { name: 'Continuar Batalha' })).toBeInTheDocument()
+    expect(audio.play).toHaveBeenCalledWith('buttonClick')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar Batalha' }))
+    expect(screen.queryByRole('dialog', { name: 'Como jogar a batalha' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Como jogar' })).toBeInTheDocument()
+    vi.useRealTimers()
   })
 
   it('aciona a esquiva pelo teclado', () => {
@@ -130,7 +205,7 @@ describe('BattleScreen', () => {
       expect.stringContaining('rat_dance.gif'),
     )
     expect(screen.getByText('VOCÊ VENCEU!')).toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('Você liberou o código:ligeirinho')
+    expect(screen.queryByText(/Você liberou o código/)).not.toBeInTheDocument()
     expect(document.body.innerHTML).not.toContain('fortnite-dance.gif')
     vi.useRealTimers()
   })
@@ -213,7 +288,7 @@ describe('BattleScreen', () => {
     vi.useRealTimers()
   })
 
-  it('oferece o final Venceu na Raça com vida entre 40% e menos de 80%', async () => {
+  it('oferece o final Venceu na Raça para uma vitória não perfeita', async () => {
     vi.useFakeTimers()
     const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
     render(
@@ -249,8 +324,29 @@ describe('BattleScreen', () => {
     )
     expect(screen.getByText(/Seus amigos, surpresos/)).toBeInTheDocument()
     expect(screen.getByText('Você conseguiu se sobressair e vencer.')).toBeInTheDocument()
+    expect(screen.getByText(/Você liberou o código/)).toBeInTheDocument()
+    expect(screen.getByText('ligeirinho')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Tentar Novamente' })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Voltar ao Menu' })).toBeInTheDocument()
+    vi.useRealTimers()
+  })
+
+  it('sempre oferece Prosseguir após uma vitória normal com mais de 80 de vida', async () => {
+    vi.useFakeTimers()
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    render(
+      <AudioContext value={audio}>
+        <BattleScreen
+          onBackToMenu={vi.fn()}
+          gameOptions={{ initialEnemyHp: 1, initialPlayerHp: 85 }}
+        />
+      </AudioContext>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Atacar' }))
+    await act(async () => vi.advanceTimersByTimeAsync(5_500))
+
+    expect(screen.getByRole('button', { name: 'Prosseguir' })).toBeInTheDocument()
     vi.useRealTimers()
   })
 
@@ -261,7 +357,7 @@ describe('BattleScreen', () => {
       <AudioContext value={audio}>
         <BattleScreen
           onBackToMenu={vi.fn()}
-          gameOptions={{ initialEnemyHp: 1, initialParryCount: 3 }}
+          gameOptions={{ initialEnemyHp: 1, initialParryCount: 2 }}
         />
       </AudioContext>,
     )
@@ -284,11 +380,11 @@ describe('BattleScreen', () => {
     expect(screen.getByText('— É só isso?')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
-    expect(screen.getByText('— Relaxa, rapaziada...')).toBeInTheDocument()
+    expect(screen.getByText('— Relaxa, galera ta tudo bem...')).toBeInTheDocument()
     expect(screen.getByText('Hoje vai ter sopa.')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
-    expect(screen.getByText('— Sopa? De quê mesmo?')).toBeInTheDocument()
+    expect(screen.getByText('— Sopa? Sopa de quê mesmo?')).toBeInTheDocument()
     expect(audio.play).toHaveBeenCalledWith('perfectEnding')
     const perfectAudioPlayCount = vi.mocked(audio.play).mock.calls.filter(
       ([sound]) => sound === 'perfectEnding',

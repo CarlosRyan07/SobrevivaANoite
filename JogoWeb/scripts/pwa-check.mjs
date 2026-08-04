@@ -52,13 +52,14 @@ try {
   })
   await page.waitForNetworkIdle({ idleTime: 300 })
 
-  for (const route of ['hide', 'battle', 'history']) {
+  for (const route of ['hide', 'battle', 'history', 'endings']) {
     await page.evaluate((nextRoute) => {
       window.location.hash = `#/${nextRoute}`
     }, route)
-    const selector =
-      route === 'history'
-        ? '[aria-label="Histórico de Partidas"]'
+    const selector = route === 'history'
+      ? '[aria-label="Histórico de Partidas"]'
+      : route === 'endings'
+        ? '[aria-label="Finais"]'
         : `[aria-label="Modo ${route === 'hide' ? 'esconder' : 'batalha'}"]`
     await page.waitForSelector(selector)
     await page.waitForNetworkIdle({ idleTime: 300 })
@@ -78,6 +79,7 @@ try {
         },
       ]),
     )
+    window.location.hash = '#/history'
   })
   await page.reload({ waitUntil: 'networkidle0' })
   report.historyPersistedAfterReload = await page.evaluate(
@@ -95,6 +97,7 @@ try {
     { hash: '#/hide', selector: '[aria-label="Modo esconder"]', name: 'hide' },
     { hash: '#/battle', selector: '[aria-label="Modo batalha"]', name: 'battle' },
     { hash: '#/history', selector: '[aria-label="Histórico de Partidas"]', name: 'history' },
+    { hash: '#/endings', selector: '[aria-label="Finais"]', name: 'endings' },
   ]) {
     await page.evaluate((hash) => {
       window.location.hash = hash
@@ -136,5 +139,5 @@ if (report.errors.length > 0) {
   report.errors.forEach((error) => console.error(error))
   process.exitCode = 1
 } else {
-  console.log(`PWA offline aprovado para abertura, esconderijo, batalha, histórico e áudios. Relatório: ${reportPath}`)
+  console.log(`PWA offline aprovado para abertura, esconderijo, batalha, histórico, finais e áudios. Relatório: ${reportPath}`)
 }

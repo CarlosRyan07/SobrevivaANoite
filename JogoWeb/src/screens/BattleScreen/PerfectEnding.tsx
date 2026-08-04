@@ -109,7 +109,7 @@ export function PerfectEnding({ rewardCode, onBackToMenu }: PerfectEndingProps) 
 
           <div className={styles.finalCopy}>
             <h1>SOPA DE LOBO!</h1>
-            <p>Você venceu sem receber nenhum golpe e realizou pelo menos três parries.</p>
+            <p>Você venceu sem receber nenhum golpe e realizou pelo menos dois parries.</p>
           </div>
 
           {rewardCode && (

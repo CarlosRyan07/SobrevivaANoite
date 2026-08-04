@@ -1,4 +1,5 @@
 import type { GameCodeId } from '../codes/gameCodes'
+import type { GameEndingId } from '../endings/gameEndings'
 
 export type AttackDirection = 'left' | 'right'
 
@@ -13,7 +14,7 @@ export type EnemyAction =
 export type DodgeTiming = 'none' | 'early' | 'perfect'
 export type PlayerState = 'idle' | 'attacking' | 'dodging' | 'stunned'
 export type BattleResult = 'win' | 'lose' | null
-export type VictoryEnding = 'standard' | 'perfect' | 'raca' | 'pidao'
+export type VictoryEnding = GameEndingId
 
 export interface BattleState {
   playerHp: number

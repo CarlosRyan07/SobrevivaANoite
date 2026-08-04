@@ -1,6 +1,6 @@
 export const PLAYER_MAX_HP = 100
 export const PIDAO_ENDING_HP_THRESHOLD = PLAYER_MAX_HP * 0.4
-export const RACA_ENDING_HP_THRESHOLD = PLAYER_MAX_HP * 0.8
+export const PERFECT_ENDING_MIN_PARRIES = 2
 export const ENEMY_MAX_HP = 700
 export const PLAYER_DAMAGE = 15
 export const NORMAL_ATTACK_DAMAGE = 3

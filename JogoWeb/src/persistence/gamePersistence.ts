@@ -1,4 +1,5 @@
 import { GAME_CODES, isGameCodeId, type GameCodeId } from '../codes/gameCodes'
+import { isGameEndingId, type GameEndingId } from '../endings/gameEndings'
 
 export type GameMode = 'Batalha' | 'Esconde-Esconde'
 
@@ -19,6 +20,10 @@ export interface CodeProgress {
   activeCodes: GameCodeId[]
 }
 
+export interface EndingProgress {
+  discoveredEndings: GameEndingId[]
+}
+
 export interface GamePersistencePort {
   getHighCombo(): number
   updateHighCombo(newCombo: number): number
@@ -29,21 +34,32 @@ export interface GamePersistencePort {
   redeemCode(codeId: GameCodeId): boolean
   setCodeActive(codeId: GameCodeId, active: boolean): boolean
   isCodeActive(codeId: GameCodeId): boolean
+  getEndingProgress(): EndingProgress
+  discoverEnding(endingId: GameEndingId): boolean
+  hasSeenBattleTutorial(): boolean
+  markBattleTutorialSeen(): void
 }
 
 export const STORAGE_KEYS = {
   highCombo: 'sobreviva-a-noite.high-combo.v1',
   matchHistory: 'sobreviva-a-noite.match-history.v1',
   codeProgress: 'sobreviva-a-noite.code-progress.v1',
+  endingProgress: 'sobreviva-a-noite.ending-progress.v1',
+  battleTutorialSeen: 'sobreviva-a-noite.battle-tutorial-seen.v1',
 } as const
 
 export const MATCH_HISTORY_UPDATED_EVENT = 'sobreviva-a-noite:match-history-updated'
 export const CODE_PROGRESS_UPDATED_EVENT = 'sobreviva-a-noite:code-progress-updated'
+export const ENDING_PROGRESS_UPDATED_EVENT = 'sobreviva-a-noite:ending-progress-updated'
 
 const EMPTY_CODE_PROGRESS: CodeProgress = {
   discoveredCodes: [],
   redeemedCodes: [],
   activeCodes: [],
+}
+
+const EMPTY_ENDING_PROGRESS: EndingProgress = {
+  discoveredEndings: [],
 }
 
 function getBrowserStorage(): Storage | null {
@@ -94,10 +110,27 @@ function parseCodeProgress(value: unknown): CodeProgress {
   return { discoveredCodes, redeemedCodes, activeCodes }
 }
 
+function cloneEndingProgress(progress: EndingProgress): EndingProgress {
+  return { discoveredEndings: [...progress.discoveredEndings] }
+}
+
+function parseEndingProgress(value: unknown): EndingProgress {
+  if (typeof value !== 'object' || value === null) {
+    return cloneEndingProgress(EMPTY_ENDING_PROGRESS)
+  }
+  const progress = value as Record<string, unknown>
+  const discoveredEndings = Array.isArray(progress.discoveredEndings)
+    ? [...new Set(progress.discoveredEndings.filter(isGameEndingId))]
+    : []
+  return { discoveredEndings }
+}
+
 export class GamePersistence implements GamePersistencePort {
   private memoryHighCombo = 0
   private memoryMatches: MatchHistory[] = []
   private memoryCodeProgress = cloneCodeProgress(EMPTY_CODE_PROGRESS)
+  private memoryEndingProgress = cloneEndingProgress(EMPTY_ENDING_PROGRESS)
+  private memoryBattleTutorialSeen = false
 
   constructor(
     private storage: Storage | null = getBrowserStorage(),
@@ -226,6 +259,47 @@ export class GamePersistence implements GamePersistencePort {
     return this.getCodeProgress().activeCodes.includes(codeId)
   }
 
+  getEndingProgress(): EndingProgress {
+    if (!this.storage) return cloneEndingProgress(this.memoryEndingProgress)
+    try {
+      const raw = this.storage.getItem(STORAGE_KEYS.endingProgress)
+      if (!raw) return cloneEndingProgress(EMPTY_ENDING_PROGRESS)
+      return parseEndingProgress(JSON.parse(raw) as unknown)
+    } catch {
+      this.storage = null
+      return cloneEndingProgress(this.memoryEndingProgress)
+    }
+  }
+
+  discoverEnding(endingId: GameEndingId): boolean {
+    const progress = this.getEndingProgress()
+    if (progress.discoveredEndings.includes(endingId)) return false
+    this.saveEndingProgress({
+      discoveredEndings: [...progress.discoveredEndings, endingId],
+    })
+    return true
+  }
+
+  hasSeenBattleTutorial(): boolean {
+    if (!this.storage) return this.memoryBattleTutorialSeen
+    try {
+      return this.storage.getItem(STORAGE_KEYS.battleTutorialSeen) === 'true'
+    } catch {
+      this.storage = null
+      return this.memoryBattleTutorialSeen
+    }
+  }
+
+  markBattleTutorialSeen(): void {
+    this.memoryBattleTutorialSeen = true
+    if (!this.storage) return
+    try {
+      this.storage.setItem(STORAGE_KEYS.battleTutorialSeen, 'true')
+    } catch {
+      this.storage = null
+    }
+  }
+
   private saveCodeProgress(progress: CodeProgress): void {
     this.memoryCodeProgress = cloneCodeProgress(progress)
     if (this.storage) {
@@ -237,6 +311,20 @@ export class GamePersistence implements GamePersistencePort {
     }
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event(CODE_PROGRESS_UPDATED_EVENT))
+    }
+  }
+
+  private saveEndingProgress(progress: EndingProgress): void {
+    this.memoryEndingProgress = cloneEndingProgress(progress)
+    if (this.storage) {
+      try {
+        this.storage.setItem(STORAGE_KEYS.endingProgress, JSON.stringify(progress))
+      } catch {
+        this.storage = null
+      }
+    }
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event(ENDING_PROGRESS_UPDATED_EVENT))
     }
   }
 

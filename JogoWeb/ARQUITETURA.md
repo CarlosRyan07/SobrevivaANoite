@@ -7,11 +7,12 @@ O jogo é uma aplicação estática de uma página. React compõe as telas; hook
 ```text
 App / navegação por hash
 ├─ AudioProvider → AudioService (10 vozes)
-├─ GamePersistence → recorde + histórico local
+├─ GamePersistence → recorde + histórico + códigos + finais + tutorial locais
 └─ GameFrame (palco vertical)
    └─ Suspense / code splitting
       ├─ MenuScreen
       ├─ HistoryScreen → historyEngine
+      ├─ EndingsScreen → catálogo e progresso persistente
       ├─ HideScreen → useHideGame → hideEngine
       └─ BattleScreen → useBattleGame → battleEngine
 ```
@@ -24,7 +25,7 @@ App / navegação por hash
 - `src/app/navigation.ts`: converte hashes em `GameRoute` e retorna à lore.
 - `src/components/GameFrame`: palco responsivo para telas de conteúdo e palco lógico escalável para gameplay.
 
-Não há React Router porque quatro rotas por hash resolvem integralmente o fluxo com menos estado e sem configuração de servidor.
+Não há React Router porque cinco rotas principais por hash resolvem integralmente o fluxo com menos estado e sem configuração de servidor.
 
 ### Áudio
 
@@ -39,7 +40,7 @@ O Rat Dance cria uma voz muda no gesto do golpe final e torna a mesma voz audív
 
 ### Menu
 
-`MenuScreen` mantém abertura e lore montadas para reproduzir os fades cruzados. Lore usa lazy loading nas imagens. O hash `#/lore` modela retorno pelo navegador e `#/history` abre o histórico.
+`MenuScreen` mantém abertura e lore montadas para reproduzir os fades cruzados. Lore usa lazy loading nas imagens. O hash `#/lore` modela retorno pelo navegador, `#/history` abre o histórico e `#/endings` abre a galeria de finais.
 
 ### Persistência e histórico
 

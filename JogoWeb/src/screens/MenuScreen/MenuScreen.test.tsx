@@ -19,7 +19,7 @@ describe('MenuScreen', () => {
     const user = userEvent.setup()
     render(
       <AudioContext value={audio}>
-        <MenuScreen onBattle={vi.fn()} onHide={vi.fn()} onHistory={vi.fn()} />
+        <MenuScreen onBattle={vi.fn()} onHide={vi.fn()} onHistory={vi.fn()} onEndings={vi.fn()} />
       </AudioContext>,
     )
 
@@ -40,7 +40,7 @@ describe('MenuScreen', () => {
     const user = userEvent.setup()
     render(
       <AudioContext value={audio}>
-        <MenuScreen onBattle={onBattle} onHide={vi.fn()} onHistory={vi.fn()} />
+        <MenuScreen onBattle={onBattle} onHide={vi.fn()} onHistory={vi.fn()} onEndings={vi.fn()} />
       </AudioContext>,
     )
 
@@ -55,7 +55,7 @@ describe('MenuScreen', () => {
     const user = userEvent.setup()
     render(
       <AudioContext value={audio}>
-        <MenuScreen onBattle={vi.fn()} onHide={vi.fn()} onHistory={onHistory} />
+        <MenuScreen onBattle={vi.fn()} onHide={vi.fn()} onHistory={onHistory} onEndings={vi.fn()} />
       </AudioContext>,
     )
 
@@ -65,11 +65,26 @@ describe('MenuScreen', () => {
     expect(onHistory).toHaveBeenCalledOnce()
   })
 
+  it('abre a galeria de finais a partir da tela inicial', async () => {
+    const onEndings = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <AudioContext value={audio}>
+        <MenuScreen onBattle={vi.fn()} onHide={vi.fn()} onHistory={vi.fn()} onEndings={onEndings} />
+      </AudioContext>,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Finais' }))
+
+    expect(audio.play).toHaveBeenCalledWith('buttonClick')
+    expect(onEndings).toHaveBeenCalledOnce()
+  })
+
   it('mostra CÓDIGOS somente após a descoberta e permite resgatar e desativar', async () => {
     const user = userEvent.setup()
     const { rerender } = render(
       <AudioContext value={audio}>
-        <MenuScreen onBattle={vi.fn()} onHide={vi.fn()} onHistory={vi.fn()} />
+        <MenuScreen onBattle={vi.fn()} onHide={vi.fn()} onHistory={vi.fn()} onEndings={vi.fn()} />
       </AudioContext>,
     )
 
@@ -78,7 +93,7 @@ describe('MenuScreen', () => {
     gamePersistence.discoverCode('ligeirinho')
     rerender(
       <AudioContext value={audio}>
-        <MenuScreen onBattle={vi.fn()} onHide={vi.fn()} onHistory={vi.fn()} />
+        <MenuScreen onBattle={vi.fn()} onHide={vi.fn()} onHistory={vi.fn()} onEndings={vi.fn()} />
       </AudioContext>,
     )
     await user.click(screen.getByRole('button', { name: 'Códigos' }))

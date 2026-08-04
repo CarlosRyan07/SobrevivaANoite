@@ -3,9 +3,9 @@ import {
   DEFAULT_ATTACK_SPEED_PROFILE,
   ENEMY_MAX_HP,
   NORMAL_ATTACK_DAMAGE,
+  PERFECT_ENDING_MIN_PARRIES,
   PIDAO_ENDING_HP_THRESHOLD,
   PLAYER_MAX_HP,
-  RACA_ENDING_HP_THRESHOLD,
   STUNNED_ATTACK_DAMAGE,
   type AttackSpeedProfile,
 } from './battleConstants'
@@ -68,10 +68,15 @@ export function victoryEndingForPerformance({
   parryCount,
   hitsReceived,
 }: VictoryPerformance): VictoryEnding {
-  if (playerHp === PLAYER_MAX_HP && hitsReceived === 0 && parryCount >= 3) return 'perfect'
+  if (
+    playerHp === PLAYER_MAX_HP &&
+    hitsReceived === 0 &&
+    parryCount >= PERFECT_ENDING_MIN_PARRIES
+  ) {
+    return 'perfect'
+  }
   if (playerHp < PIDAO_ENDING_HP_THRESHOLD) return 'pidao'
-  if (playerHp < RACA_ENDING_HP_THRESHOLD) return 'raca'
-  return 'standard'
+  return 'raca'
 }
 
 export function nextAttackSpeed(

@@ -10,13 +10,15 @@ Concluído e validado:
 - modo esconder com seis locais reposicionados pela referência visual, IA, probabilidades, timers e sons;
 - resultado do esconderijo com reinício ou retorno ao menu;
 - modo batalha com dano, esquiva por setas/teclado, ataque por botão/Espaço/mouse, parry, combo, HUD e resultados;
-- vitória atualizada com bloqueio imediato, Rat Dance e finais alternativos: Pidão abaixo de 40% de vida, Venceu na Raça entre 40% e menos de 80% e Sopa de Lobo sem sofrer golpes e com pelo menos três parries;
+- vitória atualizada com bloqueio imediato, Rat Dance e finais alternativos: Pidão abaixo de 40% de vida, Sopa de Lobo sem sofrer golpes e com pelo menos dois parries, e Venceu na Raça para as demais vitórias;
+- tutorial exibido antes da primeira batalha, com os dois esquemas de teclado/mouse e recomendação de parry; o combate permanece pausado até a confirmação e o botão **?** permite reabrir a ajuda depois;
 - recorde de combo persistido entre sessões;
 - histórico de partidas com estatísticas dos dois modos e detalhes de batalha;
+- galeria de finais no menu, com nome e arte dos finais obtidos e três dicas progressivas para cada final ainda bloqueado;
 - assets Android sincronizados, com a imagem da lore corrigida e o GIF não utilizado do Fortnite removido;
 - layout vertical responsivo, com a arte preenchendo e escurecendo as laterais da abertura;
 - PWA e funcionamento offline após o cache dos modos;
-- 85 testes aprovados em 17 arquivos;
+- 97 testes aprovados em 18 arquivos;
 - lint, TypeScript estrito, build, verificação visual e verificação offline aprovados.
 
 A lógica do aplicativo Android fora de `JogoWeb` não foi modificada pela migração. A imagem `lore_fogueira.jpg` corrigida pelo usuário foi sincronizada entre Android e Web, e o GIF não utilizado do Fortnite foi removido das duas versões.
@@ -53,7 +55,7 @@ Os arquivos finais ficam em `dist/` e podem ser hospedados como site estático.
 | `npm run test` | Vitest em modo interativo |
 | `npm run test:run` | Suíte completa uma vez |
 | `npm run assets:optimize` | Recria WebPs lossless e ícones PWA |
-| `npm run visual:check` | Build + screenshots/asserts em 18 casos visuais/interativos, incluindo extremos de zoom |
+| `npm run visual:check` | Build + screenshots/asserts em 23 casos visuais/interativos, incluindo tutorial, ajuda da batalha, galeria de finais e extremos de zoom |
 | `npm run pwa:check` | Build + teste real de persistência e funcionamento offline de telas/áudio |
 
 ### Teste manual rápido dos finais
@@ -70,7 +72,7 @@ O atalho acima testa o Pidão com 35 de vida. Para testar Venceu na Raça com 70
 http://localhost:5173/?battleTest=raca#/battle
 ```
 
-Para testar o final perfeito Sopa de Lobo, com vida intacta e três parries preparados, use:
+Para testar o final perfeito Sopa de Lobo, com vida intacta e dois parries preparados, use:
 
 ```text
 http://localhost:5173/?battleTest=perfect#/battle
@@ -104,7 +106,7 @@ Os WebPs reduziram 28,3 MiB de PNGs para 16,4 MiB. A conversão é automaticamen
 
 ## Dados locais
 
-O recorde de combo e o histórico são armazenados no `localStorage` do navegador, equivalendo ao DataStore e ao Room do Android para este volume de dados. Eles permanecem após fechar/reabrir o site e a interface é notificada imediatamente após cada resultado. Os dados pertencem à origem usada (protocolo, domínio e porta); por isso o servidor de desenvolvimento usa sempre `localhost:5173`. Limpar os dados do site também limpa o histórico.
+O recorde de combo, o histórico, os códigos, os finais obtidos e a confirmação do tutorial são armazenados no `localStorage` do navegador. Eles permanecem após fechar/reabrir o site e a interface é notificada imediatamente após cada resultado. Os dados pertencem à origem usada (protocolo, domínio e porta); por isso o servidor de desenvolvimento usa sempre `localhost:5173`. Limpar os dados do site também limpa esse progresso.
 
 ## Documentação
 

@@ -58,11 +58,16 @@
   right: calc(24px + env(safe-area-inset-right, 0px));
 }
 
+.endingsButton,
 .codesButton {
   position: absolute;
   z-index: 2;
   top: calc(24px + env(safe-area-inset-top, 0px));
   left: calc(24px + env(safe-area-inset-left, 0px));
+}
+
+.codesButton {
+  top: calc(82px + env(safe-area-inset-top, 0px));
 }
 
 .startButton:active {

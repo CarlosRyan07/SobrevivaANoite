@@ -10,10 +10,10 @@ import { ENEMY_MAX_HP, PLAYER_MAX_HP } from '../../battle/battleConstants'
 import { comboColor } from '../../battle/battleEngine'
 import { battleActionForKey } from '../../battle/battleKeyboard'
 import { useBattleGame, type BattleGameOptions } from '../../battle/useBattleGame'
-import { GAME_CODES } from '../../codes/gameCodes'
 import { HpBar } from '../../components/HpBar/HpBar'
 import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
+import { gamePersistence } from '../../persistence/gamePersistence'
 import { images, preloadImages } from '../../services/assetPaths'
 import styles from './BattleScreen.module.css'
 import { PerfectEnding } from './PerfectEnding'
@@ -29,7 +29,14 @@ type ComboStyle = CSSProperties & { '--combo-color': string }
 
 export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
   const audio = useAudio()
-  const { state, attack, dodgeLeft, dodgeRight, retry } = useBattleGame(audio, gameOptions)
+  const persistence = gameOptions?.persistence ?? gamePersistence
+  const [tutorialRequiredAtMount] = useState(() => !persistence.hasSeenBattleTutorial())
+  const [showTutorial, setShowTutorial] = useState(tutorialRequiredAtMount)
+  const [firstTutorial, setFirstTutorial] = useState(tutorialRequiredAtMount)
+  const { state, attack, dodgeLeft, dodgeRight, retry, start, pause } = useBattleGame(audio, {
+    ...gameOptions,
+    startPaused: tutorialRequiredAtMount,
+  })
   const [showEndingStory, setShowEndingStory] = useState(false)
   const comboStyle: ComboStyle = { '--combo-color': comboColor(state.playerComboStep) }
   const victorySequenceActive = state.enemyAction.kind === 'defeated'
@@ -48,13 +55,29 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
     setShowEndingStory(true)
   }, [audio])
 
+  const handleStartBattle = useCallback(() => {
+    persistence.markBattleTutorialSeen()
+    audio.play('buttonClick')
+    setShowTutorial(false)
+    setFirstTutorial(false)
+    start()
+  }, [audio, persistence, start])
+
+  const handleOpenTutorial = useCallback(() => {
+    audio.play('buttonClick')
+    pause()
+    setFirstTutorial(false)
+    setShowTutorial(true)
+  }, [audio, pause])
+
   const handlePointerAttack = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (showTutorial) return
       if (event.pointerType !== 'mouse' || event.button !== 0) return
       if (event.target instanceof Element && event.target.closest('button')) return
       attack()
     },
-    [attack],
+    [attack, showTutorial],
   )
 
   useEffect(() => {
@@ -89,6 +112,7 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
 
   useEffect(() => {
     const handleBattleKey = (event: KeyboardEvent) => {
+      if (showTutorial) return
       if (event.altKey || event.ctrlKey || event.metaKey || event.repeat) return
       if (event.target instanceof Element && event.target.closest('button, input, textarea, select')) {
         return
@@ -105,7 +129,7 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
 
     window.addEventListener('keydown', handleBattleKey)
     return () => window.removeEventListener('keydown', handleBattleKey)
-  }, [attack, dodgeLeft, dodgeRight])
+  }, [attack, dodgeLeft, dodgeRight, showTutorial])
 
   return (
     <div className={styles.root} aria-label="Modo batalha" onPointerDown={handlePointerAttack}>
@@ -115,6 +139,18 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
         <div className={styles.highScore} aria-label={`Recorde de combo ${state.highCombo}`}>
           RECORDE: {state.highCombo}
         </div>
+      )}
+
+      {state.gameResult === null && !victorySequenceActive && !showTutorial && (
+        <button
+          className={styles.helpButton}
+          type="button"
+          onClick={handleOpenTutorial}
+          aria-label="Como jogar"
+          title="Ver controles e dica de parry"
+        >
+          ?
+        </button>
       )}
 
       {state.enemyHp > 0 && state.gameResult !== 'win' && (
@@ -213,12 +249,6 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
 
       {state.gameResult === 'win' && !showEndingStory && (
         <div className={styles.winOverlay}>
-          {state.rewardCode && (
-            <p className={styles.codeReward} role="status">
-              Você liberou o código:
-              <strong>{GAME_CODES[state.rewardCode].code.toLowerCase()}</strong>
-            </p>
-          )}
           <h1>VOCÊ VENCEU!</h1>
           <div className={`${styles.winActions} ${hasStoryEnding ? styles.storyChoiceActions : ''}`}>
             {hasStoryEnding && (
@@ -246,6 +276,58 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
             </WordButton>
           </div>
         </div>
+      )}
+
+      {showTutorial && (
+        <section
+          className={styles.tutorialOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Como jogar a batalha"
+        >
+          <div className={styles.tutorialPanel}>
+            <h1>COMO JOGAR</h1>
+            <p className={styles.tutorialIntro}>Você pode utilizar:</p>
+
+            <div className={styles.tutorialOptions}>
+              <div className={styles.tutorialOption}>
+                <span className={styles.optionTitle}>OPÇÃO 1</span>
+                <div className={styles.keyLine}>
+                  <kbd>←</kbd><kbd>→</kbd><span>para esquivar</span>
+                </div>
+                <div className={styles.keyLine}>
+                  <kbd className={styles.wideKey}>CLIQUE DO MOUSE</kbd><span>para atacar</span>
+                </div>
+              </div>
+
+              <span className={styles.orLabel}>OU</span>
+
+              <div className={styles.tutorialOption}>
+                <span className={styles.optionTitle}>OPÇÃO 2</span>
+                <div className={styles.keyLine}>
+                  <kbd>A</kbd><kbd>D</kbd><span>para esquivar</span>
+                </div>
+                <div className={styles.keyLine}>
+                  <kbd className={styles.wideKey}>ESPAÇO</kbd><span>para atacar</span>
+                </div>
+              </div>
+            </div>
+
+            <p className={styles.parryTip}>
+              Se você esquivar no momento correto, irá realizar um <strong>parry</strong>,
+              deixando o inimigo vulnerável.
+            </p>
+            <p className={styles.parryTip}>
+            <strong>Dica</strong>: Se esquive na direção que o inimigo levantar a mão.
+            </p>
+            <p className={styles.parryTip}>
+               Recomendo usar a <strong>opção 2</strong>.
+            </p>
+            <WordButton type="button" onClick={handleStartBattle}>
+              {firstTutorial ? 'Começar Batalha' : 'Continuar Batalha'}
+            </WordButton>
+          </div>
+        </section>
       )}
     </div>
   )

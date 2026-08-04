@@ -39,16 +39,16 @@ describe('engine da batalha', () => {
     const ending = (playerHp: number, parryCount = 0, hitsReceived = 0) =>
       victoryEndingForPerformance({ playerHp, parryCount, hitsReceived })
 
-    expect(ending(100)).toBe('standard')
-    expect(ending(80)).toBe('standard')
+    expect(ending(100)).toBe('raca')
+    expect(ending(80)).toBe('raca')
     expect(ending(79)).toBe('raca')
     expect(ending(40)).toBe('raca')
     expect(ending(39)).toBe('pidao')
     expect(ending(0)).toBe('pidao')
-    expect(ending(100, 3)).toBe('perfect')
-    expect(ending(100, 2)).toBe('standard')
-    expect(ending(85, 3)).toBe('standard')
-    expect(ending(100, 3, 1)).toBe('standard')
+    expect(ending(100, 2)).toBe('perfect')
+    expect(ending(100, 1)).toBe('raca')
+    expect(ending(85, 2)).toBe('raca')
+    expect(ending(100, 2, 1)).toBe('raca')
   })
 
   it('usa o ritmo antigo por padrão e o ritmo rápido com LIGEIRINHO', () => {

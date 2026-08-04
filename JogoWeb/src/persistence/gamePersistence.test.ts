@@ -1,4 +1,5 @@
 import {
+  ENDING_PROGRESS_UPDATED_EVENT,
   GamePersistence,
   MATCH_HISTORY_UPDATED_EVENT,
   STORAGE_KEYS,
@@ -97,5 +98,41 @@ describe('persistência do jogo', () => {
       redeemedCodes: [],
       activeCodes: [],
     })
+  })
+
+  it('persiste os finais obtidos sem duplicar e avisa a interface', () => {
+    const persistence = new GamePersistence(localStorage)
+    const listener = vi.fn()
+    window.addEventListener(ENDING_PROGRESS_UPDATED_EVENT, listener)
+
+    expect(persistence.discoverEnding('raca')).toBe(true)
+    expect(persistence.discoverEnding('raca')).toBe(false)
+    expect(persistence.discoverEnding('perfect')).toBe(true)
+
+    expect(new GamePersistence(localStorage).getEndingProgress()).toEqual({
+      discoveredEndings: ['raca', 'perfect'],
+    })
+    expect(listener).toHaveBeenCalledTimes(2)
+    window.removeEventListener(ENDING_PROGRESS_UPDATED_EVENT, listener)
+  })
+
+  it('ignora finais desconhecidos armazenados', () => {
+    localStorage.setItem(
+      STORAGE_KEYS.endingProgress,
+      JSON.stringify({ discoveredEndings: ['pidao', 'inexistente'] }),
+    )
+
+    expect(new GamePersistence(localStorage).getEndingProgress()).toEqual({
+      discoveredEndings: ['pidao'],
+    })
+  })
+
+  it('registra que o tutorial da batalha já foi visto', () => {
+    const persistence = new GamePersistence(localStorage)
+
+    expect(persistence.hasSeenBattleTutorial()).toBe(false)
+    persistence.markBattleTutorialSeen()
+
+    expect(new GamePersistence(localStorage).hasSeenBattleTutorial()).toBe(true)
   })
 })

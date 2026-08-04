@@ -16,6 +16,9 @@ const BattleScreen = lazy(() =>
 const HistoryScreen = lazy(() =>
   import('../screens/HistoryScreen/HistoryScreen').then((module) => ({ default: module.HistoryScreen })),
 )
+const EndingsScreen = lazy(() =>
+  import('../screens/EndingsScreen/EndingsScreen').then((module) => ({ default: module.EndingsScreen })),
+)
 
 function LoadingScreen() {
   return (
@@ -58,6 +61,7 @@ export function App() {
               onHide={() => navigate('hide')}
               onBattle={() => navigate('battle')}
               onHistory={() => navigate('history')}
+              onEndings={() => navigate('endings')}
             />
           )}
           {route === 'hide' && <HideScreen onBackToMenu={backToMenu} />}
@@ -69,7 +73,7 @@ export function App() {
                     gameOptions: {
                       initialEnemyHp: 1,
                       ...(battleTest === 'perfect'
-                        ? { initialPlayerHp: 100, initialParryCount: 3 }
+                        ? { initialPlayerHp: 100, initialParryCount: 2 }
                         : battleTest === 'pidao'
                         ? { initialPlayerHp: 35 }
                         : battleTest === 'raca'
@@ -81,6 +85,7 @@ export function App() {
             />
           )}
           {route === 'history' && <HistoryScreen onBack={() => navigate('menu')} />}
+          {route === 'endings' && <EndingsScreen onBack={() => navigate('menu')} />}
         </Suspense>
       </GameFrame>
     </AudioProvider>

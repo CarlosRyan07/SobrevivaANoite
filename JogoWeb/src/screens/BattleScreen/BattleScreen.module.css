@@ -7,26 +7,153 @@
   inset: 0;
 }
 
-.codeReward {
+.tutorialOverlay {
   position: absolute;
-  z-index: 1;
-  top: 145px;
-  right: 16px;
-  left: 16px;
-  margin: 0;
+  z-index: 30;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: grid;
+  height: 100dvh;
+  max-height: 100%;
+  place-items: center;
+  padding: 22px;
+  background: rgb(0 0 0 / 82%);
   color: #fff;
-  font-family: 'Bungee', 'Arial Black', sans-serif;
-  font-size: 19px;
-  font-weight: 400;
-  line-height: 1.3;
-  text-align: center;
-  text-shadow: 0 2px 4px #000;
-  animation: codeRewardReveal 420ms cubic-bezier(0.2, 0.8, 0.2, 1.2) both;
+  animation: fadeIn 260ms ease both;
 }
 
-.codeReward strong {
-  display: block;
+.tutorialPanel {
+  display: flex;
+  overflow-y: auto;
+  width: min(100%, 400px);
+  max-height: 100%;
+  align-items: center;
+  flex-direction: column;
+  padding: 24px 18px;
+  border: 2px solid #d6a52b;
+  border-radius: 16px;
+  background: rgb(5 14 36 / 96%);
+  box-shadow: 0 10px 0 rgb(0 0 0 / 45%);
+  text-align: center;
+}
+
+.tutorialPanel h1 {
+  margin: 0;
+  color: #fff1bd;
+  -webkit-text-stroke: 1px #0a2e75;
+  paint-order: stroke fill;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 30px;
   font-weight: 400;
+  text-shadow: 0 4px 0 #071d4f;
+}
+
+.tutorialIntro {
+  margin: 12px 0 14px;
+  font-size: 16px;
+}
+
+.tutorialOptions {
+  display: grid;
+  width: 100%;
+  gap: 10px;
+}
+
+.tutorialOption {
+  display: grid;
+  gap: 9px;
+  padding: 12px;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 11px;
+  background: rgb(11 34 79 / 76%);
+}
+
+.optionTitle,
+.orLabel {
+  color: #f7cf55;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 11px;
+}
+
+.keyLine {
+  display: flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.keyLine kbd {
+  display: grid;
+  min-width: 31px;
+  min-height: 30px;
+  place-items: center;
+  padding: 4px 7px;
+  border: 1px solid #f1f3f8;
+  border-radius: 6px;
+  background: #20293d;
+  box-shadow: 0 3px 0 #080b12;
+  color: #fff;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 12px;
+}
+
+.keyLine .wideKey {
+  min-width: 102px;
+  font-size: 9px;
+}
+
+.keyLine span {
+  font-size: 14px;
+}
+
+.orLabel {
+  line-height: 1;
+}
+
+.parryTip {
+  margin: 16px 0;
+  color: #e7e9f1;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.parryTip strong {
+  color: #f7cf55;
+}
+
+.tutorialPanel > button {
+  min-width: 210px;
+  font-size: 13px;
+}
+
+@media (max-height: 700px) {
+  .tutorialPanel {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+
+  .tutorialPanel h1 {
+    font-size: 25px;
+  }
+
+  .tutorialIntro {
+    margin: 7px 0 9px;
+  }
+
+  .tutorialOptions,
+  .tutorialOption {
+    gap: 6px;
+  }
+
+  .tutorialOption {
+    padding: 8px;
+  }
+
+  .parryTip {
+    margin: 10px 0;
+  }
 }
 
 .root {
@@ -61,6 +188,37 @@
   font-size: 16px;
   font-weight: 400;
   letter-spacing: 0.5px;
+}
+
+.helpButton {
+  position: absolute;
+  z-index: 8;
+  top: calc(20px + env(safe-area-inset-top, 0px));
+  left: calc(16px + env(safe-area-inset-left, 0px));
+  display: grid;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  min-height: 36px;
+  place-items: center;
+  padding: 0;
+  border: 2px solid #d6a52b;
+  border-radius: 50%;
+  background: #0b347f;
+  box-shadow: 0 3px 0 #020b1d;
+  color: #fff1bd;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.helpButton:hover {
+  background: #10469f;
+}
+
+.helpButton:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #020b1d;
 }
 
 .combo {
@@ -297,18 +455,6 @@
   to { opacity: 1; }
 }
 
-@keyframes codeRewardReveal {
-  from {
-    opacity: 0;
-    transform: scale(0.65);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 @media (max-height: 760px) and (max-width: 599px) {
   .topUi {
     top: 100px;
@@ -332,11 +478,6 @@
 
   .winOverlay h1 {
     top: 120px;
-  }
-
-  .codeReward {
-    top: 56px;
-    font-size: 17px;
   }
 
   .winActions {
@@ -374,7 +515,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .combo,
-  .codeReward,
   .loseOverlay,
   .winOverlay {
     transition-duration: 1ms;

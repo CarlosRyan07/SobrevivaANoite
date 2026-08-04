@@ -116,7 +116,7 @@ describe('useBattleGame', () => {
     expect(result.current.state.enemyHp).toBe(0)
     expect(result.current.state.enemyAction).toEqual({ kind: 'defeated' })
     expect(result.current.state.rewardCode).toBe('ligeirinho')
-    expect(result.current.state.victoryEnding).toBe('standard')
+    expect(result.current.state.victoryEnding).toBe('raca')
     expect(result.current.state.enemyImage).toContain('psicopata_atordoado.webp')
     expect(result.current.state.gameResult).toBeNull()
     expect(audio.play).toHaveBeenCalledWith('ratDanceMusic', { prepareMuted: true })
@@ -162,6 +162,7 @@ describe('useBattleGame', () => {
     act(() => result.current.attack())
 
     expect(result.current.state.victoryEnding).toBe('pidao')
+    expect(gamePersistence.getEndingProgress()).toEqual({ discoveredEndings: ['pidao'] })
     expect(audio.play).toHaveBeenCalledWith('ratDanceMusic', { prepareMuted: true })
 
     await act(async () => vi.advanceTimersByTimeAsync(5_500))
@@ -201,19 +202,69 @@ describe('useBattleGame', () => {
     middleBattle.unmount()
   })
 
-  it('prioriza o final perfeito com três parries e nenhum golpe recebido', () => {
+  it('ativa o final Venceu na Raça acima de 80% quando a vitória não é perfeita', () => {
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const battle = renderHook(() =>
+      useBattleGame(audio, {
+        random: leftAttackRandom,
+        initialEnemyHp: 1,
+        initialPlayerHp: 85,
+      }),
+    )
+
+    act(() => battle.result.current.attack())
+
+    expect(battle.result.current.state.victoryEnding).toBe('raca')
+    expect(gamePersistence.getEndingProgress()).toEqual({ discoveredEndings: ['raca'] })
+    battle.unmount()
+  })
+
+  it('mantém a IA e os controles pausados até o início solicitado', async () => {
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const { result, unmount } = renderHook(() =>
+      useBattleGame(audio, { random: leftAttackRandom, startPaused: true }),
+    )
+
+    act(() => {
+      result.current.attack()
+      result.current.dodgeLeft()
+    })
+    await act(async () => vi.advanceTimersByTimeAsync(20_000))
+
+    expect(result.current.state.enemyHp).toBe(700)
+    expect(result.current.state.playerHp).toBe(100)
+    expect(result.current.state.playerState).toBe('idle')
+
+    act(() => result.current.start())
+    await act(async () => vi.advanceTimersByTimeAsync(4_000))
+    expect(result.current.state.enemyAction.kind).not.toBe('idle')
+
+    act(() => result.current.pause())
+    const hpAtPause = result.current.state.playerHp
+    expect(result.current.state.enemyAction.kind).toBe('idle')
+    await act(async () => vi.advanceTimersByTimeAsync(20_000))
+    expect(result.current.state.playerHp).toBe(hpAtPause)
+
+    act(() => result.current.start())
+    await act(async () => vi.advanceTimersByTimeAsync(4_000))
+    expect(result.current.state.enemyAction.kind).not.toBe('idle')
+    unmount()
+  })
+
+  it('prioriza o final perfeito com dois parries e nenhum golpe recebido', () => {
     const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
     const perfectBattle = renderHook(() =>
       useBattleGame(audio, {
         random: leftAttackRandom,
         initialEnemyHp: 1,
-        initialParryCount: 3,
+        initialParryCount: 2,
       }),
     )
 
     act(() => perfectBattle.result.current.attack())
     expect(perfectBattle.result.current.state.playerHp).toBe(100)
     expect(perfectBattle.result.current.state.victoryEnding).toBe('perfect')
+    expect(gamePersistence.getEndingProgress()).toEqual({ discoveredEndings: ['perfect'] })
     perfectBattle.unmount()
   })
 
@@ -232,6 +283,7 @@ describe('useBattleGame', () => {
     act(() => result.current.attack())
 
     expect(result.current.state.victoryEnding).toBe('pidao')
+    expect(gamePersistence.getEndingProgress()).toEqual({ discoveredEndings: ['pidao'] })
     await act(async () => vi.advanceTimersByTimeAsync(5_500))
     expect(result.current.state.gameResult).toBe('win')
     unmount()

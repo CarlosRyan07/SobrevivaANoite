@@ -15,6 +15,7 @@ interface MenuScreenProps {
   onBattle: () => void
   onHide: () => void
   onHistory: () => void
+  onEndings: () => void
   persistence?: GamePersistencePort
 }
 
@@ -26,6 +27,7 @@ export function MenuScreen({
   onBattle,
   onHide,
   onHistory,
+  onEndings,
   persistence = gamePersistence,
 }: MenuScreenProps) {
   const audio = useAudio()
@@ -98,6 +100,14 @@ export function MenuScreen({
           tabIndex={showLore || showCodes ? -1 : 0}
         >
           Histórico
+        </WordButton>
+        <WordButton
+          className={styles.endingsButton}
+          type="button"
+          onClick={() => chooseMode(onEndings)}
+          tabIndex={showLore || showCodes ? -1 : 0}
+        >
+          Finais
         </WordButton>
         {codesAvailable && (
           <WordButton

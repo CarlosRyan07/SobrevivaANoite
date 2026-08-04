@@ -31,6 +31,7 @@ export interface BattleGameOptions {
   initialEnemyHp?: number
   initialPlayerHp?: number
   initialParryCount?: number
+  startPaused?: boolean
   persistence?: GamePersistencePort
 }
 
@@ -44,6 +45,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
   const initialEnemyHp = options.initialEnemyHp
   const initialPlayerHp = options.initialPlayerHp
   const initialParryCount = Math.max(Math.trunc(options.initialParryCount ?? 0), 0)
+  const startPaused = options.startPaused ?? false
   const persistence = options.persistence ?? gamePersistence
   const [attackSpeedProfile] = useState(() =>
     persistence.isCodeActive('ligeirinho')
@@ -66,6 +68,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
   const hitsReceived = useRef(0)
   const resultSaved = useRef(false)
   const attackSpeed = useRef(attackSpeedProfile.initial)
+  const battleStarted = useRef(!startPaused)
 
   const commit = useCallback((update: (current: BattleState) => BattleState) => {
     const nextState = update(stateRef.current)
@@ -112,6 +115,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
       parryCount: parryCount.current,
       hitsReceived: hitsReceived.current,
     })
+    persistence.discoverEnding(victoryEnding)
     audio.stop('ratDanceMusic')
     audio.stop('pidaoEnding')
     audio.stop('perfectEnding')
@@ -313,7 +317,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
 
   useEffect(() => {
     const activeVictoryControllers = victoryControllers.current
-    startEnemyAi()
+    if (battleStarted.current) startEnemyAi()
     return () => {
       abortController(aiController.current)
       abortController(playerActionController.current)
@@ -327,10 +331,38 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
     }
   }, [audio, startEnemyAi])
 
+  const start = useCallback(() => {
+    if (battleStarted.current || stateRef.current.gameResult !== null) return
+    battleStarted.current = true
+    startEnemyAi()
+  }, [startEnemyAi])
+
+  const pause = useCallback(() => {
+    if (!battleStarted.current || stateRef.current.gameResult !== null) return
+    battleStarted.current = false
+    abortController(aiController.current)
+    abortController(playerActionController.current)
+    abortController(enemyHitController.current)
+    abortController(comboController.current)
+    comboStep.current = 0
+    resetComboSpeed()
+    playerDodgeIntent.current = null
+    dodgeTiming.current = 'none'
+    commit((current) => ({
+      ...current,
+      playerImage: images.survivor.idle,
+      playerState: 'idle',
+      enemyAction: { kind: 'idle' },
+      enemyImage: images.enemy.idle,
+      playerComboStep: 0,
+    }))
+  }, [commit, resetComboSpeed])
+
   const dodge = useCallback(
     (direction: AttackDirection) => {
       const current = stateRef.current
       if (
+        !battleStarted.current ||
         current.gameResult !== null ||
         current.enemyHp <= 0 ||
         current.enemyAction.kind === 'defeated' ||
@@ -382,6 +414,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
   const attack = useCallback(() => {
     const current = stateRef.current
     if (
+      !battleStarted.current ||
       current.gameResult !== null ||
       current.enemyHp <= 0 ||
       current.enemyAction.kind === 'defeated' ||
@@ -522,5 +555,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
     dodgeLeft,
     dodgeRight,
     retry,
+    start,
+    pause,
   }
 }
