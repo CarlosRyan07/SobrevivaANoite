@@ -15,7 +15,13 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage --maxWorkers=2",
+    "test:coverage": "vitest run --coverage --maxWorkers=1",
+    "test:e2e": "playwright test",
+    "test:e2e:chromium": "playwright test --project=desktop-chromium",
+    "test:e2e:headed": "playwright test --project=desktop-chromium --headed",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --project=desktop-chromium --debug",
+    "test:e2e:report": "playwright show-report .artifacts/playwright/report",
     "typecheck": "tsc -b --pretty false",
     "visual:check": "npm run build:visual && node scripts/visual-check.mjs",
     "pwa:check": "npm run build && node scripts/pwa-check.mjs"
@@ -27,6 +33,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@playwright/test": "^1.62.1",
     "@testing-library/jest-dom": "7.0.0",
     "@testing-library/react": "16.3.2",
     "@testing-library/user-event": "14.6.1",

@@ -72,6 +72,7 @@ export function App() {
                 ? {
                     gameOptions: {
                       initialEnemyHp: 1,
+                      enemyAiEnabled: false,
                       ...(battleTest === 'perfect'
                         ? { initialPlayerHp: 100, initialParryCount: 2 }
                         : battleTest === 'pidao'

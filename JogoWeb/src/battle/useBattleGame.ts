@@ -32,6 +32,7 @@ export interface BattleGameOptions {
   initialPlayerHp?: number
   initialParryCount?: number
   startPaused?: boolean
+  enemyAiEnabled?: boolean
   persistence?: GamePersistencePort
 }
 
@@ -46,6 +47,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
   const initialPlayerHp = options.initialPlayerHp
   const initialParryCount = Math.max(Math.trunc(options.initialParryCount ?? 0), 0)
   const startPaused = options.startPaused ?? false
+  const enemyAiEnabled = options.enemyAiEnabled ?? true
   const persistence = options.persistence ?? gamePersistence
   const [attackSpeedProfile] = useState(() =>
     persistence.isCodeActive('ligeirinho')
@@ -317,7 +319,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
 
   useEffect(() => {
     const activeVictoryControllers = victoryControllers.current
-    if (battleStarted.current) startEnemyAi()
+    if (battleStarted.current && enemyAiEnabled) startEnemyAi()
     return () => {
       abortController(aiController.current)
       abortController(playerActionController.current)
@@ -329,13 +331,13 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
       audio.stop('pidaoEnding')
       audio.stop('perfectEnding')
     }
-  }, [audio, startEnemyAi])
+  }, [audio, enemyAiEnabled, startEnemyAi])
 
   const start = useCallback(() => {
     if (battleStarted.current || stateRef.current.gameResult !== null) return
     battleStarted.current = true
-    startEnemyAi()
-  }, [startEnemyAi])
+    if (enemyAiEnabled) startEnemyAi()
+  }, [enemyAiEnabled, startEnemyAi])
 
   const pause = useCallback(() => {
     if (!battleStarted.current || stateRef.current.gameResult !== null) return
@@ -538,9 +540,10 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
     )
     stateRef.current = nextState
     setRenderedState(nextState)
-    startEnemyAi()
+    if (enemyAiEnabled) startEnemyAi()
   }, [
     audio,
+    enemyAiEnabled,
     initialEnemyHp,
     initialParryCount,
     initialPlayerHp,

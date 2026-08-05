@@ -14,6 +14,8 @@ class FakeAudio extends EventTarget {
 }
 
 describe('AudioService', () => {
+  afterEach(() => vi.useRealTimers())
+
   it('preserva no máximo dez streams e interrompe o mais antigo', () => {
     const created: FakeAudio[] = []
     const service = new AudioService(10, () => {
@@ -99,6 +101,5 @@ describe('AudioService', () => {
     expect(audio.volume).toBe(0)
     expect(audio.pause).toHaveBeenCalledOnce()
     expect(service.activeStreamCount).toBe(0)
-    vi.useRealTimers()
   })
 })

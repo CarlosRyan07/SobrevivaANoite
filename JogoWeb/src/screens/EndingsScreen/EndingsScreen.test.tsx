@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 import { GamePersistence } from '../../persistence/gamePersistence'
 import { EndingsScreen } from './EndingsScreen'
@@ -6,8 +7,9 @@ import { EndingsScreen } from './EndingsScreen'
 describe('EndingsScreen', () => {
   beforeEach(() => localStorage.clear())
 
-  it('mantém finais bloqueados sem imagem e revela dicas progressivas', () => {
+  it('mantém finais bloqueados sem imagem e revela dicas progressivas', async () => {
     const onBack = vi.fn()
+    const user = userEvent.setup()
     render(<EndingsScreen onBack={onBack} persistence={new GamePersistence(localStorage)} />)
 
     expect(screen.getByText('0 de 3 obtidos')).toBeInTheDocument()
@@ -16,10 +18,10 @@ describe('EndingsScreen', () => {
     expect(screen.getByText('Nem toda vitória precisa ser perfeita.')).toBeInTheDocument()
 
     const nextHint = screen.getByRole('button', { name: 'Próxima dica do final 1' })
-    fireEvent.click(nextHint)
+    await user.click(nextHint)
     expect(screen.getByText('Enfrente alguma dificuldade, mas não chegue ao limite.'))
       .toBeInTheDocument()
-    fireEvent.click(nextHint)
+    await user.click(nextHint)
     expect(
       screen.getByText(
         'Vença com pelo menos 40 de vida sem cumprir as exigências do final perfeito.',
@@ -27,7 +29,7 @@ describe('EndingsScreen', () => {
     ).toBeInTheDocument()
     expect(nextHint).toBeDisabled()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Voltar' }))
+    await user.click(screen.getByRole('button', { name: 'Voltar' }))
     expect(onBack).toHaveBeenCalledOnce()
   })
 

@@ -101,3 +101,40 @@ jobs:
           path: JogoWeb/.artifacts
           if-no-files-found: ignore
           retention-days: 7
+
+  e2e:
+    name: Critical E2E journeys
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: JogoWeb
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: JogoWeb/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Critical user journeys
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-playwright-report
+          path: JogoWeb/.artifacts/playwright
+          if-no-files-found: ignore
+          retention-days: 7

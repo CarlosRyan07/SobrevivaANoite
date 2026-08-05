@@ -251,6 +251,21 @@ describe('useBattleGame', () => {
     unmount()
   })
 
+  it('mantém a batalha determinística quando a IA está desativada', async () => {
+    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const deterministicBattle = renderHook(() =>
+      useBattleGame(audio, {
+        random: leftAttackRandom,
+        enemyAiEnabled: false,
+        initialPlayerHp: 70,
+      }),
+    )
+    await act(async () => vi.advanceTimersByTimeAsync(20_000))
+    expect(deterministicBattle.result.current.state.playerHp).toBe(70)
+    expect(deterministicBattle.result.current.state.enemyAction.kind).toBe('idle')
+    deterministicBattle.unmount()
+  })
+
   it('prioriza o final perfeito com dois parries e nenhum golpe recebido', () => {
     const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
     const perfectBattle = renderHook(() =>

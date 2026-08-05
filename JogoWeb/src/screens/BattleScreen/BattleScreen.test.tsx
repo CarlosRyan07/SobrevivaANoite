@@ -11,6 +11,8 @@ describe('BattleScreen', () => {
     gamePersistence.markBattleTutorialSeen()
   })
 
+  afterEach(() => vi.useRealTimers())
+
   it('pausa a primeira batalha e explica os dois esquemas de controles', async () => {
     localStorage.removeItem('sobreviva-a-noite.battle-tutorial-seen.v1')
     vi.useFakeTimers()

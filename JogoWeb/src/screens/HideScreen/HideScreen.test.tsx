@@ -1,12 +1,16 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 import { AudioContext } from '../../contexts/audioContextValue'
 import type { AudioService } from '../../services/AudioService'
 import { HideScreen } from './HideScreen'
 
 describe('HideScreen', () => {
-  it('renderiza mapa, seis locais e contador inicial do Android', () => {
+  afterEach(() => vi.useRealTimers())
+
+  it('renderiza mapa, seis locais e contador inicial do Android', async () => {
     const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const user = userEvent.setup()
     render(
       <AudioContext value={audio}>
         <HideScreen onBackToMenu={vi.fn()} />
@@ -21,7 +25,7 @@ describe('HideScreen', () => {
     expect(screen.getByText('Rápido, se esconda!')).toBeInTheDocument()
     expect(screen.getByText('10')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Esconderijo 1' }))
+    await user.click(screen.getByRole('button', { name: 'Esconderijo 1' }))
     expect(screen.getByRole('status')).toHaveTextContent('Ele está procurando...')
   })
 
@@ -38,8 +42,8 @@ describe('HideScreen', () => {
     await act(async () => vi.advanceTimersByTimeAsync(10_000))
 
     expect(screen.getByRole('button', { name: 'Jogar Novamente' })).toBeInTheDocument()
+    // fireEvent evita timers internos do userEvent neste cenário controlado por fake timers.
     fireEvent.click(screen.getByRole('button', { name: 'Voltar ao Menu' }))
     expect(onBackToMenu).toHaveBeenCalledOnce()
-    vi.useRealTimers()
   })
 })

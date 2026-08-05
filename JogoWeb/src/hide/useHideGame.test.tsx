@@ -18,6 +18,7 @@ const immediateDelay = () => Promise.resolve()
 
 describe('useHideGame', () => {
   beforeEach(() => localStorage.clear())
+  afterEach(() => vi.useRealTimers())
 
   it('derrota o jogador após os mesmos dez segundos sem escolha', async () => {
     vi.useFakeTimers()
@@ -37,7 +38,6 @@ describe('useHideGame', () => {
       { gameMode: 'Esconde-Esconde', wasVictory: false, finalPlayerHp: 0, parryCount: 0 },
     ])
     unmount()
-    vi.useRealTimers()
   })
 
   it('mantém a derrota de 50% quando o jogador é encontrado', async () => {

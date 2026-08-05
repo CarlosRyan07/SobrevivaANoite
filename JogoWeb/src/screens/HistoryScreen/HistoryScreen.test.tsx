@@ -1,4 +1,5 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 import { GamePersistence } from '../../persistence/gamePersistence'
 import { HistoryScreen } from './HistoryScreen'
@@ -6,12 +7,13 @@ import { HistoryScreen } from './HistoryScreen'
 describe('HistoryScreen', () => {
   beforeEach(() => localStorage.clear())
 
-  it('mostra estado vazio e permite voltar', () => {
+  it('mostra estado vazio e permite voltar', async () => {
     const onBack = vi.fn()
+    const user = userEvent.setup()
     render(<HistoryScreen onBack={onBack} persistence={new GamePersistence(localStorage)} />)
 
     expect(screen.getByText('Nenhuma partida jogada ainda.')).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Voltar' }))
+    await user.click(screen.getByRole('button', { name: 'Voltar' }))
     expect(onBack).toHaveBeenCalledOnce()
   })
 
