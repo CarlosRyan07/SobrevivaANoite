@@ -89,7 +89,7 @@ Todos os sprites abaixo têm 680×654:
 | `morte7.mp3` | 1,536 s | Morte aleatória de NPC |
 | `morte8.mp3` | 1,464 s | Morte aleatória de NPC |
 | `soco.mp3` | 0,340 s | Ataque comum |
-| `soco_forte.mp3` | 0,366 s | Ataque em inimigo atordoado |
+| `soco_forte.mp3` | 0,705 s | Ataque em inimigo atordoado |
 | `parry.mp3` | 0,340 s | Parry perfeito |
 | `lobisomem_ataque.mp3` | 1,097 s | Ataque inimigo |
 | `lobisomem_ataque1.mp3` | 1,097 s | Preservado, não referenciado |

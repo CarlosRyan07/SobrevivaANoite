@@ -55,7 +55,7 @@ export default defineConfig({
               request.destination === 'audio' || url.pathname.endsWith('.mp3'),
             handler: 'NetworkFirst',
             options: {
-              cacheName: 'sobreviva-audio-v1',
+              cacheName: 'sobreviva-audio-v2',
               networkTimeoutSeconds: 1,
               expiration: { maxEntries: 30, maxAgeSeconds: 31_536_000 },
               cacheableResponse: { statuses: [0, 200] },
