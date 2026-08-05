@@ -1,6 +1,8 @@
 # Evidências de funcionalidades
 
-Sugestões de nomes para a galeria do jogo:
+Estas capturas são apresentadas e contextualizadas em [PRODUTO.md](../../../PRODUTO.md).
+
+Capturas oficiais usadas na documentação do produto:
 
 | Arquivo | Conteúdo sugerido |
 |---|---|
@@ -8,6 +10,7 @@ Sugestões de nomes para a galeria do jogo:
 | `menu-inicial-mobile.png` | abertura em viewport móvel |
 | `tutorial-batalha.png` | instruções de teclado, mouse e parry |
 | `batalha-desktop.png` | combate completo no computador |
+| `parry-batalha.png` | parry executado durante uma batalha real |
 | `esconde-esconde.png` | planta da casa e esconderijos |
 | `galeria-finais-bloqueados.png` | galeria sem nenhum final desbloqueado |
 | `painel-codigos.png` | ativação do código `ligeirinho` |

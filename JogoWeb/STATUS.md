@@ -63,7 +63,7 @@ Migração realinhada, validada e pronta na branch `feat/web`, criada diretament
 ## Expansões autorizadas implementadas
 
 - A primeira vitória revela o código `ligeirinho` e libera o painel Códigos no menu.
-- O ritmo padrão usa `300→235→170→115 ms`; `ligeirinho` ativa `250→175→100 ms`.
+- O ritmo padrão usa `300→235→170→125 ms`; `ligeirinho` ativa `250→175→100→95 ms`.
 - A batalha possui finais condicionais pela vida restante, preservando a sequência normal de derrota, joinha e Rat Dance antes de **Prosseguir**.
 - O botão **Finais** abre uma galeria que registra automaticamente os finais alcançados em partidas normais; finais bloqueados não carregam sua imagem e oferecem dicas em três níveis.
 

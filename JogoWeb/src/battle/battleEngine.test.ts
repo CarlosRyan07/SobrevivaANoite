@@ -55,12 +55,13 @@ describe('engine da batalha', () => {
     expect(nextAttackSpeed(300, 1)).toBe(300)
     expect(nextAttackSpeed(300, 2)).toBe(235)
     expect(nextAttackSpeed(235, 3)).toBe(170)
-    expect(nextAttackSpeed(170, 4)).toBe(115)
-    expect(nextAttackSpeed(115, 5)).toBe(115)
+    expect(nextAttackSpeed(170, 4)).toBe(125)
+    expect(nextAttackSpeed(125, 5)).toBe(125)
 
     expect(nextAttackSpeed(250, 2, LIGEIRINHO_ATTACK_SPEED_PROFILE)).toBe(175)
     expect(nextAttackSpeed(175, 3, LIGEIRINHO_ATTACK_SPEED_PROFILE)).toBe(100)
-    expect(nextAttackSpeed(100, 4, LIGEIRINHO_ATTACK_SPEED_PROFILE)).toBe(100)
+    expect(nextAttackSpeed(100, 4, LIGEIRINHO_ATTACK_SPEED_PROFILE)).toBe(95)
+    expect(nextAttackSpeed(95, 5, LIGEIRINHO_ATTACK_SPEED_PROFILE)).toBe(95)
   })
 
   it('mantém limites estritos das cores de HP e combo', () => {

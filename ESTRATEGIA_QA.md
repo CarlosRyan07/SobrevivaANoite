@@ -156,7 +156,8 @@ cd ..
 
 ## Leitura complementar
 
-- [Evidências de qualidade e funcionalidades](./EVIDENCIAS_QA.md)
+- [Qualidade, testes e evidências](./QUALIDADE.md)
+- [Produto, mecânicas e capturas](./PRODUTO.md)
 - [Testes E2E Web](./JogoWeb/TESTES_E2E.md)
 - [Testes Android](./TESTES_ANDROID.md)
 - [Guia da versão Web](./JogoWeb/README.md)

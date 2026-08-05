@@ -1,5 +1,7 @@
 # Evidências de QA
 
+Estas capturas são apresentadas e contextualizadas em [QUALIDADE.md](../../../QUALIDADE.md).
+
 Nomes reservados para as capturas oficiais:
 
 | Arquivo | Evidência esperada |

@@ -194,7 +194,8 @@ Para instalar a PWA e ativar o service worker fora de `localhost`, a hospedagem 
 ## Documentação
 
 - [Estratégia de qualidade do projeto](../ESTRATEGIA_QA.md)
-- [Evidências de qualidade e funcionalidades](../EVIDENCIAS_QA.md)
+- [Produto, mecânicas e capturas](../PRODUTO.md)
+- [Qualidade, testes e evidências](../QUALIDADE.md)
 - [Como executar e publicar](COMO_EXECUTAR.md)
 - [Testes E2E com Playwright](TESTES_E2E.md)
 - [Arquitetura](ARQUITETURA.md)

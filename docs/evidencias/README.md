@@ -2,6 +2,8 @@
 
 Esta pasta reúne capturas selecionadas para demonstrar a qualidade e as principais funcionalidades de **Sobreviva à Noite**.
 
+As capturas de funcionalidades são apresentadas em [PRODUTO.md](../../PRODUTO.md); resultados e evidências de teste são apresentados em [QUALIDADE.md](../../QUALIDADE.md).
+
 ## Organização
 
 - `qa/`: resultados de testes, cobertura e validações automatizadas;
