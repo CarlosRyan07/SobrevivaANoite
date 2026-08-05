@@ -3,6 +3,7 @@ import { act, renderHook } from '@testing-library/react'
 import { gamePersistence } from '../persistence/gamePersistence'
 import type { AudioService } from '../services/AudioService'
 import type { RandomSource } from '../utils/random'
+import { BATTLE_MUSIC_VOLUME, BATTLE_TIMINGS } from './battleConstants'
 import { useBattleGame } from './useBattleGame'
 
 const leftAttackRandom: RandomSource = {
@@ -10,6 +11,14 @@ const leftAttackRandom: RandomSource = {
   integer: (minimum) => minimum,
   pick: <T,>(values: readonly T[]) => values[0] as T,
   shuffle: <T,>(values: readonly T[]) => [...values],
+}
+
+function createAudioMock(): AudioService {
+  return {
+    play: vi.fn(),
+    stop: vi.fn(),
+    fadeOut: vi.fn(),
+  } as unknown as AudioService
 }
 
 describe('useBattleGame', () => {
@@ -20,7 +29,7 @@ describe('useBattleGame', () => {
   afterEach(() => vi.useRealTimers())
 
   it('abre a janela perfeita de 100 ms e aplica parry na direção correta', async () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const { result, unmount } = renderHook(() =>
       useBattleGame(audio, { random: leftAttackRandom }),
     )
@@ -38,7 +47,7 @@ describe('useBattleGame', () => {
   })
 
   it('causa 10 de dano e som forte enquanto o inimigo está atordoado', async () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const { result, unmount } = renderHook(() =>
       useBattleGame(audio, { random: leftAttackRandom }),
     )
@@ -55,7 +64,7 @@ describe('useBattleGame', () => {
   })
 
   it('aplica 15 de dano quando não existe esquiva', async () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const { result, unmount } = renderHook(() =>
       useBattleGame(audio, { random: leftAttackRandom }),
     )
@@ -69,7 +78,7 @@ describe('useBattleGame', () => {
   })
 
   it('salva a derrota da batalha com vida final e parries', async () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const { result, unmount } = renderHook(() =>
       useBattleGame(audio, { random: leftAttackRandom }),
     )
@@ -81,11 +90,14 @@ describe('useBattleGame', () => {
     expect(gamePersistence.getMatches()).toMatchObject([
       { gameMode: 'Batalha', wasVictory: false, finalPlayerHp: 0, parryCount: 0 },
     ])
+    expect(audio.fadeOut).toHaveBeenCalledWith('battleMusic', {
+      duration: BATTLE_TIMINGS.battleMusicFadeOut,
+    })
     unmount()
   })
 
   it('ataca por 3 de dano e reseta combo depois de 1,5 segundo', async () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const { result, unmount } = renderHook(() =>
       useBattleGame(audio, { random: leftAttackRandom }),
     )
@@ -103,7 +115,7 @@ describe('useBattleGame', () => {
   })
 
   it('trava o combate no HP zero e preserva toda a sequência de vitória', async () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const { result, unmount } = renderHook(() =>
       useBattleGame(audio, { random: leftAttackRandom, initialEnemyHp: 1 }),
     )
@@ -120,6 +132,9 @@ describe('useBattleGame', () => {
     expect(result.current.state.enemyImage).toContain('psicopata_atordoado.webp')
     expect(result.current.state.gameResult).toBeNull()
     expect(audio.play).toHaveBeenCalledWith('ratDanceMusic', { prepareMuted: true })
+    expect(audio.fadeOut).toHaveBeenCalledWith('battleMusic', {
+      duration: BATTLE_TIMINGS.battleMusicFadeOut,
+    })
     expect(gamePersistence.getMatches()).toMatchObject([
       { gameMode: 'Batalha', wasVictory: true, finalPlayerHp: 100, parryCount: 1 },
     ])
@@ -150,7 +165,7 @@ describe('useBattleGame', () => {
   })
 
   it('ativa o final do Pidão somente quando a vitória ocorre abaixo de 40% de vida', async () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const { result, unmount } = renderHook(() =>
       useBattleGame(audio, {
         random: leftAttackRandom,
@@ -188,7 +203,7 @@ describe('useBattleGame', () => {
   })
 
   it('ativa o final Venceu na Raça entre 40% e menos de 80% de vida', () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const middleBattle = renderHook(() =>
       useBattleGame(audio, {
         random: leftAttackRandom,
@@ -203,7 +218,7 @@ describe('useBattleGame', () => {
   })
 
   it('ativa o final Venceu na Raça acima de 80% quando a vitória não é perfeita', () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const battle = renderHook(() =>
       useBattleGame(audio, {
         random: leftAttackRandom,
@@ -220,7 +235,7 @@ describe('useBattleGame', () => {
   })
 
   it('mantém a IA e os controles pausados até o início solicitado', async () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const { result, unmount } = renderHook(() =>
       useBattleGame(audio, { random: leftAttackRandom, startPaused: true }),
     )
@@ -234,8 +249,16 @@ describe('useBattleGame', () => {
     expect(result.current.state.enemyHp).toBe(700)
     expect(result.current.state.playerHp).toBe(100)
     expect(result.current.state.playerState).toBe('idle')
+    expect(audio.play).not.toHaveBeenCalledWith('battleMusic', {
+      loop: true,
+      volume: BATTLE_MUSIC_VOLUME,
+    })
 
     act(() => result.current.start())
+    expect(audio.play).toHaveBeenCalledWith('battleMusic', {
+      loop: true,
+      volume: BATTLE_MUSIC_VOLUME,
+    })
     await act(async () => vi.advanceTimersByTimeAsync(4_000))
     expect(result.current.state.enemyAction.kind).not.toBe('idle')
 
@@ -248,11 +271,14 @@ describe('useBattleGame', () => {
     act(() => result.current.start())
     await act(async () => vi.advanceTimersByTimeAsync(4_000))
     expect(result.current.state.enemyAction.kind).not.toBe('idle')
+    expect(
+      vi.mocked(audio.play).mock.calls.filter(([sound]) => sound === 'battleMusic'),
+    ).toHaveLength(1)
     unmount()
   })
 
   it('mantém a batalha determinística quando a IA está desativada', async () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const deterministicBattle = renderHook(() =>
       useBattleGame(audio, {
         random: leftAttackRandom,
@@ -267,7 +293,7 @@ describe('useBattleGame', () => {
   })
 
   it('prioriza o final perfeito com dois parries e nenhum golpe recebido', () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const perfectBattle = renderHook(() =>
       useBattleGame(audio, {
         random: leftAttackRandom,
@@ -284,7 +310,7 @@ describe('useBattleGame', () => {
   })
 
   it('ativa o final do Pidão na batalha normal após a vida cair abaixo de 40%', async () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const { result, unmount } = renderHook(() =>
       useBattleGame(audio, {
         random: leftAttackRandom,
@@ -305,7 +331,7 @@ describe('useBattleGame', () => {
   })
 
   it('persiste o recorde conforme o combo acelera desde o segundo golpe', async () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const { result, unmount } = renderHook(() =>
       useBattleGame(audio, { random: leftAttackRandom }),
     )
@@ -324,7 +350,7 @@ describe('useBattleGame', () => {
   })
 
   it('exibe a recompensa somente na primeira vitória', () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     gamePersistence.discoverCode('ligeirinho')
     const { result, unmount } = renderHook(() =>
       useBattleGame(audio, { random: leftAttackRandom, initialEnemyHp: 1 }),
@@ -338,7 +364,7 @@ describe('useBattleGame', () => {
   })
 
   it('aplica a velocidade rápida somente quando LIGEIRINHO está ativo', async () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const normalBattle = renderHook(() => useBattleGame(audio, { random: leftAttackRandom }))
 
     act(() => normalBattle.result.current.attack())

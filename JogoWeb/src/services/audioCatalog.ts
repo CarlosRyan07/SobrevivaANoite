@@ -9,6 +9,7 @@ export const audioCatalog = {
   doorBreak: audio('porta_sendo_quebrada'),
   hideWin: audio('win_hide'),
   hideLose: audio('lose_hide'),
+  battleMusic: audio('musica_batalha'),
   ratDanceMusic: audio('rat_dance_music'),
   pidaoEnding: audio('final_pidao'),
   perfectEnding: audio('sopa_lobo_audio'),

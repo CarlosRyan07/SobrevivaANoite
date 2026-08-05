@@ -24,11 +24,11 @@ Migração realinhada, validada e pronta na branch `feat/web`, criada diretament
 - ✔ Todos os fontes Kotlin, configurações e assets analisados.
 - ✔ Quatro telas, três ViewModels e camada de dados portados.
 - ✔ Estados, HP, dano, combo, IA, probabilidades e timers preservados; coordenadas refinadas pela referência do usuário.
-- ✔ 41 drawables, 21 MP3 e ícones Android copiados; lore corrigida e GIF não utilizado do Fortnite removido.
+- ✔ 41 drawables, 21 MP3 Android e 3 áudios Web próprios; lore corrigida e GIF não utilizado do Fortnite removido.
 - ✔ Menu/lore com textos, imagens, fades e retorno.
 - ✔ Esconderijo com alvos corrigidos, clique estável, tensão interrompível, retorno ao menu e restart.
 - ✔ Batalha com setas, teclado, mouse, IA, parry, perfis de combo, recorde e sequência de vitória refinada.
-- ✔ Música e GIF do Rat Dance idênticos aos arquivos da `master` atualizada.
+- ✔ Trilha da batalha em loop com fade-out ao encerrar o combate, além da música e do GIF do Rat Dance.
 - ✔ Histórico persistente com estatísticas e detalhes dos dois modos.
 - ✔ Galeria persistente de finais, com arte e nome para os obtidos e dicas progressivas para os bloqueados.
 - ✔ Áudio com preload real, sobreposição e dez vozes.
@@ -63,7 +63,7 @@ Migração realinhada, validada e pronta na branch `feat/web`, criada diretament
 ## Expansões autorizadas implementadas
 
 - A primeira vitória revela o código `ligeirinho` e libera o painel Códigos no menu.
-- O ritmo padrão usa `300→235→170→135 ms`; `ligeirinho` ativa `250→175→100 ms`.
+- O ritmo padrão usa `300→235→170→115 ms`; `ligeirinho` ativa `250→175→100 ms`.
 - A batalha possui finais condicionais pela vida restante, preservando a sequência normal de derrota, joinha e Rat Dance antes de **Prosseguir**.
 - O botão **Finais** abre uma galeria que registra automaticamente os finais alcançados em partidas normais; finais bloqueados não carregam sua imagem e oferecem dicas em três níveis.
 

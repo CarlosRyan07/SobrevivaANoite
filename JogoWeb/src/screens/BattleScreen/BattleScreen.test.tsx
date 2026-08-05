@@ -5,6 +5,14 @@ import { gamePersistence } from '../../persistence/gamePersistence'
 import type { AudioService } from '../../services/AudioService'
 import { BattleScreen } from './BattleScreen'
 
+function createAudioMock(): AudioService {
+  return {
+    play: vi.fn(),
+    stop: vi.fn(),
+    fadeOut: vi.fn(),
+  } as unknown as AudioService
+}
+
 describe('BattleScreen', () => {
   beforeEach(() => {
     localStorage.clear()
@@ -16,7 +24,7 @@ describe('BattleScreen', () => {
   it('pausa a primeira batalha e explica os dois esquemas de controles', async () => {
     localStorage.removeItem('sobreviva-a-noite.battle-tutorial-seen.v1')
     vi.useFakeTimers()
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     const { unmount } = render(
       <AudioContext value={audio}>
         <BattleScreen onBackToMenu={vi.fn()} />
@@ -62,7 +70,7 @@ describe('BattleScreen', () => {
   })
 
   it('renderiza HUD, sprites e os três controles do combate', () => {
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     render(
       <AudioContext value={audio}>
         <BattleScreen onBackToMenu={vi.fn()} />
@@ -86,7 +94,7 @@ describe('BattleScreen', () => {
 
   it('reabre o tutorial pelo botão de ajuda e permite continuar a batalha', () => {
     vi.useFakeTimers()
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     render(
       <AudioContext value={audio}>
         <BattleScreen onBackToMenu={vi.fn()} />
@@ -110,7 +118,7 @@ describe('BattleScreen', () => {
 
   it('aciona a esquiva pelo teclado', () => {
     vi.useFakeTimers()
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     render(
       <AudioContext value={audio}>
         <BattleScreen onBackToMenu={vi.fn()} />
@@ -127,7 +135,7 @@ describe('BattleScreen', () => {
 
   it('ataca pela barra de espaço', () => {
     vi.useFakeTimers()
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     render(
       <AudioContext value={audio}>
         <BattleScreen onBackToMenu={vi.fn()} />
@@ -146,7 +154,7 @@ describe('BattleScreen', () => {
 
   it('ataca com o botão esquerdo do mouse em qualquer área livre da batalha', () => {
     vi.useFakeTimers()
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     render(
       <AudioContext value={audio}>
         <BattleScreen onBackToMenu={vi.fn()} />
@@ -168,7 +176,7 @@ describe('BattleScreen', () => {
 
   it('mostra a pose derrotada, o joinha e somente a dança permitida na vitória', async () => {
     vi.useFakeTimers()
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     render(
       <AudioContext value={audio}>
         <BattleScreen onBackToMenu={vi.fn()} gameOptions={{ initialEnemyHp: 1 }} />
@@ -216,7 +224,7 @@ describe('BattleScreen', () => {
 
   it('mostra o recorde persistido no topo', () => {
     localStorage.setItem('sobreviva-a-noite.high-combo.v1', '12')
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     render(
       <AudioContext value={audio}>
         <BattleScreen onBackToMenu={vi.fn()} />
@@ -228,11 +236,7 @@ describe('BattleScreen', () => {
 
   it('oferece o final do Pidão após a Rat Dance e inicia o áudio antes da revelação', async () => {
     vi.useFakeTimers()
-    const audio = {
-      play: vi.fn(),
-      stop: vi.fn(),
-      fadeOut: vi.fn(),
-    } as unknown as AudioService
+    const audio = createAudioMock()
     render(
       <AudioContext value={audio}>
         <BattleScreen
@@ -294,7 +298,7 @@ describe('BattleScreen', () => {
 
   it('oferece o final Venceu na Raça para uma vitória não perfeita', async () => {
     vi.useFakeTimers()
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     render(
       <AudioContext value={audio}>
         <BattleScreen
@@ -337,7 +341,7 @@ describe('BattleScreen', () => {
 
   it('sempre oferece Prosseguir após uma vitória normal com mais de 80 de vida', async () => {
     vi.useFakeTimers()
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     render(
       <AudioContext value={audio}>
         <BattleScreen
@@ -356,7 +360,7 @@ describe('BattleScreen', () => {
 
   it('oferece o final perfeito e toca Sopa de Lobo ao revelar a imagem final', async () => {
     vi.useFakeTimers()
-    const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
+    const audio = createAudioMock()
     render(
       <AudioContext value={audio}>
         <BattleScreen

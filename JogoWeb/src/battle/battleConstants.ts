@@ -14,19 +14,20 @@ export interface AttackSpeedProfile {
 
 export const DEFAULT_ATTACK_SPEED_PROFILE: AttackSpeedProfile = {
   initial: 300,
-  minimum: 135,
+  minimum: 125,
   reduction: 65,
 }
 
 export const LIGEIRINHO_ATTACK_SPEED_PROFILE: AttackSpeedProfile = {
   initial: 250,
-  minimum: 100,
+  minimum: 95,
   reduction: 75,
 }
 
 export const INITIAL_ATTACK_SPEED = DEFAULT_ATTACK_SPEED_PROFILE.initial
 export const MINIMUM_ATTACK_SPEED = DEFAULT_ATTACK_SPEED_PROFILE.minimum
 export const ATTACK_SPEED_STEP = DEFAULT_ATTACK_SPEED_PROFILE.reduction
+export const BATTLE_MUSIC_VOLUME = 0.20
 
 export const BATTLE_TIMINGS = {
   initialEnemyDelay: 2_000,
@@ -38,6 +39,7 @@ export const BATTLE_TIMINGS = {
   enemyStunned: 4_000,
   playerDodge: 800,
   playerHit: 800,
+  battleMusicFadeOut: 1_200,
   comboTimeout: 1_500,
   enemyHit: 1_000,
   stunnedBeforeDefeat: 1_000,

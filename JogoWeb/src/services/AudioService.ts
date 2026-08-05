@@ -14,6 +14,8 @@ interface ActiveVoice {
 export interface PlaySoundOptions {
   prepareMuted?: boolean
   resumePrepared?: boolean
+  loop?: boolean
+  volume?: number
 }
 
 export interface FadeOutOptions {
@@ -49,7 +51,8 @@ export class AudioService {
       if (preparedVoice) {
         preparedVoice.prepared = false
         preparedVoice.audio.currentTime = 0
-        preparedVoice.audio.volume = 1
+        preparedVoice.audio.volume = Math.min(Math.max(options.volume ?? 1, 0), 1)
+        if (options.loop !== undefined) preparedVoice.audio.loop = options.loop
         if (preparedVoice.audio.paused) {
           void preparedVoice.audio.play().catch(preparedVoice.cleanup)
         }
@@ -63,8 +66,11 @@ export class AudioService {
 
     const audio = this.factory(audioCatalog[key])
     audio.preload = 'auto'
-    audio.volume = options.prepareMuted ? 0 : 1
+    audio.volume = options.prepareMuted
+      ? 0
+      : Math.min(Math.max(options.volume ?? 1, 0), 1)
     audio.playbackRate = 1
+    audio.loop = options.loop ?? false
 
     const cleanup = () => {
       audio.removeEventListener('ended', cleanup)

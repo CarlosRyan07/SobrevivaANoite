@@ -126,6 +126,14 @@ try {
     return response.ok && (await response.arrayBuffer()).byteLength > 0
   })
   if (!cachedRatMusicAvailable) report.errors.push('Música do Rat Dance não estava disponível offline.')
+
+  const cachedBattleMusicAvailable = await page.evaluate(async () => {
+    const response = await fetch('./assets/audio/musica_batalha.mp3')
+    return response.ok && (await response.arrayBuffer()).byteLength > 0
+  })
+  if (!cachedBattleMusicAvailable) {
+    report.errors.push('Música da batalha não estava disponível offline.')
+  }
 } finally {
   await page.setOfflineMode(false)
   await browser.close()

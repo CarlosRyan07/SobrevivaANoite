@@ -4,6 +4,7 @@ class FakeAudio extends EventTarget {
   preload = ''
   volume = 0
   playbackRate = 0
+  loop = false
   currentTime = 9
   paused = false
   play = vi.fn(() => Promise.resolve())
@@ -36,7 +37,9 @@ describe('AudioService', () => {
     const audio = new FakeAudio()
     const service = new AudioService(10, () => audio as unknown as HTMLAudioElement)
 
-    service.play('parry')
+    service.play('battleMusic', { loop: true, volume: 0.35 })
+    expect(audio.loop).toBe(true)
+    expect(audio.volume).toBe(0.35)
     audio.dispatchEvent(new Event('ended'))
 
     expect(service.activeStreamCount).toBe(0)

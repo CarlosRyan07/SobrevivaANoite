@@ -55,8 +55,8 @@ describe('engine da batalha', () => {
     expect(nextAttackSpeed(300, 1)).toBe(300)
     expect(nextAttackSpeed(300, 2)).toBe(235)
     expect(nextAttackSpeed(235, 3)).toBe(170)
-    expect(nextAttackSpeed(170, 4)).toBe(135)
-    expect(nextAttackSpeed(135, 5)).toBe(135)
+    expect(nextAttackSpeed(170, 4)).toBe(115)
+    expect(nextAttackSpeed(115, 5)).toBe(115)
 
     expect(nextAttackSpeed(250, 2, LIGEIRINHO_ATTACK_SPEED_PROFILE)).toBe(175)
     expect(nextAttackSpeed(175, 3, LIGEIRINHO_ATTACK_SPEED_PROFILE)).toBe(100)

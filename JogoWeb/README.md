@@ -158,7 +158,7 @@ As regras ficam separadas da interface e os efeitos assíncronos podem ser cance
 
 - 40 imagens WebP lossless usadas pelo jogo;
 - redução de aproximadamente 36,9 MiB para 20,9 MiB sem alteração de pixels visíveis;
-- 21 MP3 sincronizados com o Android, além dos áudios próprios dos finais;
+- 24 MP3, incluindo a trilha contínua da batalha e os áudios próprios dos finais;
 - `rat_dance.gif` como único GIF de dança da vitória;
 - imagens pesadas dos finais carregadas somente depois que a batalha é vencida.
 

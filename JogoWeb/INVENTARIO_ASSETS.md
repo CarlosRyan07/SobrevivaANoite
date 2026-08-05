@@ -7,7 +7,7 @@ Os recursos usados pelo jogo foram copiados para a Web. A imagem da lore foi atu
 | Categoria | Quantidade | Tamanho aproximado |
 |---|---:|---:|
 | Drawables (incluindo XML) | 41 | 28,90 MiB |
-| Áudios MP3 | 20 | 0,70 MiB |
+| Áudios MP3 | 24 | 3,24 MiB |
 | APK Android de referência | 1 | 31,26 MiB |
 
 ## Imagens de cenário, interface e mapa
@@ -80,6 +80,7 @@ Todos os sprites abaixo têm 680×654:
 | `porta_sendo_quebrada.mp3` | 1,019 s | Entrada na casa |
 | `win_hide.mp3` | 4,362 s | Vitória no esconderijo |
 | `lose_hide.mp3` | 4,519 s | Derrota no esconderijo |
+| `musica_batalha.mp3` | 93,022 s | Trilha em loop durante o combate |
 | `morte1.mp3` | 1,752 s | Morte aleatória de NPC |
 | `morte2.mp3` | 1,464 s | Morte aleatória de NPC |
 | `morte3.mp3` | 1,464 s | Morte aleatória de NPC |
@@ -94,6 +95,8 @@ Todos os sprites abaixo têm 680×654:
 | `lobisomem_ataque.mp3` | 1,097 s | Ataque inimigo |
 | `lobisomem_ataque1.mp3` | 1,097 s | Preservado, não referenciado |
 | `rat_dance_music.mp3` | 32,209 s | Música da sequência de vitória da batalha |
+| `final_pidao.mp3` | 21,760 s | Revelação do final Pidão |
+| `sopa_lobo_audio.mp3` | 4,389 s | Revelação do final perfeito |
 
 ## Estratégia Web
 

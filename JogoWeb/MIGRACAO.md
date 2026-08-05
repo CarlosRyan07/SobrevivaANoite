@@ -102,7 +102,7 @@ A matriz final está em `MATRIZ_EQUIVALENCIA.md`.
 - Os avisos de final obtido compartilham um popup que surge à direita e desliza até repousar à esquerda, mantendo o mesmo padrão visual entre os finais.
 - O final perfeito Sopa de Lobo possui prioridade quando o sobrevivente termina ileso e realiza pelo menos dois parries; suas etapas usam `patetico`, `vitoria_perfeita` e o áudio `sopa_lobo_audio`, iniciado na página da pergunta e mantido durante a revelação.
 - O atalho de desenvolvimento `?battleTest=perfect#/battle` prepara o inimigo com 1 HP e registra dois parries iniciais sem pular a sequência normal de vitória.
-- A primeira vitória revela o código `ligeirinho`; o menu permite ativá-lo para trocar a progressão de ataques de `300→235→170→135 ms` por `250→175→100 ms`.
+- A primeira vitória revela o código `ligeirinho`; o menu permite ativá-lo para trocar a progressão de ataques de `300→235→170→115 ms` por `250→175→100 ms`.
 - O menu ganhou a rota `#/endings`: cada final especial é registrado automaticamente na vitória normal e passa a mostrar nome e arte na galeria; os finais ainda bloqueados omitem a imagem e revelam até três dicas progressivas.
 - O código `ligeirinho` não é mais antecipado na tela **Você venceu**; sua revelação acontece somente dentro da conclusão narrativa do final, após **Prosseguir**.
 - Antes da primeira batalha, um tutorial translúcido apresenta setas/mouse ou A/D/Espaço e recomenda o parry; a IA e os controles permanecem pausados até **Começar Batalha**, a confirmação fica persistida e um pequeno botão **?** permite reabrir a ajuda com o combate pausado.

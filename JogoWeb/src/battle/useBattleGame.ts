@@ -9,6 +9,7 @@ import { images } from '../services/assetPaths'
 import { abortableDelay, abortController, isAbortError } from '../utils/abortableDelay'
 import { defaultRandom, type RandomSource } from '../utils/random'
 import {
+  BATTLE_MUSIC_VOLUME,
   BATTLE_TIMINGS,
   DEFAULT_ATTACK_SPEED_PROFILE,
   LIGEIRINHO_ATTACK_SPEED_PROFILE,
@@ -71,6 +72,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
   const resultSaved = useRef(false)
   const attackSpeed = useRef(attackSpeedProfile.initial)
   const battleStarted = useRef(!startPaused)
+  const battleMusicStarted = useRef(false)
 
   const commit = useCallback((update: (current: BattleState) => BattleState) => {
     const nextState = update(stateRef.current)
@@ -81,6 +83,19 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
   const resetComboSpeed = useCallback(() => {
     attackSpeed.current = attackSpeedProfile.initial
   }, [attackSpeedProfile])
+
+  const startBattleMusic = useCallback(() => {
+    if (battleMusicStarted.current) return
+    audio.stop('battleMusic')
+    audio.play('battleMusic', { loop: true, volume: BATTLE_MUSIC_VOLUME })
+    battleMusicStarted.current = true
+  }, [audio])
+
+  const fadeBattleMusic = useCallback(() => {
+    if (!battleMusicStarted.current) return
+    battleMusicStarted.current = false
+    audio.fadeOut('battleMusic', { duration: BATTLE_TIMINGS.battleMusicFadeOut })
+  }, [audio])
 
   const saveBattleResult = useCallback(
     (wasVictory: boolean) => {
@@ -110,6 +125,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
     abortController(comboController.current)
     comboStep.current = 0
     resetComboSpeed()
+    fadeBattleMusic()
     saveBattleResult(true)
     const rewardCode = persistence.discoverCode('ligeirinho') ? 'ligeirinho' : null
     const victoryEnding = victoryEndingForPerformance({
@@ -160,18 +176,27 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
         if (!isAbortError(error)) throw error
       })
       .finally(() => victoryControllers.current.delete(controller))
-  }, [audio, commit, delay, persistence, resetComboSpeed, saveBattleResult])
+  }, [
+    audio,
+    commit,
+    delay,
+    fadeBattleMusic,
+    persistence,
+    resetComboSpeed,
+    saveBattleResult,
+  ])
 
   const checkGameResult = useCallback(() => {
     const current = stateRef.current
     if (current.enemyHp <= 0 && current.gameResult === null) {
       startVictorySequence()
     } else if (current.playerHp <= 0 && current.gameResult === null) {
+      fadeBattleMusic()
       saveBattleResult(false)
       abortController(aiController.current)
       commit((battle) => ({ ...battle, gameResult: 'lose' }))
     }
-  }, [commit, saveBattleResult, startVictorySequence])
+  }, [commit, fadeBattleMusic, saveBattleResult, startVictorySequence])
 
   const handleParrySuccess = useCallback(
     (direction: AttackDirection) => {
@@ -319,7 +344,10 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
 
   useEffect(() => {
     const activeVictoryControllers = victoryControllers.current
-    if (battleStarted.current && enemyAiEnabled) startEnemyAi()
+    if (battleStarted.current) {
+      startBattleMusic()
+      if (enemyAiEnabled) startEnemyAi()
+    }
     return () => {
       abortController(aiController.current)
       abortController(playerActionController.current)
@@ -327,17 +355,20 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
       abortController(comboController.current)
       activeVictoryControllers.forEach(abortController)
       activeVictoryControllers.clear()
+      battleMusicStarted.current = false
+      audio.stop('battleMusic')
       audio.stop('ratDanceMusic')
       audio.stop('pidaoEnding')
       audio.stop('perfectEnding')
     }
-  }, [audio, enemyAiEnabled, startEnemyAi])
+  }, [audio, enemyAiEnabled, startBattleMusic, startEnemyAi])
 
   const start = useCallback(() => {
     if (battleStarted.current || stateRef.current.gameResult !== null) return
     battleStarted.current = true
+    startBattleMusic()
     if (enemyAiEnabled) startEnemyAi()
-  }, [enemyAiEnabled, startEnemyAi])
+  }, [enemyAiEnabled, startBattleMusic, startEnemyAi])
 
   const pause = useCallback(() => {
     if (!battleStarted.current || stateRef.current.gameResult !== null) return
@@ -540,6 +571,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
     )
     stateRef.current = nextState
     setRenderedState(nextState)
+    startBattleMusic()
     if (enemyAiEnabled) startEnemyAi()
   }, [
     audio,
@@ -549,6 +581,7 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
     initialPlayerHp,
     persistence,
     resetComboSpeed,
+    startBattleMusic,
     startEnemyAi,
   ])
 
