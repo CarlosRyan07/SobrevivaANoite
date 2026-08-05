@@ -1,127 +1,207 @@
-# Sobreviva à Noite — Web
+<div align="center">
 
-Portabilização integral do jogo Android atualizado (`origin/master` em `437340d`) para navegador, feita com React, TypeScript, Vite e CSS. O jogo funciona em celular, tablet e desktop, pode ser instalado como PWA e persiste dados localmente sem backend.
+<img src="./public/assets/optimized/tela_inicio.webp" alt="Sobreviva à Noite — Web" width="240" />
 
-## Estado do projeto
+# Sobreviva à Noite — Web/PWA
 
-Concluído e validado:
+**A versão para navegador do jogo de suspense e sobrevivência.**
 
-- abertura e lore completas;
-- modo esconder com seis locais reposicionados pela referência visual, IA, probabilidades, timers e sons;
-- resultado do esconderijo com reinício ou retorno ao menu;
-- modo batalha com dano, esquiva por setas/teclado, ataque por botão/Espaço/mouse, parry, combo, HUD e resultados;
-- vitória atualizada com bloqueio imediato, Rat Dance e finais alternativos: Pidão abaixo de 40% de vida, Sopa de Lobo sem sofrer golpes e com pelo menos dois parries, e Venceu na Raça para as demais vitórias;
-- tutorial exibido antes da primeira batalha, com os dois esquemas de teclado/mouse e recomendação de parry; o combate permanece pausado até a confirmação e o botão **?** permite reabrir a ajuda depois;
-- recorde de combo persistido entre sessões;
-- histórico de partidas com estatísticas dos dois modos e detalhes de batalha;
-- galeria de finais no menu, com nome e arte dos finais obtidos e três dicas progressivas para cada final ainda bloqueado;
-- assets Android sincronizados, com a imagem da lore corrigida e o GIF não utilizado do Fortnite removido;
-- layout vertical responsivo, com a arte preenchendo e escurecendo as laterais da abertura;
-- PWA com consulta de assets atualizados na rede e fallback offline pelo cache;
-- 103 testes aprovados em 20 arquivos, com limites automáticos de cobertura;
-- lint, TypeScript estrito, build, 26 cenários de navegador e verificação offline aprovados;
-- CI no GitHub executando qualidade, cobertura, build, fluxos visuais e PWA em pushes e pull requests.
+![React](https://img.shields.io/badge/React-19-20232A?logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-104%20testes-6E9F18?logo=vitest&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-10%20E2E-2EAD33?logo=playwright&logoColor=white)
+![PWA](https://img.shields.io/badge/PWA-offline-5A0FC8?logo=pwa&logoColor=white)
 
-A lógica do aplicativo Android fora de `JogoWeb` não foi modificada pela migração. A imagem `lore_fogueira.jpg` corrigida pelo usuário foi sincronizada entre Android e Web, e o GIF não utilizado do Fortnite foi removido das duas versões.
+[Voltar ao projeto](../README.md) • [Executar](#execução-rápida) • [Testar](#testes) • [Publicar](#publicação) • [Documentação](#documentação)
+
+</div>
+
+---
+
+## Sobre esta versão
+
+Portabilização do aplicativo Android para React, TypeScript, Vite e CSS. O jogo funciona em celular, tablet e desktop, pode ser instalado como PWA e mantém progresso local sem precisar de conta ou backend.
+
+A implementação Web preserva as regras, imagens, sons e identidade do jogo original, com adaptações autorizadas para teclado, mouse, acessibilidade e diferentes tamanhos de tela.
+
+## Estado atual
+
+| Área | Implementação |
+|---|---|
+| Menu e lore | Abertura, narrativa, escolhas e retorno correto |
+| Esconde-Esconde | Seis locais, IA, sorteios, timers, sons e resultados |
+| Batalha | Ataque, esquiva, parry, combo, HUD, tutorial e Rat Dance |
+| Finais | Pidão, Venceu na Raça e Sopa de Lobo |
+| Progressão | Código `ligeirinho`, recorde e galeria de finais |
+| Persistência | Histórico e progresso no `localStorage` |
+| PWA | Instalação, atualização de assets e fallback offline |
+| Qualidade | 104 testes Vitest, 10 execuções E2E, cobertura mínima, 26 cenários visuais e CI |
+
+### Finais da batalha
+
+- **A Maldição do Pidão:** vitória com menos de 40% da vida.
+- **Sopa de Lobo:** nenhum golpe recebido e pelo menos dois parries.
+- **Venceu na Raça:** demais vitórias.
+
+Todos os finais preservam primeiro a sequência normal: queda do monstro, pose de vitória, Rat Dance e tela **Você venceu**. A história começa somente quando o jogador escolhe **Prosseguir**.
 
 ## Execução rápida
 
-Requisito: Node.js `^20.19.0` ou `>=22.12.0`.
+Requisitos:
+
+- Node.js `^20.19.0` ou `>=22.12.0`;
+- npm compatível com a versão instalada do Node.js.
 
 ```bash
-npm install
+cd JogoWeb
+npm ci
 npm run dev
 ```
 
-Abra o endereço informado pelo Vite, normalmente `http://localhost:5173`.
+Abra o endereço informado pelo Vite, normalmente:
 
-Para gerar a versão publicável:
+```text
+http://localhost:5173
+```
+
+### Build de produção
 
 ```bash
 npm run build
 npm run preview
 ```
 
-Os arquivos finais ficam em `dist/` e podem ser hospedados como site estático.
+O Vite gera em `dist/` a versão otimizada que será enviada para a hospedagem. Essa pasta é recriada a cada build e não deve ser editada manualmente.
 
-## Scripts
+## Controles da batalha
+
+| Ação | Mouse/toque | Teclado |
+|---|---|---|
+| Esquivar para a esquerda | Botão `←` | `A` ou `←` |
+| Atacar | Punho ou clique em área livre | `Espaço` |
+| Esquivar para a direita | Botão `→` | `D` ou `→` |
+
+O tutorial aparece automaticamente na primeira batalha e pode ser reaberto pelo botão **?**.
+
+## Testes
+
+### Comandos disponíveis
 
 | Comando | Finalidade |
 |---|---|
 | `npm run dev` | Servidor de desenvolvimento |
-| `npm run build` | Tipagem + build Vite + PWA |
-| `npm run preview` | Preview local do `dist` |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | TypeScript estrito |
+| `npm run build` | TypeScript, build Vite e PWA |
+| `npm run preview` | Visualização local do conteúdo de `dist/` |
+| `npm run lint` | ESLint em todo o projeto |
+| `npm run typecheck` | TypeScript em modo estrito |
 | `npm run test` | Vitest em modo interativo |
-| `npm run test:run` | Suíte completa uma vez |
-| `npm run test:coverage` | Suíte completa com relatório e limites mínimos de cobertura |
-| `npm run assets:optimize` | Recria WebPs lossless e ícones PWA |
-| `npm run visual:check` | Build + screenshots/asserts em 26 casos visuais/interativos, incluindo o fluxo completo dos três finais, tutorial, galeria e extremos de zoom |
-| `npm run pwa:check` | Build + teste real de persistência e funcionamento offline de telas/áudio |
+| `npm run test:run` | Suíte completa executada uma vez |
+| `npm run test:coverage` | Testes com relatório e limites mínimos |
+| `npm run test:e2e` | Jornadas críticas em quatro perfis de navegador |
+| `npm run test:e2e:chromium` | Jornadas E2E somente no Chrome desktop |
+| `npm run test:e2e:ui` | Interface interativa do Playwright |
+| `npm run test:e2e:debug` | Inspector do Playwright passo a passo |
+| `npm run test:e2e:report` | Abre o último relatório HTML E2E |
+| `npm run visual:check` | 26 cenários reais no Chrome |
+| `npm run pwa:check` | Persistência, telas e áudios offline |
+| `npm run assets:optimize` | Recria e valida imagens WebP lossless |
 
-### Teste manual rápido dos finais
+### Atalhos para testar os finais
 
-Com o servidor de desenvolvimento aberto por `npm run dev`, acesse:
+Com `npm run dev` aberto, use uma das URLs:
 
 ```text
 http://localhost:5173/?battleTest=pidao#/battle
-```
-
-O atalho acima testa o Pidão com 35 de vida. Para testar Venceu na Raça com 70 de vida, use:
-
-```text
 http://localhost:5173/?battleTest=raca#/battle
-```
-
-Para testar o final perfeito Sopa de Lobo, com vida intacta e dois parries preparados, use:
-
-```text
 http://localhost:5173/?battleTest=perfect#/battle
 ```
 
-Nos três casos, o monstro começa com 1 de vida. Dê um único golpe, aguarde a queda do monstro, clique em **Prosseguir** e depois em **Continuar** para conferir a sequência. Os atalhos existem somente durante o desenvolvimento e não alteram a versão de produção.
+O monstro começa com 1 de vida. Dê um golpe, aguarde a sequência completa e escolha **Prosseguir**. Esses atalhos existem somente no ambiente de desenvolvimento e não são habilitados no build normal.
 
-## Publicação
+### Qualidade atual
 
-O projeto usa `base: './'`, portanto `dist/` funciona tanto na raiz de um domínio quanto numa subpasta. Exemplos de destinos:
+- 104 testes aprovados em 20 arquivos;
+- 10 execuções E2E aprovadas em Chrome e Firefox desktop, Chrome e Safari móveis emulados;
+- cobertura atual de 88,85% de statements, 80,59% de branches, 92,94% de funções e 91,71% de linhas;
+- cobertura mínima de 85% de statements, 75% de branches, 85% de funções e 88% de linhas;
+- 26 cenários visuais cobrindo telas, tutorial, galeria, histórico, extremos de escala e os três finais;
+- abertura, esconderijo, batalha, histórico, finais, imagens e áudios verificados offline;
+- lint, TypeScript estrito, build e auditoria de dependências aprovados;
+- GitHub Actions executando as verificações em pushes e pull requests.
 
-- GitHub Pages;
-- Cloudflare Pages;
-- Vercel;
-- Netlify;
-- Apache/Nginx;
-- hospedagem de arquivos estáticos.
+A cobertura é produzida pelo `@vitest/coverage-v8`, configurado em `vite.config.ts`, e não pelo JaCoCo. Execute `npm run test:coverage` para gerar o resumo no terminal e os relatórios detalhados em `coverage/`. O relatório HTML pode ser aberto diretamente no navegador.
 
-Publique o conteúdo de `dist/`. Para instalar a PWA e ativar service worker fora de desenvolvimento, a hospedagem deve usar HTTPS, exceto em `localhost`.
+## Arquitetura resumida
 
-## Assets
+```text
+JogoWeb/
+├── e2e/                 # Jornadas críticas com Playwright
+├── public/
+│   ├── assets/           # Imagens, áudios, GIF e derivados WebP
+│   └── icons/            # Ícones da PWA
+├── scripts/              # Otimização e verificações em Chrome
+├── src/
+│   ├── app/              # Navegação e composição principal
+│   ├── battle/           # Regras e ciclo de vida da batalha
+│   ├── hide/             # Regras e ciclo de vida do esconderijo
+│   ├── components/       # Componentes compartilhados
+│   ├── persistence/      # Histórico, recorde, códigos e finais
+│   ├── screens/          # Telas e histórias dos finais
+│   └── services/         # Áudio e caminhos de assets
+└── vite.config.ts        # Build, testes, cobertura e PWA
+```
 
-- `public/assets/images`: imagens/XML sincronizados com o Android, incluindo a lore corrigida.
-- `public/assets/audio`: os 21 MP3 da versão Android atualizada e os áudios dos finais Pidão e Sopa de Lobo.
-- `public/assets/gif`: somente `rat_dance.gif`, usado na vitória da batalha.
-- `public/assets/android-icons`: mipmaps/ícones Android preservados.
-- `public/assets/optimized`: 40 WebPs lossless usados pelo jogo.
-- `public/icons`: ícones 192/512 da PWA.
+As regras ficam separadas da interface e os efeitos assíncronos podem ser cancelados ao reiniciar ou sair da tela. A aleatoriedade relevante é injetável para manter os testes determinísticos.
 
-Os WebPs reduziram 36,9 MiB de PNGs para 20,9 MiB. A conversão é automaticamente recusada se alfa ou qualquer pixel visível mudar.
+## Assets e carregamento
+
+- 40 imagens WebP lossless usadas pelo jogo;
+- redução de aproximadamente 36,9 MiB para 20,9 MiB sem alteração de pixels visíveis;
+- 21 MP3 sincronizados com o Android, além dos áudios próprios dos finais;
+- `rat_dance.gif` como único GIF de dança da vitória;
+- imagens pesadas dos finais carregadas somente depois que a batalha é vencida.
+
+Os arquivos originais permanecem em `public/assets/images`; os derivados otimizados ficam em `public/assets/optimized`.
 
 ## Dados locais
 
-O recorde de combo, o histórico, os códigos, os finais obtidos e a confirmação do tutorial são armazenados no `localStorage` do navegador. Eles permanecem após fechar/reabrir o site e a interface é notificada imediatamente após cada resultado. Os dados pertencem à origem usada (protocolo, domínio e porta); por isso o servidor de desenvolvimento usa sempre `localhost:5173`. Limpar os dados do site também limpa esse progresso.
+O navegador armazena no `localStorage`:
+
+- recorde de combo;
+- histórico de partidas;
+- código desbloqueado e ativação do `ligeirinho`;
+- finais obtidos e níveis de dica;
+- confirmação de que o tutorial já foi visto.
+
+Esses dados pertencem ao protocolo, domínio e porta atuais. Limpar os dados do site também apaga esse progresso.
+
+## Publicação
+
+O projeto usa caminhos relativos e navegação por hash. Por isso o conteúdo de `dist/` funciona tanto na raiz de um domínio quanto em uma subpasta, sem exigir regras especiais de redirecionamento.
+
+Configuração típica de uma hospedagem:
+
+| Campo | Valor |
+|---|---|
+| Diretório do projeto | `JogoWeb` |
+| Comando de instalação | `npm ci` |
+| Comando de build | `npm run build` |
+| Diretório de saída | `dist` |
+
+Para instalar a PWA e ativar o service worker fora de `localhost`, a hospedagem precisa oferecer HTTPS.
 
 ## Documentação
 
-- [Como executar](COMO_EXECUTAR.md)
+- [Estratégia de qualidade do projeto](../ESTRATEGIA_QA.md)
+- [Evidências de qualidade e funcionalidades](../EVIDENCIAS_QA.md)
+- [Como executar e publicar](COMO_EXECUTAR.md)
+- [Testes E2E com Playwright](TESTES_E2E.md)
 - [Arquitetura](ARQUITETURA.md)
-- [Análise Android](ANALISE_ANDROID.md)
+- [Análise do aplicativo Android](ANALISE_ANDROID.md)
 - [Plano de migração](PLANO_MIGRACAO.md)
 - [Histórico da migração](MIGRACAO.md)
 - [Inventário de assets](INVENTARIO_ASSETS.md)
 - [Matriz de equivalência](MATRIZ_EQUIVALENCIA.md)
-- [Status](STATUS.md)
+- [Status atual](STATUS.md)
 - [Regras de desenvolvimento](AGENTS.md)
-
-## Observação sobre direitos
-
-Alguns arquivos parecem fazer referência a personagens, músicas ou danças de terceiros. Antes de divulgar comercialmente ou monetizar o jogo, confirme as licenças desses materiais. Esta portabilização preserva os arquivos fornecidos, mas não concede direitos sobre eles.

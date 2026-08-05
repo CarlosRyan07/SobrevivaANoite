@@ -34,6 +34,7 @@ Uma diferença entre documentação e Kotlin deve ser resolvida em favor do Kotl
 - `src/utils`: utilitários puros e genéricos.
 - `public/assets`: cópias dos assets Android.
 - `public/assets/optimized`: derivados WebP lossless validados.
+- `e2e`: jornadas críticas executadas em navegadores reais pelo Playwright.
 - `scripts`: otimização e verificações reais em Chrome.
 
 ## Convenções
@@ -46,6 +47,7 @@ Uma diferença entre documentação e Kotlin deve ser resolvida em favor do Kotl
 - Engines, serviços e utilitários: `camelCase.ts`.
 - CSS Modules ao lado da tela/componente.
 - Testes ao lado do módulo como `*.test.ts` ou `*.test.tsx`.
+- Testes de jornada em `e2e/*.spec.ts`, usando locators acessíveis e estado isolado.
 - Uniões discriminadas para estados e eventos; evitar strings abertas.
 - Nunca usar `any`; usar `unknown` e narrowing quando necessário.
 - Timers devem possuir cancelamento no unmount/restart.
@@ -104,7 +106,8 @@ Para cada módulo:
    - `npm run typecheck`;
    - `npm test -- --run`;
    - `npm run test:coverage`;
-   - `npm run build`.
+   - `npm run build`;
+   - `npm run test:e2e`.
 6. Executar `npm run visual:check` para alteração visual/responsiva.
 7. Executar `npm run pwa:check` para alteração em assets/cache/PWA.
 8. Inspecionar manualmente desktop e viewport móvel.
@@ -133,7 +136,7 @@ Um módulo está pronto somente quando:
 - timers anteriores são cancelados em restart/unmount;
 - sons correspondentes são disparados;
 - layout funciona em celular, tablet e desktop;
-- testes focados e globais passam;
+- testes focados, globais e jornadas E2E críticas passam;
 - documentação e `STATUS.md` foram atualizados;
 - não existe pendência conhecida silenciosa.
 

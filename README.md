@@ -1,316 +1,231 @@
+<div align="center">
+
+<img src="./JogoWeb/public/assets/optimized/tela_inicio.webp" alt="Tela inicial de Sobreviva à Noite" width="280" />
+
 # 🌙 Sobreviva à Noite
 
-<div align="center">
+**Um jogo de suspense, sorte e reflexos para Android e navegador.**
 
 ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
-![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![PWA](https://img.shields.io/badge/PWA-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)
-![API](https://img.shields.io/badge/API-28%2B-brightgreen?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
-**Um jogo de suspense e sobrevivência para Android e navegador que testará seus nervos e reflexos!**
+[![Qualidade Web](https://github.com/CarlosRyan07/SobrevivaANoite/actions/workflows/web-quality.yml/badge.svg)](https://github.com/CarlosRyan07/SobrevivaANoite/actions/workflows/web-quality.yml)
+![Testes](https://img.shields.io/badge/testes-104%20aprovados-22c55e)
+![Offline](https://img.shields.io/badge/PWA-offline-0a7ea4)
 
-[📱 Android](#opção-1-apk-direto) • [🌐 Versão Web](./JogoWeb/README.md) • [🎮 Como Jogar](#como-jogar) • [🛠️ Desenvolvimento](#desenvolvimento)
-
-</div>
-
----
-
-## 🎯 Sobre o Projeto
-
-**Sobreviva à Noite** nasceu como um jogo Android e agora também possui uma versão Web instalável como PWA. As duas versões compartilham a mesma identidade, modos, regras, imagens e sons, com controles adaptados para celular e computador.
-
-### Versões disponíveis
-
-| Versão | Localização | Tecnologias | Estado |
-|---|---|---|---|
-| Android | [`app/`](./app) | Kotlin, Jetpack Compose, Room e DataStore | ✅ Completa |
-| Web/PWA | [`JogoWeb/`](./JogoWeb) | React, TypeScript e Vite | ✅ Completa |
-
-A documentação de execução, arquitetura, equivalência e testes da versão Web está em **[JogoWeb/README.md](./JogoWeb/README.md)**.
-
-### 🎓 Contexto Acadêmico
-Este projeto foi desenvolvido como parte da disciplina de **Programação para Dispositivos Móveis**, onde o desafio inicial era criar um aplicativo multi-telas utilizando **Jetpack Compose**. 
-
-Motivado a ir além dos requisitos básicos, decidi criar um **joguinho** que explorasse os limites da proposta acadêmica, implementando:
-- ✅ **Múltiplas telas** com navegação fluida
-- ✅ **Interface moderna** com Jetpack Compose
-- ✅ **Lógica complexa** de jogos interativos
-
-O resultado foi um projeto que não apenas cumpriu os requisitos acadêmicos, mas também demonstrou o potencial criativo e técnico no desenvolvimento Android.
-
-### 🎯 Objetivos Acadêmicos Alcançados
-
-| Requisito Original | Implementação no Projeto | Status |
-|:---:|:---:|:---:|
-| **Multi-telas** | Menu principal, telas de jogo, resultados | ✅ Superado |
-| **Jetpack Compose** | Interface 100% em Compose | ✅ Completo |
-| **Navegação** | Sistema robusto entre telas | ✅ Avançado |
-| **Interatividade** | Jogos com mecânicas complexas | ✅ Inovador |
-
-### 💾 Persistência de Dados
-
-| Requisito da Atividade | Implementação | Status |
-|:---:|:---:|:---:|
-| **Persistência (Room)** | Histórico de partidas | ✅ Implementado |
-| **DataStore** | Recorde de combo e configurações | ✅ Implementado |
-
-### 📚 Principais Aprendizados
-- **Arquitetura Android** com Jetpack Compose
-- **Gerenciamento de estado** em aplicações interativas
-- **Navigation Component** para fluxo entre telas
-- **Design responsivo** e experiência do usuário
-- **Lógica de jogos** e algoritmos de gameplay
-
-### 🎯 Aprendizados Ampliados
-- **Room Database** para histórico local de partidas
-- **DataStore Preferences** para recordes e configurações
-- **React, TypeScript e PWA** na adaptação para navegadores
-- **Padrões de arquitetura** com estado e persistência separados da interface
-
----
-
-### 🚨 Problema Principal
-Oferecer uma experiência de jogo simples e interativa, explorando diferentes mecânicas de gameplay em um ambiente de suspense que mantém o jogador sempre alerta.
-
----
-
-## 🕹️ Modos de Jogo
-
-### 🫣 Modo Esconde-Esconde
-> *"Onde você se esconderia quando sua vida dependesse disso?"*
-
-- **Mecânica**: Jogo de escolha e sorte
-- **Objetivo**: Escapar de um psicopata escolhendo os melhores esconderijos
-- **Habilidades Testadas**: 
-  - Tomada de decisão sob pressão
-  - Intuição e sorte
-  - Estratégia de sobrevivência
-
-### ⚔️ Modo Batalha
-> *"Quando fugir não é uma opção, lute!"*
-
-- **Mecânica**: Sistema de combate baseado em tempo de reação
-- **Objetivo**: Derrotar inimigos usando combos e reflexos rápidos
-- **Habilidades Testadas**:
-  - Tempo de reação
-  - Coordenação motora
-  - Execução de combos
-
----
-
-## 📱 Screenshots
-
-<div align="center">
-
-| Modo Esconde-Esconde | Modo Batalha | Menu Principal |
-|:---:|:---:|:---:|
-| *Em breve* | *Em breve* | *Em breve* |
+[Visão geral](#visão-geral) • [Qualidade e testes](#qualidade-e-testes) • [Modos de jogo](#modos-de-jogo) • [Como jogar](#como-jogar) • [Executar](#executar-localmente) • [Documentação](#documentação)
 
 </div>
 
 ---
 
-## 🚀 Funcionalidades
+## Visão geral
 
-- ✅ **Dois modos de jogo únicos** com mecânicas distintas
-- ✅ **Interface intuitiva** e responsiva
-- ✅ **Sistema de pontuação** para competição
-- ✅ **Efeitos sonoros** imersivos
-- ✅ **Compatibilidade** com Android 9.0+ (API 28+)
-- ✅ **Salvamento persistente** de resultados e recordes
-- ✅ **Sistema de histórico** de partidas
-- ✅ **Recordes de combos** no modo batalha
-- ✅ **Versão Web responsiva e instalável como PWA**
-- ✅ **Funcionamento offline** após o primeiro carregamento
-- 🎨 **Design moderno** com tema dark
+**Sobreviva à Noite** nasceu como um projeto acadêmico Android e evoluiu para um jogo completo com duas formas de sobreviver: esconder-se dentro da casa ou enfrentar o monstro em uma batalha baseada em tempo de reação.
 
----
+O mesmo jogo também está disponível como uma aplicação Web instalável. A versão Web preserva a identidade, as regras, as imagens e os sons do Android, acrescentando controles de teclado e mouse, funcionamento offline e layouts adaptados para celular e computador.
 
-## 🛠️ Tecnologias Utilizadas
+| Versão | Tecnologias | Estado |
+|---|---|:---:|
+| Android | Kotlin, Jetpack Compose, Room e DataStore | ✅ Completa |
+| Web/PWA | React, TypeScript, Vite e Service Worker | ✅ Completa |
 
-<div align="center">
+> A publicação do jogo na internet será adicionada aqui após a escolha da hospedagem. Enquanto isso, as duas versões podem ser executadas localmente.
 
-| Tecnologia | Versão | Uso |
-|:---:|:---:|:---:|
-| **Kotlin** | Latest | Linguagem principal |
-| **Android SDK** | 35 | Desenvolvimento mobile |
-| **Jetpack Compose** | Latest | Interface moderna |
-| **Room e DataStore** | Latest | Persistência no Android |
-| **React + TypeScript** | 19 + 5.9 | Interface e lógica da Web |
-| **Vite + PWA** | 8 | Build, service worker e instalação Web |
-| **Gradle** | 8.x | Build system |
-| **Material Design** | 3.0 | Design system |
+## Qualidade e testes
 
-</div>
+A qualidade é parte central do projeto. A versão Web combina testes de regras, componentes, integração, fluxos reais no navegador, persistência e funcionamento offline.
 
----
+### Resultados atuais
 
-## 📋 Requisitos do Sistema
+| Indicador | Resultado |
+|---|:---:|
+| Testes automatizados | **104** testes em 20 arquivos ✅ |
+| Jornadas E2E | **10** execuções aprovadas em 4 perfis de navegador ✅ |
+| Cenários reais no Chrome | **26** cenários visuais e interativos ✅ |
+| Statements | **88,85%** |
+| Branches | **80,59%** |
+| Funções | **92,94%** |
+| Linhas | **91,71%** |
+| TypeScript estrito, ESLint e build | Aprovados ✅ |
+| Telas, imagens e áudios offline | Aprovados ✅ |
 
-### Mínimos
-- **Android**: 9.0 (API 28)
-- **RAM**: 2GB
-- **Armazenamento**: 50MB livres
-- **Processador**: Dual-core 1.2GHz
+### Estratégia de QA
 
-### Recomendados
-- **Android**: 12.0+ (API 31+)
-- **RAM**: 4GB+
-- **Armazenamento**: 100MB livres
-- **Processador**: Quad-core 2.0GHz+
+| Camada | Ferramentas e cobertura |
+|---|---|
+| Regras de negócio | Vitest: batalha, esconderijo, finais, códigos e persistência |
+| Componentes e integração | Testing Library: telas, modais, controles, foco e navegação |
+| Cobertura de código | `@vitest/coverage-v8`, com limites mínimos obrigatórios |
+| Jornadas de usuário | Playwright: menu, tutorial, controles, esconderijo, vitória, histórico, finais e códigos |
+| Testes visuais | Puppeteer + Chrome em diferentes viewports e escalas |
+| PWA | Fluxos online/offline, cache, imagens, rotas e áudios |
+| Integração contínua | GitHub Actions em pushes e pull requests |
 
-### Versão Web
-- Navegador moderno com JavaScript habilitado
-- Chrome, Edge, Firefox ou Safari atualizado
-- Teclado opcional no modo batalha; controles de toque continuam disponíveis
+### Como a cobertura é calculada
 
----
-
-## 🚀 Instalação
-
-### Opção 1: APK Direto
-1. Baixe o arquivo `app-release.apk` da seção [Releases](../../releases)
-2. Ative "Fontes desconhecidas" nas configurações do Android
-3. Instale o APK baixado
-
-### Opção 2: Compilação Local
 ```bash
-# Clone o repositório
-git clone https://github.com/CarlosRyan07/SobrevivaANoite.git
-
-# Entre no diretório
-cd SobrevivaANoite
-
-# Compile e instale (requer Android Studio)
-./gradlew installDebug
+cd JogoWeb
+npm run test:coverage
 ```
 
-### Opção 3: Versão Web local
+A cobertura Web é coletada pelo mecanismo **V8** por meio do pacote `@vitest/coverage-v8`. O comando apresenta o resumo no terminal e gera relatórios em `JogoWeb/coverage/`, incluindo uma página HTML navegável.
+
+Os limites configurados são 85% de statements, 75% de branches, 85% de funções e 88% de linhas. Se algum valor ficar abaixo do limite, o comando falha e o GitHub Actions bloqueia a validação do PR.
+
+> **Não usamos JaCoCo para esses números.** JaCoCo é voltado à cobertura de aplicações Java/Kotlin na JVM. Como esta cobertura pertence à versão React/TypeScript, usamos a instrumentação nativa do V8 integrada ao Vitest.
+
+### Evidências selecionadas
+
+| Cobertura Web com Vitest/V8 | Jornadas reais com Playwright |
+|:---:|:---:|
+| <img src="./docs/evidencias/qa/web-vitest-cobertura.png" alt="Cobertura Web por módulo" width="600" /> | <img src="./docs/evidencias/qa/web-playwright-matriz.png" alt="Matriz Playwright aprovada" width="600" /> |
+
+Consulte as [evidências completas de qualidade e funcionalidades](./EVIDENCIAS_QA.md), com contexto, comandos reproduzíveis e limitações declaradas.
+
+## Modos de jogo
+
+### 🫣 Esconde-Esconde
+
+Você tem poucos segundos para escolher um dos seis esconderijos. Depois disso, resta acompanhar o monstro percorrendo a casa e torcer para que ele não encontre você.
+
+- escolha sob pressão;
+- percurso e sobreviventes sorteados a cada partida;
+- personagens, tensão, passos e efeitos sonoros;
+- histórico persistente de vitórias e derrotas.
+
+### ⚔️ Batalha
+
+Quando fugir não é uma opção, lute. Ataque o monstro, observe a direção dos golpes e esquive no instante certo para executar um **parry**.
+
+- ataques, esquivas, parry e combos;
+- recorde persistente;
+- tutorial de controles dentro do jogo;
+- três finais condicionais;
+- códigos desbloqueáveis e galeria de finais.
+
+## Imagens do jogo
+
+<div align="center">
+
+| Abertura | Esconde-Esconde | Batalha |
+|:---:|:---:|:---:|
+| <img src="./JogoWeb/public/assets/optimized/tela_inicio.webp" alt="Abertura do jogo" width="210" /> | <img src="./JogoWeb/public/assets/optimized/planta_casa_portainteira.webp" alt="Planta da casa do modo Esconde-Esconde" width="235" /> | <img src="./docs/evidencias/funcionalidades/batalha-desktop.png" alt="Modo batalha no desktop" width="340" /> |
+
+</div>
+
+## Principais recursos
+
+- 🎮 dois modos com mecânicas diferentes;
+- 📖 lore completa antes da escolha do modo;
+- 🏆 três finais: **A Maldição do Pidão**, **Venceu na Raça** e **Sopa de Lobo**;
+- 🔐 sistema de códigos e recompensas desbloqueáveis;
+- 🌳 galeria persistente de finais, com dicas para os ainda bloqueados;
+- 📊 histórico de partidas e recorde de combo;
+- 🔊 trilha, vozes e efeitos sonoros sobrepostos;
+- ⌨️ controles por toque, teclado e mouse;
+- 📱 palco proporcional em celular e desktop;
+- 📦 instalação como PWA;
+- 📴 funcionamento offline após o primeiro carregamento.
+
+## Como jogar
+
+### Esconde-Esconde
+
+1. Entre na casa escolhendo **Esconder**.
+2. Selecione um dos seis locais antes do contador terminar.
+3. Acompanhe a busca do monstro.
+4. Sobreviva e tente descobrir todos os resultados.
+
+### Batalha
+
+| Ação | Tela/toque | Teclado |
+|---|---|---|
+| Esquivar para a esquerda | Botão `←` | `A` ou `←` |
+| Atacar | Botão de punho ou clique na tela | `Espaço` |
+| Esquivar para a direita | Botão `→` | `D` ou `→` |
+
+Esquivar na direção correta durante o ataque realiza um **parry**, atordoa o inimigo e abre uma janela segura para atacar.
+
+## Executar localmente
+
+### Web/PWA
+
+Requisitos: Git e Node.js `^20.19.0` ou `>=22.12.0`.
+
 ```bash
-# A partir da raiz do repositório
-cd JogoWeb
+git clone https://github.com/CarlosRyan07/SobrevivaANoite.git
+cd SobrevivaANoite/JogoWeb
 npm ci
 npm run dev
 ```
 
-Depois, abra o endereço local mostrado pelo Vite. Para gerar a versão de produção, execute `npm run build`. Consulte o **[guia completo da versão Web](./JogoWeb/README.md)** para testes, PWA e publicação.
+Abra o endereço mostrado pelo Vite, normalmente `http://localhost:5173`.
 
----
+Para gerar a versão pronta para hospedagem:
 
-## 🎮 Como Jogar
-
-### 🫣 Modo Esconde-Esconde
-1. **Inicie** o modo no menu principal
-2. **Escolha** um local para se esconder entre as opções disponíveis
-3. **Aguarde** o resultado - você conseguiu escapar?
-4. **Repita** e tente sobreviver o máximo de rodadas possível
-
-### ⚔️ Modo Batalha
-1. **Entre** no modo batalha pelo menu
-2. **Observe** os comandos que aparecem na tela
-3. **Execute** os combos tocando nos botões; na Web, use `A`/`←` e `D`/`→` para esquivar, e `Espaço` ou clique esquerdo para atacar
-4. **Derrote** todos os inimigos para avançar
-
----
-
-## 🏗️ Desenvolvimento
-
-### Estrutura do Projeto
-```text
-SobrevivaANoite/
-├── app/                  # Aplicativo Android/Kotlin
-│   └── src/main/
-│       ├── java/         # Telas, ViewModels e persistência
-│       └── res/          # Imagens, áudios e recursos Android
-├── JogoWeb/              # Aplicação React/TypeScript/PWA
-│   ├── src/              # Telas, regras, serviços e testes
-│   ├── public/           # Assets do jogo e ícones PWA
-│   └── README.md         # Documentação completa da Web
-├── gradle/               # Configuração de build Android
-└── README.md             # Visão geral das duas versões
+```bash
+npm run build
+npm run preview
 ```
 
-### Como Contribuir
-1. **Fork** este repositório
-2. **Crie** uma branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
-3. **Commit** suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
-4. **Push** para a branch (`git push origin feature/nova-funcionalidade`)
-5. **Abra** um Pull Request
+O build final é criado em `JogoWeb/dist/`. Consulte o [guia completo da versão Web](./JogoWeb/README.md) para testes e publicação.
 
----
+### Android
 
-## 📊 Status do Projeto
+Abra o repositório no Android Studio ou execute:
 
-<div align="center">
+```bash
+git clone https://github.com/CarlosRyan07/SobrevivaANoite.git
+cd SobrevivaANoite
+./gradlew installDebug
+```
 
-| Funcionalidade | Status | Versão |
-|:---:|:---:|:---:|
-| Modo Esconde-Esconde | ✅ Completo | v1.0 |
-| Modo Batalha | ✅ Completo | v1.0 |
-| Histórico e recordes | ✅ Completo | v1.1 |
-| Aplicativo Android | ✅ Completo | v1.1 |
-| Aplicação Web/PWA | ✅ Completa | v1.0 Web |
-| Novos Modos | 💭 Considerando | TBD |
+No Windows PowerShell, use `./gradlew.bat installDebug`.
 
-</div>
+## Estrutura do repositório
 
----
+```text
+SobrevivaANoite/
+├── app/                  # Aplicativo Android em Kotlin
+├── JogoWeb/              # Aplicação React/TypeScript/PWA
+│   ├── public/           # Imagens, áudios, GIF e ícones
+│   ├── e2e/              # Jornadas críticas com Playwright
+│   ├── scripts/          # Otimização e testes em navegador
+│   ├── src/              # Telas, regras, persistência e testes
+│   └── README.md         # Guia técnico da versão Web
+├── gradle/               # Configuração do Android
+└── README.md             # Apresentação geral do projeto
+```
 
-## 👥 Equipe
+## Documentação
 
-<div align="center">
+- [Estratégia de qualidade](./ESTRATEGIA_QA.md)
+- [Evidências de qualidade e funcionalidades](./EVIDENCIAS_QA.md)
+- [Testes Android](./TESTES_ANDROID.md)
+- [Guia da versão Web](./JogoWeb/README.md)
+- [Como executar e publicar](./JogoWeb/COMO_EXECUTAR.md)
+- [Testes E2E com Playwright](./JogoWeb/TESTES_E2E.md)
+- [Arquitetura Web](./JogoWeb/ARQUITETURA.md)
+- [Histórico da migração](./JogoWeb/MIGRACAO.md)
+- [Matriz de equivalência Android/Web](./JogoWeb/MATRIZ_EQUIVALENCIA.md)
+- [Status atual](./JogoWeb/STATUS.md)
 
-| [<img src="https://github.com/CarlosRyan07.png" width="100px;"/><br /><sub><b>Carlos Ryan</b></sub>](https://github.com/CarlosRyan07) |
-| :---: |
-| 💻 Desenvolvedor Principal |
+## Origem acadêmica
 
-*Projeto desenvolvido como parte da disciplina de **Programação para Dispositivos Móveis***
+O projeto começou na disciplina de **Programação para Dispositivos Móveis**, explorando Jetpack Compose, navegação, gerenciamento de estado, persistência local e mecânicas interativas. A migração para a Web ampliou o trabalho com React, TypeScript, PWA, acessibilidade e testes reais em navegador.
 
-</div>
-
----
-
-## 🎓 Reflexão Acadêmica
-
-Este projeto representa mais do que um simples cumprimento de requisitos acadêmicos. Foi uma oportunidade de:
-
-- **Explorar limites criativos** dentro de um framework técnico específico
-- **Aplicar conhecimentos teóricos** em um projeto prático e envolvente  
-- **Demonstrar domínio técnico** do Jetpack Compose e arquitetura Android
-- **Criar valor real** através de uma experiência de usuário divertida
-
-O resultado final mostra como é possível **ir além do esperado** mesmo dentro de constraints acadêmicas, transformando um exercício de programação em um **produto completo** e **funcional**.
-
-### 📋 Documentação da versão Web
-
-Para detalhes sobre arquitetura, equivalência com Android, testes e execução, consulte **[JogoWeb/README.md](./JogoWeb/README.md)**.
-
----
-
-## 📄 Licença
-
-Este projeto é distribuído sob a licença MIT.
-
----
-
-## 🤝 Suporte
-
-Encontrou um bug ou tem uma sugestão? 
-
-- 🐛 [Reporte um bug](../../issues/new?template=bug_report.md)
-- 💡 [Sugira uma feature](../../issues/new?template=feature_request.md)
-- 📧 Entre em contato: [seu-email@exemplo.com]
-
----
+## Autor
 
 <div align="center">
 
-**⭐ Se você gostou do projeto, não esqueça de dar uma estrela!**
+[<img src="https://github.com/CarlosRyan07.png" width="100" alt="Carlos Ryan" /><br /><strong>Carlos Ryan</strong>](https://github.com/CarlosRyan07)
 
----
+Desenvolvimento, conceito e evolução do projeto.
 
-*Feito com ❤️ e muito ☕ por [Carlos Ryan](https://github.com/CarlosRyan07)*
+⭐ Se você gostou do jogo, considere deixar uma estrela no repositório.
 
 </div>

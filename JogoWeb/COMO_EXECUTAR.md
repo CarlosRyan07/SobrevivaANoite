@@ -5,6 +5,7 @@
 - Node.js `^20.19.0` ou `>=22.12.0`.
 - npm incluído no Node.
 - Chrome instalado apenas para `visual:check` e `pwa:check`.
+- Navegadores do Playwright instalados apenas para os testes E2E.
 
 O desenvolvimento e o build do jogo não exigem Android Studio, Java, Kotlin ou servidor de backend.
 
@@ -15,6 +16,7 @@ No terminal, entre em `JogoWeb` a partir da raiz do repositório:
 ```powershell
 cd .\JogoWeb
 npm install
+npx playwright install chromium firefox webkit
 ```
 
 `package-lock.json` fixa as versões resolvidas. Em CI ou instalação reproduzível, prefira:
@@ -49,7 +51,16 @@ npm run typecheck
 npm run test:run
 npm run test:coverage
 npm run build
+npm run test:e2e
 ```
+
+O Playwright abre a aplicação em navegadores reais e percorre os fluxos críticos. Ele inicia seu próprio preview na porta `4174`; não execute `npm run dev` antes. Para aprender usando a interface interativa:
+
+```bash
+npm run test:e2e:ui
+```
+
+Consulte [Testes E2E com Playwright](TESTES_E2E.md) para execução visível, depuração, testes focados e leitura dos relatórios.
 
 Verificação visual:
 
@@ -149,6 +160,8 @@ Clique em `Iniciar Jogo`. Navegadores bloqueiam áudio antes da primeira intera�
 ### Service worker antigo
 
 O registro usa `autoUpdate`. Se necessário durante desenvolvimento, feche abas antigas e limpe `Application > Storage` nas ferramentas do navegador.
+
+Ao substituir um áudio mantendo o mesmo nome, altere a cópia em `JogoWeb/public/assets/audio` e incremente o nome de `cacheName` do áudio em `vite.config.ts`. Assim instalações PWA existentes não reutilizam a versão anterior.
 
 ### `visual:check` não encontra Chrome
 

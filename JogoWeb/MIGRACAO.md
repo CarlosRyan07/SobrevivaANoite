@@ -90,7 +90,7 @@ A matriz final está em `MATRIZ_EQUIVALENCIA.md`.
 - A batalha aceita `Espaço` e clique esquerdo em qualquer área livre para atacar; os botões de esquiva mostram apenas setas.
 - A dança do Fortnite foi removida dos assets Android e Web; a vitória usa apenas `rat_dance.gif`.
 - HP zero agora trava imediatamente ataques e esquivas, cancela timers concorrentes e fixa o sprite derrotado antes do joinha e da dança.
-- A vitória possui cenário de teste com inimigo iniciado em 1 HP e usa o `rat_dance_music.mp3` oficial da `master` atualizada.
+- A vitória possui cenário de teste com inimigo iniciado em 1 HP e IA inimiga desativada apenas no ambiente de validação; a sequência usa o `rat_dance_music.mp3` oficial da `master` atualizada.
 - `Voltar ao Menu` nos resultados limpa o hash da lore e retorna à abertura real.
 - A espera do sprite derrotado foi ajustada para 2.000 ms antes do joinha, reduzindo em 2 segundos o congelamento percebido após o golpe final.
 - A música é preparada muda durante o golpe final e retomada audível com o joinha, evitando o bloqueio de autoplay após o timer.
@@ -106,6 +106,8 @@ A matriz final está em `MATRIZ_EQUIVALENCIA.md`.
 - O menu ganhou a rota `#/endings`: cada final especial é registrado automaticamente na vitória normal e passa a mostrar nome e arte na galeria; os finais ainda bloqueados omitem a imagem e revelam até três dicas progressivas.
 - O código `ligeirinho` não é mais antecipado na tela **Você venceu**; sua revelação acontece somente dentro da conclusão narrativa do final, após **Prosseguir**.
 - Antes da primeira batalha, um tutorial translúcido apresenta setas/mouse ou A/D/Espaço e recomenda o parry; a IA e os controles permanecem pausados até **Começar Batalha**, a confirmação fica persistida e um pequeno botão **?** permite reabrir a ajuda com o combate pausado.
+- Os fluxos críticos passaram a ser executados também pelo Playwright em Chrome e Firefox desktop, Chrome e Safari móveis emulados, cobrindo menu, tutorial, controles, esconderijo, vitória, histórico, finais e códigos.
+- `soco_forte.mp3` foi substituído pela nova gravação fornecida pelo usuário e o cache de áudio da PWA avançou para `sobreviva-audio-v2` para invalidar a versão anterior.
 
 ### 7.2. Sincronização com a `master` remota
 
