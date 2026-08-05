@@ -1,0 +1,523 @@
+.root,
+.background,
+.centerStage,
+.loseOverlay,
+.winOverlay {
+  position: absolute;
+  inset: 0;
+}
+
+.tutorialOverlay {
+  position: absolute;
+  z-index: 30;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: grid;
+  height: 100dvh;
+  max-height: 100%;
+  place-items: center;
+  padding: 22px;
+  background: rgb(0 0 0 / 82%);
+  color: #fff;
+  animation: fadeIn 260ms ease both;
+}
+
+.tutorialPanel {
+  display: flex;
+  overflow-y: auto;
+  width: min(100%, 400px);
+  max-height: 100%;
+  align-items: center;
+  flex-direction: column;
+  padding: 24px 18px;
+  border: 2px solid #d6a52b;
+  border-radius: 16px;
+  background: rgb(5 14 36 / 96%);
+  box-shadow: 0 10px 0 rgb(0 0 0 / 45%);
+  text-align: center;
+}
+
+.tutorialPanel h1 {
+  margin: 0;
+  color: #fff1bd;
+  -webkit-text-stroke: 1px #0a2e75;
+  paint-order: stroke fill;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  text-shadow: 0 4px 0 #071d4f;
+}
+
+.tutorialIntro {
+  margin: 12px 0 14px;
+  font-size: 16px;
+}
+
+.tutorialOptions {
+  display: grid;
+  width: 100%;
+  gap: 10px;
+}
+
+.tutorialOption {
+  display: grid;
+  gap: 9px;
+  padding: 12px;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 11px;
+  background: rgb(11 34 79 / 76%);
+}
+
+.optionTitle,
+.orLabel {
+  color: #f7cf55;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 11px;
+}
+
+.keyLine {
+  display: flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.keyLine kbd {
+  display: grid;
+  min-width: 31px;
+  min-height: 30px;
+  place-items: center;
+  padding: 4px 7px;
+  border: 1px solid #f1f3f8;
+  border-radius: 6px;
+  background: #20293d;
+  box-shadow: 0 3px 0 #080b12;
+  color: #fff;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 12px;
+}
+
+.keyLine .wideKey {
+  min-width: 102px;
+  font-size: 9px;
+}
+
+.keyLine span {
+  font-size: 14px;
+}
+
+.orLabel {
+  line-height: 1;
+}
+
+.parryTip {
+  margin: 16px 0;
+  color: #e7e9f1;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.parryTip strong {
+  color: #f7cf55;
+}
+
+.tutorialPanel > button {
+  min-width: 210px;
+  font-size: 13px;
+}
+
+@media (max-height: 700px) {
+  .tutorialPanel {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+
+  .tutorialPanel h1 {
+    font-size: 25px;
+  }
+
+  .tutorialIntro {
+    margin: 7px 0 9px;
+  }
+
+  .tutorialOptions,
+  .tutorialOption {
+    gap: 6px;
+  }
+
+  .tutorialOption {
+    padding: 8px;
+  }
+
+  .parryTip {
+    margin: 10px 0;
+  }
+}
+
+.root {
+  overflow: hidden;
+  background: var(--color-battle-night);
+}
+
+.background {
+  width: 100%;
+  height: 100%;
+  transform: translateY(-60px);
+  object-fit: contain;
+}
+
+.topUi {
+  position: absolute;
+  z-index: 3;
+  top: 120px;
+  right: 0;
+  left: 0;
+}
+
+.highScore {
+  position: absolute;
+  z-index: 5;
+  top: calc(24px + env(safe-area-inset-top, 0px));
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  color: #ffeb3b;
+
+  paint-order: stroke fill;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+.helpButton {
+  position: absolute;
+  z-index: 8;
+  top: calc(20px + env(safe-area-inset-top, 0px));
+  left: calc(16px + env(safe-area-inset-left, 0px));
+  display: grid;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  min-height: 36px;
+  place-items: center;
+  padding: 0;
+  border: 2px solid #d6a52b;
+  border-radius: 50%;
+  background: #0b347f;
+  box-shadow: 0 3px 0 #020b1d;
+  color: #fff1bd;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.helpButton:hover {
+  background: #10469f;
+}
+
+.helpButton:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #020b1d;
+}
+
+.combo {
+  position: absolute;
+  z-index: 4;
+  top: 380px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  color: var(--combo-color);
+  -webkit-text-stroke: 2px #d6a52b;
+  paint-order: stroke fill;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-weight: 400;
+  opacity: 1;
+  text-shadow: 0 2px 0 #5d3900;
+  transition: color 500ms ease, opacity 300ms ease;
+}
+
+.combo strong {
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.combo span {
+  margin-top: 4px;
+  font-size: 16px;
+}
+
+.centerStage {
+  z-index: 2;
+}
+
+.enemy,
+.survivor {
+  position: absolute;
+  left: 50%;
+  width: 70%;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+}
+
+.enemy {
+  top: calc(50% - 20px);
+  height: 270px;
+}
+
+.survivor {
+  top: calc(50% + 60px);
+  width: 60%;
+  height: 200px;
+}
+
+.bottomUi {
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.controls {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: space-evenly;
+  gap: 6px;
+  margin-top: 24px;
+}
+
+.controlGroup {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.controlHint {
+  min-width: 32px;
+  padding: 3px 7px;
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 6px;
+  background: rgb(8 21 52 / 88%);
+  color: #fff;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.4px;
+  line-height: 1.2;
+  text-align: center;
+  text-shadow: 0 2px 0 #000;
+}
+
+.controls button {
+  min-height: 48px;
+  padding: 8px 14px;
+  text-align: center;
+}
+
+.controls .dodgeButton {
+  width: 76px;
+  height: 56px;
+  padding: 0;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.controls .attackButton {
+  width: 80px;
+  height: 70px;
+  padding: 0;
+  font-size: 25px;
+}
+
+.loseOverlay {
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 24px;
+  background: rgb(0 0 0 / 90%);
+  animation: fadeIn 300ms ease both;
+}
+
+.loseOverlay h1 {
+  margin: 0;
+  color: #f44336;
+  -webkit-text-stroke: 2px #000;
+  paint-order: stroke fill;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 48px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  line-height: 1.1;
+  text-align: center;
+  text-shadow:
+    0 1px 0 #000,
+    0 5px 0 rgb(0 0 0 / 42%);
+}
+
+.loseOverlay button:first-of-type {
+  margin-top: 32px;
+}
+
+.loseOverlay button + button {
+  margin-top: 16px;
+}
+
+.winOverlay {
+  z-index: 6;
+  pointer-events: none;
+  animation: fadeIn 300ms ease both;
+}
+
+.winOverlay h1 {
+  position: absolute;
+  top: 210px;
+  right: 0;
+  left: 0;
+  margin: 0;
+  color: #22c94f;
+  -webkit-text-stroke: 2px #000;
+  paint-order: stroke fill;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 40px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  line-height: 1.1;
+  text-align: center;
+  text-shadow:
+    0 1px 0 #000,
+    0 5px 0 rgb(0 0 0 / 42%);
+}
+
+.winActions {
+  position: absolute;
+  right: 0;
+  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  pointer-events: auto;
+}
+
+.storyChoiceActions {
+  right: 20px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  left: 20px;
+  display: grid;
+  grid-template-areas:
+    'retry proceed'
+    'menu menu';
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 12px;
+  row-gap: 10px;
+}
+
+.storyChoiceActions button {
+  min-height: 48px;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.1;
+}
+
+.storyChoiceActions button span {
+  white-space: nowrap;
+}
+
+.storyChoiceActions .proceedButton {
+  min-width: 0;
+  grid-area: proceed;
+}
+
+.storyRetryButton {
+  grid-area: retry;
+}
+
+.storyMenuButton {
+  min-width: 210px;
+  grid-area: menu;
+  justify-self: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-height: 760px) and (max-width: 599px) {
+  .topUi {
+    top: 100px;
+  }
+
+  .combo {
+    top: 275px;
+  }
+
+  .bottomUi {
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .enemy {
+    height: 235px;
+  }
+
+  .survivor {
+    height: 175px;
+  }
+
+  .winOverlay h1 {
+    top: 120px;
+  }
+
+  .winActions {
+    bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .storyChoiceActions {
+    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 370px) {
+  .controls button {
+    padding-right: 9px;
+    padding-left: 9px;
+    font-size: 14px;
+  }
+
+  .controls .attackButton {
+    width: 70px;
+  }
+
+  .storyChoiceActions {
+    right: 10px;
+    left: 10px;
+    gap: 8px;
+  }
+
+  .storyChoiceActions button {
+    padding-right: 8px;
+    padding-left: 8px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .combo,
+  .loseOverlay,
+  .winOverlay {
+    transition-duration: 1ms;
+    animation-duration: 1ms;
+  }
+}

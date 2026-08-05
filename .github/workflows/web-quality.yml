@@ -1,0 +1,140 @@
+name: Web quality
+
+'on':
+  push:
+    paths:
+      - 'JogoWeb/**'
+      - '.github/workflows/web-quality.yml'
+  pull_request:
+    paths:
+      - 'JogoWeb/**'
+      - '.github/workflows/web-quality.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: web-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, types, tests and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: JogoWeb
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: JogoWeb/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Tests with coverage
+        run: npm run test:coverage
+
+      - name: Production build
+        run: npm run build
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-coverage
+          path: JogoWeb/coverage
+          if-no-files-found: ignore
+          retention-days: 7
+
+  browser:
+    name: Browser and offline checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: JogoWeb
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: JogoWeb/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Locate Chrome
+        shell: bash
+        run: echo "CHROME_PATH=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium)" >> "$GITHUB_ENV"
+
+      - name: Visual flows
+        run: npm run visual:check
+
+      - name: Offline PWA
+        run: npm run pwa:check
+
+      - name: Upload browser reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-browser-reports
+          path: JogoWeb/.artifacts
+          if-no-files-found: ignore
+          retention-days: 7
+
+  e2e:
+    name: Critical E2E journeys
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: JogoWeb
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: JogoWeb/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Critical user journeys
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-playwright-report
+          path: JogoWeb/.artifacts/playwright
+          if-no-files-found: ignore
+          retention-days: 7

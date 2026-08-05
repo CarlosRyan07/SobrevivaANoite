@@ -75,7 +75,7 @@ class HideViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState.Choosing)
     val uiState: StateFlow<GameUiState> = _uiState
-    private val _playersStatus = MutableStateFlow(getInitialPlayersStatus())
+    private val _playersStatus = MutableStateFlow(HideRules.initialPlayersStatus())
     val playersStatus: StateFlow<Map<Int, PlayerStatus>> = _playersStatus
     private val _psychopathPosition = MutableStateFlow(offScreenPosition)
     val psychopathPosition: StateFlow<Position> = _psychopathPosition
@@ -107,12 +107,7 @@ class HideViewModel(application: Application) : AndroidViewModel(application) {
                 // Salva o resultado de derrota
                 saveHideResult(wasVictory = false)
                 _soundEventChannel.send(SoundEvent.PlayerLoses)
-                _uiState.value = GameUiState.Result(
-                    didPlayerWin = false,
-                    playerChoice = null,
-                    otherSurvivor = null,
-                    customMessage = "Você foi pego antes mesmo de conseguir se esconder."
-                )
+                _uiState.value = HideRules.countdownExpiredResult()
             }
         }
     }
@@ -121,8 +116,8 @@ class HideViewModel(application: Application) : AndroidViewModel(application) {
         if (_uiState.value !is GameUiState.Choosing) return
         countdownJob?.cancel()
         viewModelScope.launch {
-            val allSpots = (1..6).toList()
-            val searchPath = allSpots.shuffled().take(4).toMutableList()
+            val allSpots = (1..HideRules.HIDING_SPOT_COUNT).toList()
+            val searchPath = HideRules.initialSearchPath(allSpots.shuffled())
             _uiState.value = GameUiState.Searching
             updatePosition(outsideDoorPosition)
             delay(2000)
@@ -154,8 +149,11 @@ class HideViewModel(application: Application) : AndroidViewModel(application) {
                         _uiState.value = GameUiState.Result(false, playerChoice, null)
                         return@launch
                     } else {
-                        val currentPathAndPlayer = searchPath.toSet() + playerChoice
-                        val replacementTarget = allSpots.find { it !in currentPathAndPlayer && _playersStatus.value[it] == PlayerStatus.Hiding }
+                        val replacementTarget = HideRules.replacementTarget(
+                            remainingSearchPath = searchPath,
+                            playerChoice = playerChoice,
+                            playersStatus = _playersStatus.value
+                        )
                         replacementTarget?.let {
                             searchPath.add(it)
                         }
@@ -171,8 +169,7 @@ class HideViewModel(application: Application) : AndroidViewModel(application) {
                 updatePosition(houseCenterPosition)
                 delay(2000)
             }
-            val finalSurvivors = _playersStatus.value.filter { it.value == PlayerStatus.Hiding }.keys
-            val finalOtherSurvivor = finalSurvivors.find { it != playerChoice }
+            val finalOtherSurvivor = HideRules.otherSurvivor(_playersStatus.value, playerChoice)
             delay(500)
             repeat(4) {
                 _isFacingRight.value = !_isFacingRight.value
@@ -204,17 +201,13 @@ class HideViewModel(application: Application) : AndroidViewModel(application) {
 
     fun playAgain() {
         _uiState.value = GameUiState.Choosing
-        _playersStatus.value = getInitialPlayersStatus()
+        _playersStatus.value = HideRules.initialPlayersStatus()
         _psychopathPosition.value = offScreenPosition
         _backgroundImageRes.value = R.drawable.planta_casa_portainteira
         _currentPsychopathImageRes.value = psychopathImages.random()
         _isFacingRight.value = false
         _countdown.value = 10
         startCountdown()
-    }
-
-    private fun getInitialPlayersStatus(): Map<Int, PlayerStatus> {
-        return (1..6).associateWith { PlayerStatus.Hiding }
     }
 
     // NOVO: Função para salvar o resultado

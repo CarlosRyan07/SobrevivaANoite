@@ -1,0 +1,162 @@
+# Arquitetura Web
+
+## Visão geral
+
+O jogo é uma aplicação estática de uma página. React compõe as telas; hooks orquestram os efeitos; engines puras concentram as regras; CSS Modules reproduzem o layout; HTML Audio fornece sons sobrepostos.
+
+```text
+App / navegação por hash
+├─ AudioProvider → AudioService (10 vozes)
+├─ GamePersistence → recorde + histórico + códigos + finais + tutorial locais
+└─ GameFrame (palco vertical)
+   └─ Suspense / code splitting
+      ├─ MenuScreen
+      ├─ HistoryScreen → historyEngine
+      ├─ EndingsScreen → catálogo e progresso persistente
+      ├─ HideScreen → useHideGame → hideEngine
+      └─ BattleScreen → useBattleGame → battleEngine
+```
+
+## Camadas
+
+### Shell e navegação
+
+- `src/app/App.tsx`: provider, palco, lazy imports e seleção da tela.
+- `src/app/navigation.ts`: converte hashes em `GameRoute` e retorna à lore.
+- `src/components/GameFrame`: palco responsivo para telas de conteúdo e palco lógico escalável para gameplay.
+
+Não há React Router porque cinco rotas principais por hash resolvem integralmente o fluxo com menos estado e sem configuração de servidor.
+
+### Áudio
+
+- `audioCatalog.ts`: associa nomes tipados aos 21 MP3.
+- `AudioService.ts`: preload, play, preparação muda para áudio tardio, parada seletiva, sobreposição, limite de dez streams e release.
+- `AudioContext.tsx`: ciclo de vida global.
+- `audioContextValue.ts`: contexto e hook de consumo.
+
+Cada efeito cria um novo `HTMLAudioElement`, permitindo sobreposição como `SoundPool`. Ao atingir dez vozes, a mais antiga é interrompida.
+As vozes guardam a chave lógica do som, permitindo encerrar apenas a tensão ou a música de vitória sem cortar os demais efeitos.
+O Rat Dance cria uma voz muda no gesto do golpe final e torna a mesma voz audível após os timers, contornando políticas de autoplay sem antecipar o som.
+
+### Menu
+
+`MenuScreen` mantém abertura e lore montadas para reproduzir os fades cruzados. Lore usa lazy loading nas imagens. O hash `#/lore` modela retorno pelo navegador, `#/history` abre o histórico e `#/endings` abre a galeria de finais.
+
+### Persistência e histórico
+
+- `persistence/gamePersistence.ts`: adapta o recorde do DataStore e as partidas do Room ao armazenamento local Web.
+- `history/historyEngine.ts`: resume vitórias/derrotas e formata horários.
+- `HistoryScreen`: estatísticas, estado vazio e partidas da mais recente para a mais antiga.
+
+O serviço possui contrato injetável para testes e fallback em memória caso o armazenamento do navegador esteja indisponível. Não há envio de dados a servidor.
+
+### Esconderijo
+
+- `hideTypes.ts`: uniões discriminadas e estado completo.
+- `hideConstants.ts`: coordenadas e todos os timers.
+- `hideEngine.ts`: estado inicial, caminho, substituto e sobrevivente.
+- `useHideGame.ts`: contador, sequência assíncrona, áudio e cancelamento.
+- `HideScreen.tsx`: renderização, sem regras de probabilidade.
+
+O hook usa `AbortController` para equivaler ao cancelamento de `Job`. Um ref guarda o estado mais recente para que a sequência assíncrona leia mortes e fase sem closures antigas.
+
+### Batalha
+
+- `battleTypes.ts`: direções, ações, timings e estado.
+- `battleConstants.ts`: HP, dano, velocidade e delays.
+- `battleEngine.ts`: resolução de ataque, dano, velocidade e paletas.
+- `useBattleGame.ts`: IA, jobs concorrentes, input e sequência de resultado.
+- `battleKeyboard.ts`: mapeamento testável de `A`/←, `D`/→ e `Espaço`.
+- `BattleScreen.tsx`: sprites, controles touch/teclado/mouse, HUD e overlays.
+- `HpBar`: componente compartilhado de barra animada.
+
+Controllers independentes reproduzem os jobs Android:
+
+- IA;
+- ação do jogador;
+- impacto no inimigo;
+- timeout de combo;
+- sequência de vitória.
+
+### Animação
+
+- Fades, HUD e overlays: CSS.
+- Movimento do assassino: `requestAnimationFrame` com mola crítica equivalente ao Compose (`stiffness 1500`, threshold `0.1`).
+- GIFs: reprodução nativa por `<img>`.
+- `prefers-reduced-motion` reduz transições decorativas, sem mudar timers de regras.
+
+### Aleatoriedade
+
+`RandomSource` abstrai booleano, inteiro, escolha e shuffle. Produção usa `Math.random`; testes injetam sequências determinísticas. As distribuições e listas permanecem as do Kotlin.
+
+## Estado
+
+Não há Zustand. Cada modo possui estado local isolado, como cada `ViewModel` Android. Context API existe somente para áudio global; a persistência é um serviço pequeno, injetável e independente de React.
+
+As fases são uniões discriminadas:
+
+```text
+HidePhase: choosing → searching → result
+EnemyAction: idle → preparing → attacking → recovering
+                                     └→ stunned → idle
+                                     └→ defeated
+BattleResult: null → win | lose
+```
+
+## Responsividade
+
+- Menu, lore e histórico: `100dvh`, largura 100% e máximo 480 px.
+- Esconderijo: palco lógico imutável de `480×850`, escalado uniformemente para caber na área visível; batalha: quadro vertical de referência com rolagem quando necessária.
+- A escala considera largura e altura; redimensionamento e zoom não alteram a proporção `0,48` nem as coordenadas internas.
+- Desktop/tablet: palco centralizado, com margens temáticas quando a proporção da tela é diferente.
+- Mobile: palco inteiro reduzido como uma unidade, sem cortar personagens ou reposicionar controles isoladamente.
+- Lore: rolagem própria e overscroll contido.
+
+## Assets e performance
+
+- Chunks separados para as quatro telas por `React.lazy`.
+- Abertura tem preload prioritário.
+- Lore usa lazy loading.
+- Cada modo preaquece somente seus sprites.
+- WebPs lossless reduzem transferência sem alterar pixels visíveis.
+- Arquivos originais continuam preservados em `public`.
+
+## PWA e cache
+
+Workbox gera o service worker:
+
+- precache de shell, JS, CSS, manifest e ícones (~900 KiB);
+- `NetworkFirst` para imagens, com timeout de um segundo e até 100 entradas por um ano;
+- `NetworkFirst` para MP3, com timeout de um segundo, suporte a range e até 30 entradas por um ano;
+- suporte a range requests de áudio;
+- atualização automática e limpeza de caches antigos.
+
+## Testes
+
+- Engines: constantes, probabilidade, dano, velocidade, paletas.
+- Hooks: fake timers, parry, hits, combo, contador e resultados.
+- Componentes: elementos, controles e acessibilidade.
+- Áudio: dez streams, preparação do Rat Dance e cleanup.
+- Cobertura: limites globais de 85% de statements, 75% de branches, 85% de funções e 88% de linhas.
+- Visual: Chrome real em 26 casos, incluindo os três finais completos, histórico, abertura 546×866, seleção mantida e equivalentes de zoom entre 67% e 175%.
+- PWA: Chrome real com reload persistente e funcionamento offline.
+- CI: GitHub Actions executa a suíte de qualidade e os testes de navegador em pushes e pull requests.
+
+## Dependências
+
+Runtime:
+
+- React;
+- React DOM.
+
+Desenvolvimento:
+
+- Vite e plugin React;
+- TypeScript;
+- Vitest, Testing Library e jsdom;
+- ESLint/typescript-eslint;
+- Sharp para otimização;
+- Puppeteer Core para validação real;
+- vite-plugin-pwa/Workbox.
+
+Nenhuma dependência de runtime de estado, roteamento, UI ou animação foi necessária.

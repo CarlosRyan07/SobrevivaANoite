@@ -1,0 +1,144 @@
+.root {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  background: var(--color-battle-night);
+  color: #fff;
+}
+
+.topBar {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-height: 64px;
+  flex: 0 0 auto;
+  grid-template-columns: 48px 1fr 48px;
+  align-items: center;
+  padding: env(safe-area-inset-top, 0px) 8px 0;
+  background: #17172f;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 40%);
+}
+
+.topBar h1 {
+  grid-column: 2;
+  margin: 0;
+  font-size: 20px;
+  text-align: center;
+}
+
+.backButton {
+  display: grid;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  place-items: center;
+  padding: 0;
+  background: transparent;
+  font-size: 28px;
+}
+
+.content {
+  overflow-y: auto;
+  padding: 16px 16px calc(24px + env(safe-area-inset-bottom, 0px));
+  overscroll-behavior: contain;
+}
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stats h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+}
+
+.statsCard,
+.matchCard {
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 12px;
+  background: rgb(64 64 64 / 30%);
+}
+
+.statsCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+}
+
+.statsCard strong {
+  font-size: 15px;
+}
+
+.statsCard span,
+.matchCard p {
+  color: #d3d3d3;
+}
+
+.empty {
+  display: grid;
+  min-height: 240px;
+  place-items: center;
+  margin: 24px 0 0;
+  color: #9e9e9e;
+  text-align: center;
+}
+
+.matches {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.matchCard {
+  padding: 16px;
+}
+
+.matchHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.matchHeading h3,
+.matchCard p {
+  margin: 0;
+}
+
+.matchHeading h3 {
+  font-size: 18px;
+}
+
+.matchCard time {
+  display: block;
+  margin-top: 8px;
+  color: #9e9e9e;
+  font-size: 12px;
+}
+
+.matchCard p {
+  margin-top: 4px;
+}
+
+.victory {
+  color: #4caf50;
+}
+
+.defeat {
+  color: #f44336;
+}
+
+@media (max-width: 370px) {
+  .statsCard {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -58,9 +58,9 @@ class BattleViewModel(application: Application) : AndroidViewModel(application) 
     private val playerDodgeRightImages = listOf(R.drawable.sobrevivente_esquivando_direita, R.drawable.sobrevivente_esquivando_direita1)
     private val playerAttackImages = listOf(R.drawable.sobrevivente_ataque1, R.drawable.sobrevivente_ataque2, R.drawable.sobrevivente_ataque3, R.drawable.sobrevivente_ataque4, R.drawable.sobrevivente_ataque5, R.drawable.sobrevivente_ataque6)
     private val enemyHitImages = listOf(R.drawable.psicopata_atingido1, R.drawable.psicopata_atingido2, R.drawable.psicopata_atingido3, R.drawable.psicopata_atingido4)
-    private val victoryDances = listOf(R.drawable.rat_dance)//, R.drawable.fortnite_dance)
+    private val victoryDances = listOf(R.drawable.rat_dance)
     val victoryDancesList: List<Int> = victoryDances
-    private var attackSpeed: Long = 250L
+    private var attackSpeed: Long = BattleRules.INITIAL_ATTACK_SPEED_MS
 
     init {
         viewModelScope.launch {
@@ -87,7 +87,7 @@ class BattleViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun resetComboSpeed() {
-        attackSpeed = 250L
+        attackSpeed = BattleRules.INITIAL_ATTACK_SPEED_MS
     }
 
     private fun startEnemyAiLoop() {
@@ -113,16 +113,15 @@ class BattleViewModel(application: Application) : AndroidViewModel(application) 
                 delay(100)
                 val enemyAction = _uiState.value.enemyAction
                 if (enemyAction is EnemyAction.ATTACKING && _uiState.value.gameResult == null) {
-                    val wasCorrectDirection = playerDodgeIntent == enemyAction.direction
-                    when {
-                        wasCorrectDirection && dodgeTiming == DodgeTiming.PERFECT -> handleParrySuccess(enemyAction.direction)
-                        wasCorrectDirection && dodgeTiming == DodgeTiming.EARLY -> {
+                    when (BattleRules.resolveEnemyAttack(enemyAction.direction, playerDodgeIntent, dodgeTiming)) {
+                        EnemyAttackResolution.PARRY -> handleParrySuccess(enemyAction.direction)
+                        EnemyAttackResolution.DODGED_EARLY -> {
                             SoundManager.playSound(R.raw.lobisomem_ataque)
                             playerComboStep = 0
                             _uiState.update { it.copy(playerComboStep = 0) }
                             resetComboSpeed()
                         }
-                        else -> {
+                        EnemyAttackResolution.PLAYER_HIT -> {
                             SoundManager.playSound(R.raw.lobisomem_ataque)
                             handlePlayerHit(enemyAction.direction)
                         }
@@ -152,8 +151,8 @@ class BattleViewModel(application: Application) : AndroidViewModel(application) 
         val hitImage = if (attackDirection == AttackDirection.LEFT) R.drawable.sobrevivente_atingido_esquerda else R.drawable.sobrevivente_atingido_direita
         playerActionJob = viewModelScope.launch {
             _uiState.update { it.copy(playerImage = hitImage, playerState = PlayerState.STUNNED, playerComboStep = 0) }
-            val newPlayerHp = _uiState.value.playerHp - 15
-            _uiState.update { it.copy(playerHp = newPlayerHp.coerceAtLeast(0)) }
+            val newPlayerHp = BattleRules.playerHpAfterHit(_uiState.value.playerHp)
+            _uiState.update { it.copy(playerHp = newPlayerHp) }
             checkGameResult()
             delay(800)
             if (_uiState.value.gameResult == null) {
@@ -248,9 +247,7 @@ class BattleViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
 
-        if (playerComboStep >= 2) {
-            attackSpeed = (attackSpeed - 75L).coerceAtLeast(100L)
-        }
+        attackSpeed = BattleRules.attackSpeedAfterCombo(attackSpeed, playerComboStep)
 
         comboTimerJob = viewModelScope.launch {
             delay(1500)
@@ -259,8 +256,7 @@ class BattleViewModel(application: Application) : AndroidViewModel(application) 
             _uiState.update { it.copy(playerComboStep = 0, playerImage = playerIdleImages.random())}
         }
 
-        val damage = if (isStunned) 10 else 3
-        val newEnemyHp = (_uiState.value.enemyHp - damage).coerceAtLeast(0)
+        val newEnemyHp = BattleRules.enemyHpAfterAttack(_uiState.value.enemyHp, isStunned)
         _uiState.update { it.copy(enemyHp = newEnemyHp) }
 
         if (isStunned) {
