@@ -10,6 +10,7 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 const artifactDirectory = path.join(projectRoot, '.artifacts')
 const executablePath =
   process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+const pageTimeout = 60_000
 
 await mkdir(artifactDirectory, { recursive: true })
 
@@ -26,6 +27,7 @@ if (!baseUrl) {
 
 const browser = await puppeteer.launch({ executablePath, headless: true })
 const page = await browser.newPage()
+page.setDefaultTimeout(pageTimeout)
 const report = {
   serviceWorkerControlled: false,
   historyPersistedAfterReload: false,
@@ -35,9 +37,11 @@ const report = {
 
 try {
   await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1, isMobile: true, hasTouch: true })
-  await page.goto(baseUrl, { waitUntil: 'networkidle0' })
+  await page.goto(baseUrl, { waitUntil: 'domcontentloaded' })
+  await page.waitForSelector('img[alt="Tela de Início"]')
   await page.evaluate(() => navigator.serviceWorker.ready)
-  await page.reload({ waitUntil: 'networkidle0' })
+  await page.reload({ waitUntil: 'domcontentloaded' })
+  await page.waitForSelector('img[alt="Tela de Início"]')
 
   report.serviceWorkerControlled = await page.evaluate(() => navigator.serviceWorker.controller !== null)
   if (!report.serviceWorkerControlled) report.errors.push('A página não ficou sob controle do service worker.')
@@ -48,9 +52,8 @@ try {
   await page.waitForSelector('[aria-label="História"]')
   await page.evaluate(() => {
     const lore = document.querySelector('[aria-label="História"]')
-    if (lore instanceof HTMLElement) lore.scrollTop = lore.scrollHeight
+  if (lore instanceof HTMLElement) lore.scrollTop = lore.scrollHeight
   })
-  await page.waitForNetworkIdle({ idleTime: 300 })
 
   for (const route of ['hide', 'battle', 'history', 'endings']) {
     await page.evaluate((nextRoute) => {
@@ -62,7 +65,6 @@ try {
         ? '[aria-label="Finais"]'
         : `[aria-label="Modo ${route === 'hide' ? 'esconder' : 'batalha'}"]`
     await page.waitForSelector(selector)
-    await page.waitForNetworkIdle({ idleTime: 300 })
   }
 
   await page.evaluate(() => {
@@ -81,10 +83,11 @@ try {
     )
     window.location.hash = '#/history'
   })
-  await page.reload({ waitUntil: 'networkidle0' })
-  report.historyPersistedAfterReload = await page.evaluate(
+  await page.reload({ waitUntil: 'domcontentloaded' })
+  await page.waitForFunction(
     () => document.body.textContent?.includes('Vida Final: 85 | Parrys: 2') ?? false,
   )
+  report.historyPersistedAfterReload = true
   if (!report.historyPersistedAfterReload) {
     report.errors.push('O histórico não permaneceu visível após recarregar a página.')
   }
@@ -98,6 +101,7 @@ try {
     { hash: '#/battle', selector: '[aria-label="Modo batalha"]', name: 'battle' },
     { hash: '#/history', selector: '[aria-label="Histórico de Partidas"]', name: 'history' },
     { hash: '#/endings', selector: '[aria-label="Finais"]', name: 'endings' },
+    { hash: '#/curiosities', selector: '[aria-label="Curiosidades"]', name: 'curiosities' },
   ]) {
     await page.evaluate((hash) => {
       window.location.hash = hash

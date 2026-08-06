@@ -12,6 +12,7 @@ describe('navegação', () => {
     ['#/battle', 'battle'],
     ['#/history', 'history'],
     ['#/endings', 'endings'],
+    ['#/curiosities', 'curiosities'],
     ['#/desconhecida', 'menu'],
   ] as const)('converte %s para %s', (hash, expected) => {
     expect(routeFromHash(hash)).toBe(expected)

@@ -15,6 +15,7 @@ describe('App', () => {
     { hash: '#/battle', label: 'Modo batalha' },
     { hash: '#/history', label: 'Histórico de Partidas' },
     { hash: '#/endings', label: 'Finais' },
+    { hash: '#/curiosities', label: 'Curiosidades' },
   ])('carrega a rota $hash dentro do shell principal', async ({ hash, label }) => {
     window.location.hash = hash
     render(<App />)

@@ -20,6 +20,11 @@ const HistoryScreen = lazy(() =>
 const EndingsScreen = lazy(() =>
   import('../screens/EndingsScreen/EndingsScreen').then((module) => ({ default: module.EndingsScreen })),
 )
+const CuriositiesScreen = lazy(() =>
+  import('../screens/CuriositiesScreen/CuriositiesScreen').then((module) => ({
+    default: module.CuriositiesScreen,
+  })),
+)
 
 function LoadingScreen({ completed, total }: { completed: number; total: number }) {
   return (
@@ -88,6 +93,7 @@ export function App() {
               onBattle={() => navigate('battle')}
               onHistory={() => navigate('history')}
               onEndings={() => navigate('endings')}
+              onCuriosities={() => navigate('curiosities')}
             />
           )}
           {route === 'hide' && <HideScreen onBackToMenu={backToMenu} />}
@@ -113,6 +119,7 @@ export function App() {
           )}
           {route === 'history' && <HistoryScreen onBack={() => navigate('menu')} />}
           {route === 'endings' && <EndingsScreen onBack={() => navigate('menu')} />}
+          {route === 'curiosities' && <CuriositiesScreen onBack={() => navigate('menu')} />}
           </Suspense>
         )}
       </GameFrame>
