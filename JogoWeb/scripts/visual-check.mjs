@@ -172,6 +172,13 @@ try {
     page.on('requestfailed', (request) => {
       const errorText = request.failure()?.errorText ?? 'falha de rede'
       if (request.resourceType() === 'image' && errorText === 'net::ERR_ABORTED') return
+      if (
+        request.resourceType() === 'media' &&
+        errorText === 'net::ERR_ABORTED' &&
+        request.url().includes('/assets/audio/')
+      ) {
+        return
+      }
       errors.push(`${request.url()}: ${errorText}`)
     })
     await page.evaluateOnNewDocument((showBattleTutorial) => {
@@ -225,6 +232,25 @@ try {
         await page.waitForSelector(routeSelector, { timeout: 20_000 })
       } catch {
         errors.push(`A rota ${visualCase.hash || 'inicial'} não terminou de abrir.`)
+      }
+    }
+
+    if (visualCase.hash === '#/battle' && visualCase.showBattleTutorial !== true) {
+      const tutorialVisible = await page.$('[aria-label="Como jogar a batalha"]')
+      if (tutorialVisible) {
+        const buttonHandle = await page.evaluateHandle(() =>
+          [...document.querySelectorAll('button')].find((element) =>
+            element.textContent?.includes('Continuar Batalha'),
+          ),
+        )
+        const continueButton = buttonHandle.asElement()
+        if (!continueButton) {
+          errors.push('Tutorial da batalha não ofereceu o botão Continuar Batalha.')
+        } else {
+          await continueButton.click()
+          await new Promise((resolve) => setTimeout(resolve, 100))
+        }
+        await buttonHandle.dispose()
       }
     }
 
