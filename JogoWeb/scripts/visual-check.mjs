@@ -213,7 +213,8 @@ try {
         if (
           errorText === 'net::ERR_ABORTED' &&
           (request.url().startsWith('https://www.google.com/recaptcha/') ||
-            request.url().startsWith('https://ep2.adtrafficquality.google/'))
+            request.url().startsWith('https://ep2.adtrafficquality.google/') ||
+            request.url().startsWith('https://pagead2.googlesyndication.com/pagead/ping'))
         ) {
           return
         }
