@@ -6,6 +6,16 @@
 
 O projeto Android, localizado fora desta pasta, é somente leitura. Nenhum trabalho Web pode editar, mover, excluir ou formatar arquivos do Android.
 
+## Política de modelo e esforço de raciocínio
+
+Antes de iniciar uma tarefa que não seja trivial, avaliar o menor perfil capaz de concluí-la com segurança. Quando a tarefa não combinar com o modelo ou o nível de raciocínio da sessão, avisar o usuário no início da resposta e recomendar a troca antes de agir.
+
+- **Modelo leve/mais rápido** (por exemplo, **Luna**, quando estiver disponível): correções pontuais, ajustes de texto ou CSS, tarefa localizada em um arquivo, tipagem óbvia, documentação e comandos de verificação simples. Usar raciocínio **baixo**.
+- **Terra**: features novas de porte médio, refatorações locais, integração de sistemas já existentes, testes de componentes e correções que atravessam alguns arquivos. Usar raciocínio **médio**; elevar para **alto** se houver concorrência de timers, áudio ou responsividade complexa.
+- **Sol**: arquitetura, bugs difíceis e intermitentes, revisão grande, migrações, alterações no estado central do jogo, persistência, regras de batalha/esconderijo ou estratégia de qualidade ampla. Usar raciocínio **alto**; reservar **xhigh/max/ultra** para investigações realmente complexas, não para tarefas rotineiras.
+
+Não presumir que um nome de modelo esteja disponível: recomendar e usar somente modelos expostos pela superfície atual. Em caso de dúvida, preferir o modelo mais econômico que preserve a segurança da mudança e aumentar o esforço apenas se a investigação exigir.
+
 ## Fonte de verdade
 
 Em caso de dúvida, consultar nesta ordem:

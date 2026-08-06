@@ -17,6 +17,9 @@ export async function openBattleTest(
   }, BATTLE_TUTORIAL_KEY)
   await page.goto(`/?battleTest=${ending}#/battle`)
   await expect(page.getByLabel('Modo batalha')).toBeVisible()
+  const tutorial = page.getByRole('dialog', { name: 'Como jogar a batalha' })
+  await expect(tutorial).toBeVisible()
+  await tutorial.getByRole('button', { name: 'Continuar Batalha' }).click()
   await expect(page.getByRole('meter', { name: 'Vida de Psicopata' })).toHaveAttribute(
     'aria-valuenow',
     '1',

@@ -72,11 +72,13 @@ describe('AudioService', () => {
     })
 
     service.play('ratDanceMusic', { prepareMuted: true })
+    expect(service.hasPrepared('ratDanceMusic')).toBe(true)
     expect(created).toHaveLength(1)
     expect(created[0]?.volume).toBe(0)
     expect(created[0]?.play).toHaveBeenCalledOnce()
 
     service.play('ratDanceMusic', { resumePrepared: true })
+    expect(service.hasPrepared('ratDanceMusic')).toBe(false)
     expect(created).toHaveLength(1)
     expect(created[0]?.volume).toBe(1)
     expect(created[0]?.currentTime).toBe(0)

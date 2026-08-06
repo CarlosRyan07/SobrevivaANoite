@@ -79,8 +79,11 @@ export function MenuScreen({
   }, [audio])
 
   const chooseMode = useCallback(
-    (callback: () => void) => {
+    (callback: () => void, prepareBattleMusic = false) => {
       audio.play('buttonClick')
+      if (prepareBattleMusic) {
+        audio.play('battleMusic', { loop: true, prepareMuted: true })
+      }
       callback()
     },
     [audio],
@@ -196,7 +199,7 @@ export function MenuScreen({
               <WordButton type="button" onClick={() => chooseMode(onHide)} tabIndex={showLore ? 0 : -1}>
                 Esconder
               </WordButton>
-              <WordButton type="button" onClick={() => chooseMode(onBattle)} tabIndex={showLore ? 0 : -1}>
+              <WordButton type="button" onClick={() => chooseMode(onBattle, true)} tabIndex={showLore ? 0 : -1}>
                 Lutar
               </WordButton>
             </div>

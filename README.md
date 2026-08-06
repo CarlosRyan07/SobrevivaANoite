@@ -30,10 +30,12 @@ O mesmo jogo também está disponível como uma aplicação Web instalável. A v
 
 | Versão | Tecnologias | Estado |
 |---|---|:---:|
-| Android | Kotlin, Jetpack Compose, Room e DataStore | ✅ Completa |
-| Web/PWA | React, TypeScript, Vite e Service Worker | ✅ Completa |
+| Android | Kotlin, Jetpack Compose, Room e DataStore | Versão original |
+| Web/PWA | React, TypeScript, Vite e Service Worker | **Versão principal, mais atual e completa** |
 
-> A publicação do jogo na internet será adicionada aqui após a escolha da hospedagem. Enquanto isso, as duas versões podem ser executadas localmente.
+> A versão Web/PWA é atualmente a versão principal do jogo. Ela preserva a experiência Android e acrescenta controles para computador, responsividade, PWA/offline, finais, códigos, histórico e uma cobertura de testes mais ampla.
+
+Jogue no navegador: [sobreviva-a-noite.vercel.app](https://sobreviva-a-noite.vercel.app/).
 
 ## Documentação principal
 

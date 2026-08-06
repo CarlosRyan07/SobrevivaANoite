@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties, type PropsWithChildren } from 'react'
 
+import { AdRail } from '../AdRail/AdRail'
 import { images } from '../../services/assetPaths'
 import styles from './GameFrame.module.css'
 
@@ -69,6 +70,7 @@ export function GameFrame({ children, layout = 'responsive' }: GameFrameProps) {
       className={`${styles.shell} ${fixedGameplay ? styles.gameplayShell : ''}`}
       style={shellStyle}
     >
+      <AdRail side="left" />
       <section
         className={`${styles.frame} ${fixedGameplay ? styles.fixedFrame : ''} ${menuLayout ? styles.menuFrame : ''} ${battleLayout ? styles.battleFrame : ''}`}
         style={frameStyle}
@@ -85,6 +87,7 @@ export function GameFrame({ children, layout = 'responsive' }: GameFrameProps) {
           children
         )}
       </section>
+      <AdRail side="right" />
     </main>
   )
 }

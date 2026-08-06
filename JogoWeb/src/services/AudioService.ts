@@ -43,6 +43,10 @@ export class AudioService {
     })
   }
 
+  hasPrepared(key: SoundKey): boolean {
+    return this.activeVoices.some((voice) => voice.key === key && voice.prepared)
+  }
+
   play(key: SoundKey, options: PlaySoundOptions = {}): void {
     if (options.resumePrepared) {
       const preparedVoice = [...this.activeVoices]

@@ -1,7 +1,8 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 
 import { GameFrame } from '../components/GameFrame/GameFrame'
 import { AudioProvider } from '../contexts/AudioContext'
+import { preloadGameAssets } from '../services/gameAssetPreloader'
 import { useGameNavigation } from './navigation'
 
 const MenuScreen = lazy(() =>
@@ -20,7 +21,7 @@ const EndingsScreen = lazy(() =>
   import('../screens/EndingsScreen/EndingsScreen').then((module) => ({ default: module.EndingsScreen })),
 )
 
-function LoadingScreen() {
+function LoadingScreen({ completed, total }: { completed: number; total: number }) {
   return (
     <div
       role="status"
@@ -30,16 +31,23 @@ function LoadingScreen() {
         height: '100%',
         placeItems: 'center',
         background: '#0a1940',
-        color: '#fff',
+        color: '#fff1bd',
+        fontFamily: "'Bungee', 'Arial Black', sans-serif",
+        fontSize: 'clamp(18px, 5vw, 28px)',
+        fontWeight: 400,
+        textAlign: 'center',
+        textShadow: '0 4px 0 #071d4f',
       }}
     >
-      Carregando…
+      {total > 0 ? `PREPARANDO JOGO… ${Math.round((completed / total) * 100)}%` : 'PREPARANDO JOGO…'}
     </div>
   )
 }
 
 export function App() {
   const { route, navigate, backToMenu } = useGameNavigation()
+  const [assetProgress, setAssetProgress] = useState({ completed: 0, total: 0 })
+  const [assetsReady, setAssetsReady] = useState(import.meta.env.MODE === 'test')
   const battleTest = import.meta.env.DEV || import.meta.env.MODE === 'visual'
     ? new URLSearchParams(window.location.search).get('battleTest')
     : null
@@ -52,10 +60,28 @@ export function App() {
           ? 'battle'
           : 'responsive'
 
+  useEffect(() => {
+    if (assetsReady) return
+
+    let active = true
+    void preloadGameAssets((completed, total) => {
+      if (active) setAssetProgress({ completed, total })
+    }).finally(() => {
+      if (active) setAssetsReady(true)
+    })
+
+    return () => {
+      active = false
+    }
+  }, [assetsReady])
+
   return (
     <AudioProvider>
       <GameFrame layout={frameLayout}>
-        <Suspense fallback={<LoadingScreen />}>
+        {!assetsReady ? (
+          <LoadingScreen {...assetProgress} />
+        ) : (
+          <Suspense fallback={<LoadingScreen completed={0} total={0} />}>
           {route === 'menu' && (
             <MenuScreen
               onHide={() => navigate('hide')}
@@ -87,7 +113,8 @@ export function App() {
           )}
           {route === 'history' && <HistoryScreen onBack={() => navigate('menu')} />}
           {route === 'endings' && <EndingsScreen onBack={() => navigate('menu')} />}
-        </Suspense>
+          </Suspense>
+        )}
       </GameFrame>
     </AudioProvider>
   )

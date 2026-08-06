@@ -86,8 +86,11 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
 
   const startBattleMusic = useCallback(() => {
     if (battleMusicStarted.current) return
-    audio.stop('battleMusic')
-    audio.play('battleMusic', { loop: true, volume: BATTLE_MUSIC_VOLUME })
+    audio.play('battleMusic', {
+      loop: true,
+      volume: BATTLE_MUSIC_VOLUME,
+      resumePrepared: true,
+    })
     battleMusicStarted.current = true
   }, [audio])
 
