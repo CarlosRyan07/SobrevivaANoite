@@ -16,6 +16,7 @@ interface MenuScreenProps {
   onHide: () => void
   onHistory: () => void
   onEndings: () => void
+  onCuriosities?: () => void
   persistence?: GamePersistencePort
 }
 
@@ -28,6 +29,7 @@ export function MenuScreen({
   onHide,
   onHistory,
   onEndings,
+  onCuriosities = () => undefined,
   persistence = gamePersistence,
 }: MenuScreenProps) {
   const audio = useAudio()
@@ -111,6 +113,14 @@ export function MenuScreen({
           tabIndex={showLore || showCodes ? -1 : 0}
         >
           Finais
+        </WordButton>
+        <WordButton
+          className={styles.curiositiesButton}
+          type="button"
+          onClick={() => chooseMode(onCuriosities)}
+          tabIndex={showLore || showCodes ? -1 : 0}
+        >
+          Curiosidades
         </WordButton>
         {codesAvailable && (
           <WordButton

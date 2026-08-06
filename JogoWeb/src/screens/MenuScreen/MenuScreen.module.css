@@ -58,6 +58,13 @@
   right: calc(24px + env(safe-area-inset-right, 0px));
 }
 
+.curiositiesButton {
+  position: absolute;
+  z-index: 2;
+  top: calc(82px + env(safe-area-inset-top, 0px));
+  right: calc(24px + env(safe-area-inset-right, 0px));
+}
+
 .endingsButton,
 .codesButton {
   position: absolute;

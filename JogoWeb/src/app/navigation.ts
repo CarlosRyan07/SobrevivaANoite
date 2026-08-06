@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useState } from 'react'
 
-export type GameRoute = 'menu' | 'hide' | 'battle' | 'history' | 'endings'
+export type GameRoute = 'menu' | 'hide' | 'battle' | 'history' | 'endings' | 'curiosities'
 
 export function routeFromHash(hash: string): GameRoute {
   const route = hash.replace(/^#\/?/, '')
-  if (route === 'hide' || route === 'battle' || route === 'history' || route === 'endings') {
+  if (
+    route === 'hide' ||
+    route === 'battle' ||
+    route === 'history' ||
+    route === 'endings' ||
+    route === 'curiosities'
+  ) {
     return route
   }
   return 'menu'

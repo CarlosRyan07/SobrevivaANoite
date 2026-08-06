@@ -80,6 +80,27 @@ describe('MenuScreen', () => {
     expect(onEndings).toHaveBeenCalledOnce()
   })
 
+  it('abre as curiosidades a partir da tela inicial', async () => {
+    const onCuriosities = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <AudioContext value={audio}>
+        <MenuScreen
+          onBattle={vi.fn()}
+          onHide={vi.fn()}
+          onHistory={vi.fn()}
+          onEndings={vi.fn()}
+          onCuriosities={onCuriosities}
+        />
+      </AudioContext>,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Curiosidades' }))
+
+    expect(audio.play).toHaveBeenCalledWith('buttonClick')
+    expect(onCuriosities).toHaveBeenCalledOnce()
+  })
+
   it('mostra CÓDIGOS somente após a descoberta e permite resgatar e desativar', async () => {
     const user = userEvent.setup()
     const { rerender } = render(

@@ -203,13 +203,20 @@ try {
     page.on('requestfailed', (request) => {
       const errorText = request.failure()?.errorText ?? 'falha de rede'
       if (request.resourceType() === 'image' && errorText === 'net::ERR_ABORTED') return
-      if (
-        request.resourceType() === 'media' &&
-        errorText === 'net::ERR_ABORTED' &&
-        request.url().includes('/assets/audio/')
-      ) {
-        return
-      }
+        if (
+          request.resourceType() === 'media' &&
+          request.url().includes('/assets/audio/') &&
+          (errorText === 'net::ERR_ABORTED' || errorText === 'net::ERR_CACHE_OPERATION_NOT_SUPPORTED')
+        ) {
+          return
+        }
+        if (
+          errorText === 'net::ERR_ABORTED' &&
+          (request.url().startsWith('https://www.google.com/recaptcha/') ||
+            request.url().startsWith('https://ep2.adtrafficquality.google/'))
+        ) {
+          return
+        }
       errors.push(`${request.url()}: ${errorText}`)
     })
     await page.evaluateOnNewDocument((showBattleTutorial) => {

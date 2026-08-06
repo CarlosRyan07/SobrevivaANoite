@@ -101,6 +101,7 @@ try {
     { hash: '#/battle', selector: '[aria-label="Modo batalha"]', name: 'battle' },
     { hash: '#/history', selector: '[aria-label="Histórico de Partidas"]', name: 'history' },
     { hash: '#/endings', selector: '[aria-label="Finais"]', name: 'endings' },
+    { hash: '#/curiosities', selector: '[aria-label="Curiosidades"]', name: 'curiosities' },
   ]) {
     await page.evaluate((hash) => {
       window.location.hash = hash
