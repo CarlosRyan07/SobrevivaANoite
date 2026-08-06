@@ -32,11 +32,14 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
   const audio = useAudio()
   const persistence = gameOptions?.persistence ?? gamePersistence
   const [tutorialRequiredAtMount] = useState(() => !persistence.hasSeenBattleTutorial())
-  const [showTutorial, setShowTutorial] = useState(tutorialRequiredAtMount)
+  const [startPromptRequiredAtMount] = useState(() => !audio.hasPrepared('battleMusic'))
+  const [showTutorial, setShowTutorial] = useState(
+    () => tutorialRequiredAtMount || startPromptRequiredAtMount,
+  )
   const [firstTutorial, setFirstTutorial] = useState(tutorialRequiredAtMount)
   const { state, attack, dodgeLeft, dodgeRight, retry, start, pause } = useBattleGame(audio, {
     ...gameOptions,
-    startPaused: tutorialRequiredAtMount,
+    startPaused: tutorialRequiredAtMount || startPromptRequiredAtMount,
   })
   const [showEndingStory, setShowEndingStory] = useState(false)
   const comboStyle: ComboStyle = { '--combo-color': comboColor(state.playerComboStep) }
@@ -381,6 +384,7 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
           </div>
         </section>
       )}
+
     </div>
   )
 }

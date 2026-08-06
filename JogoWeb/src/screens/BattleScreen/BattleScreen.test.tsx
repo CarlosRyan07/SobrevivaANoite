@@ -5,11 +5,12 @@ import { gamePersistence } from '../../persistence/gamePersistence'
 import type { AudioService } from '../../services/AudioService'
 import { BattleScreen } from './BattleScreen'
 
-function createAudioMock(): AudioService {
+function createAudioMock(battleMusicPrepared = true): AudioService {
   return {
     play: vi.fn(),
     stop: vi.fn(),
     fadeOut: vi.fn(),
+    hasPrepared: vi.fn(() => battleMusicPrepared),
   } as unknown as AudioService
 }
 
@@ -114,6 +115,18 @@ describe('BattleScreen', () => {
     expect(screen.queryByRole('dialog', { name: 'Como jogar a batalha' })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Como jogar' })).toBeInTheDocument()
     vi.useRealTimers()
+  })
+
+  it('reexibe o tutorial ao abrir a batalha sem áudio preparado', () => {
+    const audio = createAudioMock(false)
+    render(
+      <AudioContext value={audio}>
+        <BattleScreen onBackToMenu={vi.fn()} />
+      </AudioContext>,
+    )
+
+    expect(screen.getByRole('dialog', { name: 'Como jogar a batalha' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Continuar Batalha' })).toBeInTheDocument()
   })
 
   it('aciona a esquiva pelo teclado', () => {

@@ -27,7 +27,7 @@ export const LIGEIRINHO_ATTACK_SPEED_PROFILE: AttackSpeedProfile = {
 export const INITIAL_ATTACK_SPEED = DEFAULT_ATTACK_SPEED_PROFILE.initial
 export const MINIMUM_ATTACK_SPEED = DEFAULT_ATTACK_SPEED_PROFILE.minimum
 export const ATTACK_SPEED_STEP = DEFAULT_ATTACK_SPEED_PROFILE.reduction
-export const BATTLE_MUSIC_VOLUME = 0.20
+export const BATTLE_MUSIC_VOLUME = 0.25
 
 export const BATTLE_TIMINGS = {
   initialEnemyDelay: 2_000,

@@ -85,7 +85,10 @@ Nenhuma imagem pública desta documentação mostra a conclusão narrativa ou a 
 - instalação como PWA;
 - funcionamento offline após o primeiro carregamento;
 - carregamento antecipado de imagens e áudios de cada etapa;
+- áreas laterais reservadas para futura publicidade no desktop, sem anúncios no celular;
 - persistência local sem necessidade de cadastro.
+
+> A publicidade ainda não está integrada a um provedor. Os espaços laterais existem apenas como preparação de layout e preservam o palco do jogo, seus controles e a navegação.
 
 ## Executar o produto
 

@@ -258,6 +258,7 @@ describe('useBattleGame', () => {
     expect(audio.play).toHaveBeenCalledWith('battleMusic', {
       loop: true,
       volume: BATTLE_MUSIC_VOLUME,
+      resumePrepared: true,
     })
     await act(async () => vi.advanceTimersByTimeAsync(4_000))
     expect(result.current.state.enemyAction.kind).not.toBe('idle')

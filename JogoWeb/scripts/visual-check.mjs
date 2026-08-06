@@ -10,6 +10,35 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 const outputDirectory = path.join(projectRoot, '.artifacts', 'visual')
 const defaultChrome = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
 const executablePath = process.env.CHROME_PATH || defaultChrome
+const browserLaunchAttempts = 2
+const browserLaunchTimeout = 60_000
+
+const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
+
+const launchBrowser = async () => {
+  let lastError
+
+  for (let attempt = 1; attempt <= browserLaunchAttempts; attempt += 1) {
+    try {
+      return await puppeteer.launch({
+        executablePath,
+        headless: true,
+        timeout: browserLaunchTimeout,
+        args: ['--disable-gpu', '--disable-dev-shm-usage', '--no-first-run', '--no-sandbox'],
+      })
+    } catch (error) {
+      lastError = error
+      if (attempt < browserLaunchAttempts) {
+        console.warn(
+          `Chrome não iniciou na tentativa ${attempt}/${browserLaunchAttempts}; tentando novamente.`,
+        )
+        await wait(2_000)
+      }
+    }
+  }
+
+  throw lastError
+}
 
 await mkdir(outputDirectory, { recursive: true })
 
@@ -25,11 +54,13 @@ if (!baseUrl) {
   throw new Error('O Vite não informou a URL local do preview.')
 }
 
-const browser = await puppeteer.launch({
-  executablePath,
-  headless: true,
-  args: ['--disable-gpu', '--no-first-run'],
-})
+let browser
+try {
+  browser = await launchBrowser()
+} catch (error) {
+  await server.close()
+  throw error
+}
 
 const visualCases = [
   { name: 'mobile-opening', hash: '', width: 390, height: 844, wait: 150 },
@@ -172,6 +203,13 @@ try {
     page.on('requestfailed', (request) => {
       const errorText = request.failure()?.errorText ?? 'falha de rede'
       if (request.resourceType() === 'image' && errorText === 'net::ERR_ABORTED') return
+      if (
+        request.resourceType() === 'media' &&
+        errorText === 'net::ERR_ABORTED' &&
+        request.url().includes('/assets/audio/')
+      ) {
+        return
+      }
       errors.push(`${request.url()}: ${errorText}`)
     })
     await page.evaluateOnNewDocument((showBattleTutorial) => {
@@ -225,6 +263,25 @@ try {
         await page.waitForSelector(routeSelector, { timeout: 20_000 })
       } catch {
         errors.push(`A rota ${visualCase.hash || 'inicial'} não terminou de abrir.`)
+      }
+    }
+
+    if (visualCase.hash === '#/battle' && visualCase.showBattleTutorial !== true) {
+      const tutorialVisible = await page.$('[aria-label="Como jogar a batalha"]')
+      if (tutorialVisible) {
+        const buttonHandle = await page.evaluateHandle(() =>
+          [...document.querySelectorAll('button')].find((element) =>
+            element.textContent?.includes('Continuar Batalha'),
+          ),
+        )
+        const continueButton = buttonHandle.asElement()
+        if (!continueButton) {
+          errors.push('Tutorial da batalha não ofereceu o botão Continuar Batalha.')
+        } else {
+          await continueButton.click()
+          await new Promise((resolve) => setTimeout(resolve, 100))
+        }
+        await buttonHandle.dispose()
       }
     }
 

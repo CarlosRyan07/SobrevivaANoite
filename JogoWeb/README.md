@@ -36,6 +36,7 @@ A implementação Web preserva as regras, imagens, sons e identidade do jogo ori
 | Progressão | Código `ligeirinho`, recorde e galeria de finais |
 | Persistência | Histórico e progresso no `localStorage` |
 | PWA | Instalação, atualização de assets e fallback offline |
+| Publicidade | Espaços laterais reservados no desktop; nenhum provedor integrado ainda |
 | Qualidade | 104 testes Vitest, 10 execuções E2E, cobertura mínima, 26 cenários visuais e CI |
 
 ### Finais da batalha

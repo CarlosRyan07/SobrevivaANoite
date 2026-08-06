@@ -19,6 +19,8 @@ describe('GameFrame', () => {
       screen.getByRole('main').style.getPropertyValue('--game-backdrop'),
     ).toContain('/assets/optimized/tela_inicio.webp')
     expect(screen.getByRole('region', { name: 'Sobreviva à Noite' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Publicidade esquerda')).toBeInTheDocument()
+    expect(screen.getByLabelText('Publicidade direita')).toBeInTheDocument()
     expect(screen.getByText('Conteúdo do jogo')).toBeInTheDocument()
   })
 
