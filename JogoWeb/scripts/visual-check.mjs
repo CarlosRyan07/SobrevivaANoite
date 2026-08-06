@@ -210,12 +210,14 @@ try {
         ) {
           return
         }
-        if (
-          errorText === 'net::ERR_ABORTED' &&
+      if (
+        (errorText === 'net::ERR_ABORTED' &&
           (request.url().startsWith('https://www.google.com/recaptcha/') ||
             request.url().startsWith('https://ep2.adtrafficquality.google/') ||
-            request.url().startsWith('https://pagead2.googlesyndication.com/pagead/ping'))
-        ) {
+            request.url().startsWith('https://pagead2.googlesyndication.com/pagead/ping'))) ||
+        (errorText === 'net::ERR_BLOCKED_BY_ORB' &&
+          request.url().startsWith('https://csp.withgoogle.com/'))
+      ) {
           return
         }
       errors.push(`${request.url()}: ${errorText}`)
