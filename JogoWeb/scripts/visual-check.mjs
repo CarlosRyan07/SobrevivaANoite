@@ -10,6 +10,35 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 const outputDirectory = path.join(projectRoot, '.artifacts', 'visual')
 const defaultChrome = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
 const executablePath = process.env.CHROME_PATH || defaultChrome
+const browserLaunchAttempts = 2
+const browserLaunchTimeout = 60_000
+
+const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
+
+const launchBrowser = async () => {
+  let lastError
+
+  for (let attempt = 1; attempt <= browserLaunchAttempts; attempt += 1) {
+    try {
+      return await puppeteer.launch({
+        executablePath,
+        headless: true,
+        timeout: browserLaunchTimeout,
+        args: ['--disable-gpu', '--disable-dev-shm-usage', '--no-first-run', '--no-sandbox'],
+      })
+    } catch (error) {
+      lastError = error
+      if (attempt < browserLaunchAttempts) {
+        console.warn(
+          `Chrome não iniciou na tentativa ${attempt}/${browserLaunchAttempts}; tentando novamente.`,
+        )
+        await wait(2_000)
+      }
+    }
+  }
+
+  throw lastError
+}
 
 await mkdir(outputDirectory, { recursive: true })
 
@@ -25,11 +54,13 @@ if (!baseUrl) {
   throw new Error('O Vite não informou a URL local do preview.')
 }
 
-const browser = await puppeteer.launch({
-  executablePath,
-  headless: true,
-  args: ['--disable-gpu', '--no-first-run'],
-})
+let browser
+try {
+  browser = await launchBrowser()
+} catch (error) {
+  await server.close()
+  throw error
+}
 
 const visualCases = [
   { name: 'mobile-opening', hash: '', width: 390, height: 844, wait: 150 },
