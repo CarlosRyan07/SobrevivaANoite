@@ -4,6 +4,7 @@ import { GameFrame } from '../components/GameFrame/GameFrame'
 import { AudioProvider } from '../contexts/AudioContext'
 import { preloadGameAssets } from '../services/gameAssetPreloader'
 import { useGameNavigation } from './navigation'
+import { ThemeMusic } from './ThemeMusic'
 
 const MenuScreen = lazy(() =>
   import('../screens/MenuScreen/MenuScreen').then((module) => ({ default: module.MenuScreen })),
@@ -82,6 +83,7 @@ export function App() {
 
   return (
     <AudioProvider>
+      <ThemeMusic route={route} />
       <GameFrame layout={frameLayout}>
         {!assetsReady ? (
           <LoadingScreen {...assetProgress} />

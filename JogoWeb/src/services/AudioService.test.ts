@@ -63,6 +63,18 @@ describe('AudioService', () => {
     expect(service.activeStreamCount).toBe(1)
   })
 
+  it('informa se uma trilha está ativa', () => {
+    const audio = new FakeAudio()
+    const service = new AudioService(10, () => audio as unknown as HTMLAudioElement)
+
+    expect(service.isActive('menuTheme')).toBe(false)
+    service.play('menuTheme', { loop: true })
+    expect(service.isActive('menuTheme')).toBe(true)
+
+    service.stop('menuTheme')
+    expect(service.isActive('menuTheme')).toBe(false)
+  })
+
   it('prepara uma música no gesto do usuário e a torna audível sem criar outra voz', () => {
     const created: FakeAudio[] = []
     const service = new AudioService(10, () => {

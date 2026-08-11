@@ -2,6 +2,7 @@ const audioBase = import.meta.env.BASE_URL
 const audio = (name: string) => `${audioBase}assets/audio/${name}.mp3`
 
 export const audioCatalog = {
+  menuTheme: audio('musica_tema'),
   tenseMusic: audio('musica_tensa'),
   centerTheme: audio('fnaf2_theme'),
   footsteps: audio('psicopata_passos'),
