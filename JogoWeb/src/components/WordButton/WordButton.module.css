@@ -4,7 +4,7 @@
 }
 
 .button:hover:not(:disabled) {
-  background: #003ca4;
+  background: #0045bd;
 }
 
 .button:active:not(:disabled) {
