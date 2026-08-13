@@ -12,10 +12,14 @@ const gameplayImages = [
   images.blood,
   ...images.killers,
   images.enemy.idle,
-  images.enemy.preparingLeft,
-  images.enemy.preparingRight,
-  images.enemy.attackingLeft,
-  images.enemy.attackingRight,
+  ...images.enemy.attackSequences.flatMap(
+    ({ preparingLeft, attackingLeft, preparingRight, attackingRight }) => [
+      preparingLeft,
+      attackingLeft,
+      preparingRight,
+      attackingRight,
+    ],
+  ),
   images.enemy.stunned,
   ...images.enemy.hit,
   images.enemy.defeated,

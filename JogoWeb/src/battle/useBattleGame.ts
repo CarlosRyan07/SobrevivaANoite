@@ -287,19 +287,20 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
         )
 
         const direction: AttackDirection = random.boolean() ? 'left' : 'right'
+        const sequence = random.pick(images.enemy.attackSequences)
         commit((current) => ({
           ...current,
           enemyAction: { kind: 'preparing', direction },
           enemyImage:
-            direction === 'left' ? images.enemy.preparingLeft : images.enemy.preparingRight,
+            direction === 'left' ? sequence.preparingLeft : sequence.preparingRight,
         }))
-        await delay(BATTLE_TIMINGS.enemyPreparing, controller.signal)
+        await delay(sequence.preparingDuration, controller.signal)
 
         commit((current) => ({
           ...current,
           enemyAction: { kind: 'attacking', direction },
           enemyImage:
-            direction === 'left' ? images.enemy.attackingLeft : images.enemy.attackingRight,
+            direction === 'left' ? sequence.attackingLeft : sequence.attackingRight,
         }))
         await delay(BATTLE_TIMINGS.enemyAttackWindow, controller.signal)
 
@@ -524,7 +525,10 @@ export function useBattleGame(audio: AudioService, options: BattleGameOptions = 
       const hitController = new AbortController()
       enemyHitController.current = hitController
       const hitImage = images.enemy.hit[comboStep.current % images.enemy.hit.length]
-      commit((battle) => ({ ...battle, enemyImage: hitImage ?? images.enemy.stunned }))
+      commit((battle) => ({
+        ...battle,
+        enemyImage: hitImage ?? images.enemy.stunned,
+      }))
 
       const finishEnemyHit = async () => {
         await delay(BATTLE_TIMINGS.enemyHit, hitController.signal)

@@ -13,6 +13,20 @@ const leftAttackRandom: RandomSource = {
   shuffle: <T,>(values: readonly T[]) => [...values],
 }
 
+const upwardScratchRandom: RandomSource = {
+  boolean: () => true,
+  integer: (minimum) => minimum,
+  pick: <T,>(values: readonly T[]) => values[2] as T,
+  shuffle: <T,>(values: readonly T[]) => [...values],
+}
+
+const lateralCutRandom: RandomSource = {
+  boolean: () => true,
+  integer: (minimum) => minimum,
+  pick: <T,>(values: readonly T[]) => values[1] as T,
+  shuffle: <T,>(values: readonly T[]) => [...values],
+}
+
 function createAudioMock(): AudioService {
   return {
     play: vi.fn(),
@@ -43,6 +57,43 @@ describe('useBattleGame', () => {
     expect(result.current.state.enemyAction).toEqual({ kind: 'stunned' })
     expect(result.current.state.playerHp).toBe(100)
     expect(audio.play).toHaveBeenCalledWith('parry')
+    unmount()
+  })
+
+  it('mantÃ©m o mesmo tipo de golpe entre a preparaÃ§Ã£o e o ataque', async () => {
+    const audio = createAudioMock()
+    const { result, unmount } = renderHook(() =>
+      useBattleGame(audio, { random: upwardScratchRandom }),
+    )
+
+    await act(async () => vi.advanceTimersByTimeAsync(3_000))
+    expect(result.current.state.enemyAction).toEqual({ kind: 'preparing', direction: 'left' })
+    expect(result.current.state.enemyImage).toContain(
+      'psicopata_preparando_arranhada_para_cima_esquerda.webp',
+    )
+
+    await act(async () => vi.advanceTimersByTimeAsync(700))
+    expect(result.current.state.enemyAction).toEqual({ kind: 'attacking', direction: 'left' })
+    expect(result.current.state.enemyImage).toContain('psicopata_arranhada_para_cima_esquerda.webp')
+    unmount()
+  })
+
+  it('reduz a preparaÃ§Ã£o do corte lateral sem mudar sua direÃ§Ã£o', async () => {
+    const audio = createAudioMock()
+    const { result, unmount } = renderHook(() =>
+      useBattleGame(audio, { random: lateralCutRandom }),
+    )
+
+    await act(async () => vi.advanceTimersByTimeAsync(3_000))
+    expect(result.current.state.enemyAction).toEqual({ kind: 'preparing', direction: 'left' })
+    expect(result.current.state.enemyImage).toContain('psicopata_preparando_corte_lateral_esquerda.webp')
+
+    await act(async () => vi.advanceTimersByTimeAsync(449))
+    expect(result.current.state.enemyAction).toEqual({ kind: 'preparing', direction: 'left' })
+
+    await act(async () => vi.advanceTimersByTimeAsync(1))
+    expect(result.current.state.enemyAction).toEqual({ kind: 'attacking', direction: 'left' })
+    expect(result.current.state.enemyImage).toContain('psicopata_corte_lateral_esquerda.webp')
     unmount()
   })
 

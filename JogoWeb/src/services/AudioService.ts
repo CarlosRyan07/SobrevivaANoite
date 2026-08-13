@@ -72,7 +72,8 @@ export class AudioService {
       this.stopVoice(this.activeVoices[0])
     }
 
-    const audio = this.factory(audioCatalog[key])
+    const audio = this.preloaded.get(key) ?? this.factory(audioCatalog[key])
+    this.preloaded.delete(key)
     audio.preload = 'auto'
     audio.volume = options.prepareMuted
       ? 0

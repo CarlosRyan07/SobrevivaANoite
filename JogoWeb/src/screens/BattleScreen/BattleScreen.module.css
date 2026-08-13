@@ -187,7 +187,7 @@
 .topUi {
   position: absolute;
   z-index: 3;
-  top: 120px;
+  top: 80px;
   right: 0;
   left: 0;
 }

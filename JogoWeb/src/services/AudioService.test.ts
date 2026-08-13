@@ -45,6 +45,23 @@ describe('AudioService', () => {
     expect(service.activeStreamCount).toBe(0)
   })
 
+  it('reutiliza o Ã¡udio prÃ©-carregado ao iniciar uma trilha', () => {
+    const created: FakeAudio[] = []
+    const service = new AudioService(10, () => {
+      const audio = new FakeAudio()
+      created.push(audio)
+      return audio as unknown as HTMLAudioElement
+    })
+
+    service.preload(['menuTheme'])
+    service.play('menuTheme', { loop: true, volume: 0.3 })
+
+    expect(created).toHaveLength(1)
+    expect(created[0]?.load).toHaveBeenCalledOnce()
+    expect(created[0]?.play).toHaveBeenCalledOnce()
+    expect(created[0]?.volume).toBe(0.3)
+  })
+
   it('interrompe somente as vozes do som solicitado', () => {
     const created: FakeAudio[] = []
     const service = new AudioService(10, () => {

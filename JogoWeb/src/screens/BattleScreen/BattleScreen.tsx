@@ -93,10 +93,14 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
     preloadImages([
       images.cabin,
       images.enemy.idle,
-      images.enemy.preparingLeft,
-      images.enemy.preparingRight,
-      images.enemy.attackingLeft,
-      images.enemy.attackingRight,
+      ...images.enemy.attackSequences.flatMap(
+        ({ preparingLeft, attackingLeft, preparingRight, attackingRight }) => [
+          preparingLeft,
+          attackingLeft,
+          preparingRight,
+          attackingRight,
+        ],
+      ),
       images.enemy.stunned,
       images.enemy.defeated,
       ...images.enemy.hit,
