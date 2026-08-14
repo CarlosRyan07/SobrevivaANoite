@@ -62,12 +62,35 @@ describe('MenuScreen', () => {
       </AudioContext>,
     )
 
+    await user.click(screen.getByRole('button', { name: 'Fechar' }))
     await user.click(screen.getByRole('button', { name: 'Lutar' }))
     expect(screen.getByRole('dialog', { name: 'Escolha a dificuldade' })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /Pesadelo/i }))
     expect(onBattle).toHaveBeenCalledWith('hard')
     expect(audio.stop).toHaveBeenCalledWith('battleMusic')
     expect(audio.play).toHaveBeenCalledWith('battleMusic', { loop: true, prepareMuted: true })
+  })
+
+  it('anuncia o modo Pesadelo apenas uma vez após desbloqueá-lo', async () => {
+    const user = userEvent.setup()
+    gamePersistence.discoverCode('ligeirinho')
+    const { unmount } = render(
+      <AudioContext value={audio}>
+        <MenuScreen onBattle={vi.fn()} onHide={vi.fn()} onHistory={vi.fn()} onEndings={vi.fn()} />
+      </AudioContext>,
+    )
+
+    expect(screen.getByRole('dialog', { name: 'Modo Pesadelo desbloqueado' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Fechar' }))
+    expect(screen.queryByRole('dialog', { name: 'Modo Pesadelo desbloqueado' })).not.toBeInTheDocument()
+
+    unmount()
+    render(
+      <AudioContext value={audio}>
+        <MenuScreen onBattle={vi.fn()} onHide={vi.fn()} onHistory={vi.fn()} onEndings={vi.fn()} />
+      </AudioContext>,
+    )
+    expect(screen.queryByRole('dialog', { name: 'Modo Pesadelo desbloqueado' })).not.toBeInTheDocument()
   })
 
   it('abre o histórico a partir da tela inicial', async () => {

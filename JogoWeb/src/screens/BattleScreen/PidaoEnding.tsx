@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 
-import { GAME_CODES, type GameCodeId } from '../../codes/gameCodes'
+import type { GameCodeId } from '../../codes/gameCodes'
 import { EndingToast } from '../../components/EndingToast/EndingToast'
+import { VictoryUnlocks } from '../../components/VictoryUnlocks/VictoryUnlocks'
 import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
 import { useModalFocus } from '../../hooks/useModalFocus'
@@ -108,12 +109,7 @@ export function PidaoEnding({ rewardCode, onBackToMenu }: PidaoEndingProps) {
           <div className={styles.revealShade} />
           <h1>UM PIDÃO!!!</h1>
           <EndingToast label="FINAL OBTIDO" title="Você se tornou um Lobisomem Pidão" />
-          {rewardCode && (
-            <p className={styles.codeReward} role="status">
-              Você liberou o código:
-              <strong>{GAME_CODES[rewardCode].code.toLowerCase()}</strong>
-            </p>
-          )}
+          <VictoryUnlocks rewardCode={rewardCode} className={styles.codeReward} />
           <div className={styles.actions}>
             <WordButton type="button" onClick={onBackToMenu}>Voltar ao Menu</WordButton>
           </div>

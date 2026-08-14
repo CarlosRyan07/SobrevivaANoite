@@ -118,7 +118,7 @@
   align-items: center;
   gap: 14px;
   padding: 26px 22px 22px;
-  border: 2px solid #fff1bd;
+  border: 2px solid #bdebff;
   border-radius: 22px;
   background:
     linear-gradient(180deg, rgb(27 54 108 / 98%), rgb(5 15 46 / 98%)),
@@ -133,7 +133,7 @@
 }
 
 .difficultyPanel h2 {
-  color: #fff1bd;
+  color: #faf9f6;
   font-family: 'Bungee', 'Arial Black', sans-serif;
   font-size: 18px;
   letter-spacing: 0.5px;
@@ -160,7 +160,7 @@
   justify-content: center;
   gap: 14px;
   padding: 18px 13px 16px;
-  border: 2px solid #78b7ff;
+  border: 2px solid #eaeef2;
   border-radius: 16px;
   background:
     linear-gradient(145deg, rgb(39 104 184 / 95%), rgb(9 30 82 / 98%)),
@@ -266,6 +266,75 @@
   font-size: 16px;
 }
 
+.nightmareUnlockOverlay {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(1 4 14 / 74%);
+  animation: overlayReveal 280ms ease both;
+}
+
+.nightmareUnlockPanel {
+  display: flex;
+  width: min(100%, 330px);
+  align-items: center;
+  flex-direction: column;
+  padding: 24px 20px 20px;
+  border: 2px solid #e07070;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 50% 0%, rgb(201 57 57 / 28%), transparent 48%),
+    linear-gradient(150deg, #260b20, #080c24);
+  box-shadow: 0 8px 0 rgb(0 0 0 / 58%), 0 0 28px rgb(198 45 45 / 34%);
+  color: #fff;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  text-align: center;
+  animation: unlockReveal 420ms cubic-bezier(0.18, 0.82, 0.28, 1.12) both;
+}
+
+.nightmareUnlockPanel > span {
+  color: #ff907c;
+  font-size: 12px;
+  letter-spacing: 0.6px;
+}
+
+.nightmareUnlockPanel h2 {
+  margin: 8px 0 12px;
+  color: #ffd4c8;
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1;
+  text-shadow: 0 3px 0 #9c261f;
+}
+
+.nightmareUnlockPanel p {
+  margin: 0;
+  color: #d7e7ff;
+  font-family: system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.nightmareUnlockPanel button {
+  min-width: 150px;
+  margin-top: 22px;
+  font-size: 13px;
+}
+
+@keyframes overlayReveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes unlockReveal {
+  from { opacity: 0; transform: translateY(12px) scale(0.92); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 @media (max-width: 380px) {
   .difficultyOverlay {
     padding: 12px;
@@ -298,5 +367,10 @@
   .loreVisible {
     transition-duration: 1ms;
     transition-delay: 0ms;
+  }
+
+  .nightmareUnlockOverlay,
+  .nightmareUnlockPanel {
+    animation-duration: 1ms;
   }
 }

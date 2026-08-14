@@ -3,7 +3,12 @@ import { act, renderHook } from '@testing-library/react'
 import { gamePersistence } from '../persistence/gamePersistence'
 import type { AudioService } from '../services/AudioService'
 import type { RandomSource } from '../utils/random'
-import { BATTLE_MUSIC_VOLUME, BATTLE_TIMINGS, HARD_PARRIES_TO_STUN } from './battleConstants'
+import {
+  BATTLE_MUSIC_VOLUME,
+  BATTLE_TIMINGS,
+  HARD_ENEMY_MAX_HP,
+  HARD_PARRIES_TO_STUN,
+} from './battleConstants'
 import { useBattleGame } from './useBattleGame'
 
 const leftAttackRandom: RandomSource = {
@@ -66,8 +71,8 @@ describe('useBattleGame', () => {
       useBattleGame(audio, { random: leftAttackRandom, difficulty: 'hard' }),
     )
 
-    expect(result.current.state.enemyHp).toBe(1_000)
-    expect(result.current.state.enemyMaxHp).toBe(1_000)
+    expect(result.current.state.enemyHp).toBe(HARD_ENEMY_MAX_HP)
+    expect(result.current.state.enemyMaxHp).toBe(HARD_ENEMY_MAX_HP)
     expect(result.current.state.parryGauge).toBe(0)
 
     for (let parry = 1; parry <= HARD_PARRIES_TO_STUN; parry += 1) {
@@ -90,14 +95,14 @@ describe('useBattleGame', () => {
       useBattleGame(audio, {
         random: leftAttackRandom,
         difficulty: 'hard',
-        initialEnemyHp: 501,
+        initialEnemyHp: HARD_ENEMY_MAX_HP / 2 + 1,
         enemyAiEnabled: false,
       }),
     )
 
     act(() => hardBattle.result.current.attack())
 
-    expect(hardBattle.result.current.state.enemyHp).toBe(498)
+    expect(hardBattle.result.current.state.enemyHp).toBe(HARD_ENEMY_MAX_HP / 2 - 2)
     expect(hardBattle.result.current.state.isBerserk).toBe(true)
     expect(hardBattle.result.current.state.enemyAction).toEqual({ kind: 'berserk' })
     expect(audio.fadeOut).toHaveBeenCalledWith('battleMusic', {

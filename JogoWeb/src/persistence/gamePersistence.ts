@@ -40,6 +40,8 @@ export interface GamePersistencePort {
   discoverEnding(endingId: GameEndingId): boolean
   hasSeenBattleTutorial(): boolean
   markBattleTutorialSeen(): void
+  hasSeenNightmareUnlock(): boolean
+  markNightmareUnlockSeen(): void
 }
 
 export const STORAGE_KEYS = {
@@ -48,6 +50,7 @@ export const STORAGE_KEYS = {
   codeProgress: 'sobreviva-a-noite.code-progress.v1',
   endingProgress: 'sobreviva-a-noite.ending-progress.v1',
   battleTutorialSeen: 'sobreviva-a-noite.battle-tutorial-seen.v1',
+  nightmareUnlockSeen: 'sobreviva-a-noite.nightmare-unlock-seen.v1',
 } as const
 
 export const MATCH_HISTORY_UPDATED_EVENT = 'sobreviva-a-noite:match-history-updated'
@@ -134,6 +137,7 @@ export class GamePersistence implements GamePersistencePort {
   private memoryCodeProgress = cloneCodeProgress(EMPTY_CODE_PROGRESS)
   private memoryEndingProgress = cloneEndingProgress(EMPTY_ENDING_PROGRESS)
   private memoryBattleTutorialSeen = false
+  private memoryNightmareUnlockSeen = false
 
   constructor(
     private storage: Storage | null = getBrowserStorage(),
@@ -298,6 +302,26 @@ export class GamePersistence implements GamePersistencePort {
     if (!this.storage) return
     try {
       this.storage.setItem(STORAGE_KEYS.battleTutorialSeen, 'true')
+    } catch {
+      this.storage = null
+    }
+  }
+
+  hasSeenNightmareUnlock(): boolean {
+    if (!this.storage) return this.memoryNightmareUnlockSeen
+    try {
+      return this.storage.getItem(STORAGE_KEYS.nightmareUnlockSeen) === 'true'
+    } catch {
+      this.storage = null
+      return this.memoryNightmareUnlockSeen
+    }
+  }
+
+  markNightmareUnlockSeen(): void {
+    this.memoryNightmareUnlockSeen = true
+    if (!this.storage) return
+    try {
+      this.storage.setItem(STORAGE_KEYS.nightmareUnlockSeen, 'true')
     } catch {
       this.storage = null
     }

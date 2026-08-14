@@ -1,0 +1,36 @@
+.rewards {
+  display: grid;
+  width: min(100%, 278px);
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0 auto;
+  color: #fff;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  text-align: left;
+  text-shadow: 0 2px 4px #000;
+}
+
+.card {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: 9px 14px;
+  border: 2px solid #d6a52b;
+  border-radius: 14px;
+  background: rgb(2 10 29 / 92%);
+  box-shadow: 0 5px 0 rgb(0 0 0 / 52%);
+}
+
+.card span {
+  color: #f7cf55;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.card strong {
+  margin-top: 3px;
+  color: #fff1bd;
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.1;
+}

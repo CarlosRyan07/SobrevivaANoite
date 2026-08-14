@@ -38,6 +38,11 @@ export function MenuScreen({
   const [showCodes, setShowCodes] = useState(false)
   const [showDifficultyChoice, setShowDifficultyChoice] = useState(false)
   const [codeProgress, setCodeProgress] = useState(() => persistence.getCodeProgress())
+  const [showNightmareUnlock, setShowNightmareUnlock] = useState(
+    () =>
+      persistence.getCodeProgress().discoveredCodes.includes('ligeirinho') &&
+      !persistence.hasSeenNightmareUnlock(),
+  )
   const codesAvailable =
     codeProgress.discoveredCodes.length > 0 || codeProgress.redeemedCodes.length > 0
 
@@ -112,6 +117,12 @@ export function MenuScreen({
     },
     [audio, onBattle],
   )
+
+  const closeNightmareUnlock = useCallback(() => {
+    audio.play('buttonClick')
+    persistence.markNightmareUnlockSeen()
+    setShowNightmareUnlock(false)
+  }, [audio, persistence])
 
   return (
     <div className={styles.root}>
@@ -272,6 +283,24 @@ export function MenuScreen({
             </div>
             <WordButton type="button" onClick={() => setShowDifficultyChoice(false)}>
               Voltar
+            </WordButton>
+          </div>
+        </section>
+      )}
+
+      {showNightmareUnlock && (
+        <section
+          className={styles.nightmareUnlockOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Modo Pesadelo desbloqueado"
+        >
+          <div className={styles.nightmareUnlockPanel}>
+            <span>MODO DESBLOQUEADO</span>
+            <h2>PESADELO</h2>
+            <p>Inimigos mais resistentes e difíceis de atordoar.</p>
+            <WordButton type="button" onClick={closeNightmareUnlock}>
+              Fechar
             </WordButton>
           </div>
         </section>

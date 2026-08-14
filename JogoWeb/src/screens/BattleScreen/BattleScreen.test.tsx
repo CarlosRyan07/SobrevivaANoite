@@ -345,7 +345,7 @@ describe('BattleScreen', () => {
     )
     expect(screen.getByText(/Seus amigos, surpresos/)).toBeInTheDocument()
     expect(screen.getByText('Você conseguiu se sobressair e vencer.')).toBeInTheDocument()
-    expect(screen.getByText(/Você liberou o código/)).toBeInTheDocument()
+    expect(screen.getByText('CÓDIGO LIBERADO')).toBeInTheDocument()
     expect(screen.getByText('ligeirinho')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Tentar Novamente' })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Voltar ao Menu' })).toBeInTheDocument()

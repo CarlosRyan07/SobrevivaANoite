@@ -1,7 +1,8 @@
 import { useState } from 'react'
 
-import { GAME_CODES, type GameCodeId } from '../../codes/gameCodes'
+import type { GameCodeId } from '../../codes/gameCodes'
 import { EndingToast } from '../../components/EndingToast/EndingToast'
+import { VictoryUnlocks } from '../../components/VictoryUnlocks/VictoryUnlocks'
 import { WordButton } from '../../components/WordButton/WordButton'
 import { useModalFocus } from '../../hooks/useModalFocus'
 import { images } from '../../services/assetPaths'
@@ -67,12 +68,7 @@ export function RacaEnding({ rewardCode, onBackToMenu }: RacaEndingProps) {
             <p className={styles.summary}>Você conseguiu se sobressair e vencer.</p>
           </div>
 
-          {rewardCode && (
-            <p className={styles.codeReward} role="status">
-              Você liberou o código:
-              <strong>{GAME_CODES[rewardCode].code.toLowerCase()}</strong>
-            </p>
-          )}
+          <VictoryUnlocks rewardCode={rewardCode} className={styles.codeReward} />
 
           <div className={styles.actions}>
             <WordButton type="button" onClick={onBackToMenu}>

@@ -5,7 +5,7 @@ const gif = (name: string) => `${assetBase}assets/gif/${name}`
 
 export const images = {
   start: optimized('tela_inicio'),
-  loreCampfire: image('lore_fogueira.jpg'),
+  loreCampfire: `${image('lore_fogueira.jpg')}?v=20260814`,
   cabin: optimized('background_cabana'),
   houseWithDoor: optimized('planta_casa_portainteira'),
   house: optimized('planta_casa'),
@@ -21,7 +21,7 @@ export const images = {
   killers: [optimized('terrifier'), optimized('lobisomem'), optimized('ghostface')] as const,
   enemy: {
     idle: optimized('psicopata_parado'),
-    berserkIdle: image('psicopata_parado_berserk.png'),
+    berserkIdle: optimized('psicopata_parado_berserk'),
     berserkActivation: gif('ativando_modo_berserk.gif'),
     attackSequences: [
       {
