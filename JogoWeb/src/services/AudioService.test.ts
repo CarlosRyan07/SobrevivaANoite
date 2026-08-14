@@ -6,6 +6,7 @@ class FakeAudio extends EventTarget {
   playbackRate = 0
   loop = false
   currentTime = 9
+  duration = 10
   paused = false
   play = vi.fn(() => Promise.resolve())
   pause = vi.fn(() => {
@@ -45,6 +46,36 @@ describe('AudioService', () => {
     expect(service.activeStreamCount).toBe(0)
   })
 
+  it('reutiliza o Ã¡udio prÃ©-carregado ao iniciar uma trilha', () => {
+    const created: FakeAudio[] = []
+    const service = new AudioService(10, () => {
+      const audio = new FakeAudio()
+      created.push(audio)
+      return audio as unknown as HTMLAudioElement
+    })
+
+    service.preload(['menuTheme'])
+    service.play('menuTheme', { loop: true, volume: 0.3 })
+
+    expect(created).toHaveLength(1)
+    expect(created[0]?.load).toHaveBeenCalledOnce()
+    expect(created[0]?.play).toHaveBeenCalledOnce()
+    expect(created[0]?.volume).toBe(0.3)
+  })
+
+  it('avisa uma vez quando o áudio se aproxima do fim', () => {
+    const audio = new FakeAudio()
+    const onNearEnd = vi.fn()
+    const service = new AudioService(10, () => audio as unknown as HTMLAudioElement)
+
+    service.play('berserkScream', { nearEndSeconds: 0.2, onNearEnd })
+    audio.currentTime = 9.85
+    audio.dispatchEvent(new Event('timeupdate'))
+    audio.dispatchEvent(new Event('timeupdate'))
+
+    expect(onNearEnd).toHaveBeenCalledOnce()
+  })
+
   it('interrompe somente as vozes do som solicitado', () => {
     const created: FakeAudio[] = []
     const service = new AudioService(10, () => {
@@ -61,6 +92,18 @@ describe('AudioService', () => {
     expect(created[0]?.currentTime).toBe(0)
     expect(created[1]?.pause).not.toHaveBeenCalled()
     expect(service.activeStreamCount).toBe(1)
+  })
+
+  it('informa se uma trilha está ativa', () => {
+    const audio = new FakeAudio()
+    const service = new AudioService(10, () => audio as unknown as HTMLAudioElement)
+
+    expect(service.isActive('menuTheme')).toBe(false)
+    service.play('menuTheme', { loop: true })
+    expect(service.isActive('menuTheme')).toBe(true)
+
+    service.stop('menuTheme')
+    expect(service.isActive('menuTheme')).toBe(false)
   })
 
   it('prepara uma música no gesto do usuário e a torna audível sem criar outra voz', () => {

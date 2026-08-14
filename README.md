@@ -61,6 +61,18 @@ O jogador conhece a história e escolhe entre duas experiências: encontrar um e
 
 Controles, mecânicas, progressão e a galeria completa de capturas sem spoilers estão em [PRODUTO.md](./PRODUTO.md).
 
+### Modo Pesadelo
+
+Após a primeira vitória na batalha, o jogador desbloqueia o modo **Pesadelo**. O monstro passa a ter mais vida, exige mais parries para ficar atordoado e entra em Berserk ao chegar à metade da vida.
+
+<div align="center">
+
+| Ativação Berserk | Monstro em Berserk |
+|:---:|:---:|
+| <img src="./JogoWeb/public/assets/gif/ativando_modo_berserk.gif" alt="Animação de ativação do modo Berserk" width="280" /> | <img src="./JogoWeb/public/assets/optimized/psicopata_parado_berserk.webp" alt="Monstro em modo Berserk" width="280" /> |
+
+</div>
+
 ## Executar localmente
 
 ### Web/PWA

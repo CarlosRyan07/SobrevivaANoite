@@ -161,6 +161,22 @@
   background: var(--color-battle-night);
 }
 
+.root::before {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 75px;
+  border-bottom: 1px solid rgb(62 112 166 / 72%);
+  background: linear-gradient(180deg, rgb(14 14 67 / 92%), rgb(14 14 67 / 74%));
+  box-shadow:
+    inset 0 1px 0 rgb(151 191 230 / 20%),
+    0 4px 12px rgb(0 0 0 / 20%);
+  content: '';
+  pointer-events: none;
+}
+
 .background {
   width: 100%;
   height: 100%;
@@ -171,7 +187,7 @@
 .topUi {
   position: absolute;
   z-index: 3;
-  top: 120px;
+  top: 80px;
   right: 0;
   left: 0;
 }
@@ -268,6 +284,12 @@
   height: 270px;
 }
 
+.berserkEnemy {
+  filter:
+    drop-shadow(0 0 1px #ff5252)
+    drop-shadow(0 0 5px rgba(157, 1, 1, 0.78));
+}
+
 .survivor {
   top: calc(50% + 60px);
   width: 60%;
@@ -278,11 +300,42 @@
   position: absolute;
   z-index: 5;
   right: 0;
-  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(4px + env(safe-area-inset-bottom, 0px));
   left: 0;
   display: flex;
+  box-sizing: border-box;
   align-items: center;
   flex-direction: column;
+  border-bottom: 1px solid rgb(5 8 34 / 72%);
+  background: transparent;
+  box-shadow: none;
+  isolation: isolate;
+}
+
+.bottomUi::before {
+  position: absolute;
+  z-index: 0;
+  top: 62px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-top: 1px solid rgb(62 112 166 / 72%);
+  border-bottom: 1px solid rgb(5 8 34 / 72%);
+  background: linear-gradient(
+    180deg,
+    rgb(14 14 67 / 44%),
+    rgb(8 9 47 / 56%)
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(151 191 230 / 16%),
+    0 -4px 12px rgb(0 0 0 / 18%);
+  content: '';
+  pointer-events: none;
+}
+
+.bottomUi > * {
+  position: relative;
+  z-index: 1;
 }
 
 .controls {
@@ -488,6 +541,7 @@
     bottom: calc(8px + env(safe-area-inset-bottom, 0px));
   }
 }
+
 
 @media (max-width: 370px) {
   .controls button {

@@ -42,7 +42,10 @@ function MatchHistoryItem({ match }: { match: MatchHistory }) {
         {formatMatchTimestamp(match.timestamp)}
       </time>
       {match.gameMode === 'Batalha' && (
-        <p>Vida Final: {match.finalPlayerHp} | Parrys: {match.parryCount}</p>
+        <p>
+          Dificuldade: {match.difficulty === 'hard' ? 'Pesadelo' : 'Normal'} | Vida Final:{' '}
+          {match.finalPlayerHp} | Parrys: {match.parryCount}
+        </p>
       )}
     </article>
   )

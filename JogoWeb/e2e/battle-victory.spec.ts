@@ -33,12 +33,16 @@ test('vitória libera final, histórico e código somente no fluxo correto', asy
   await expect(page.getByRole('button', { name: 'Iniciar Jogo' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Códigos' })).toBeVisible()
 
+  const nightmareUnlock = page.getByRole('dialog', { name: 'Modo Pesadelo desbloqueado' })
+  await expect(nightmareUnlock).toBeVisible()
+  await nightmareUnlock.getByRole('button', { name: 'Fechar' }).click()
+
   await page.getByRole('button', { name: 'Histórico' }).click()
   await expect(page.getByLabel('Estatísticas de Batalha')).toContainText(
     'Vitórias: 1 | Derrotas: 0',
   )
   await expect(page.getByLabel('Partidas', { exact: true })).toContainText(
-    'Vida Final: 70 | Parrys: 0',
+    'Dificuldade: Normal | Vida Final: 70 | Parrys: 0',
   )
 
   await page.getByRole('button', { name: 'Voltar' }).click()

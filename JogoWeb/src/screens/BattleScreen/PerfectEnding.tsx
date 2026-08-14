@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 
-import { GAME_CODES, type GameCodeId } from '../../codes/gameCodes'
+import type { GameCodeId } from '../../codes/gameCodes'
 import { EndingToast } from '../../components/EndingToast/EndingToast'
+import { VictoryUnlocks } from '../../components/VictoryUnlocks/VictoryUnlocks'
 import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
 import { useModalFocus } from '../../hooks/useModalFocus'
@@ -116,12 +117,7 @@ export function PerfectEnding({ rewardCode, onBackToMenu }: PerfectEndingProps) 
             <p>Você venceu sem receber nenhum golpe e realizou pelo menos dois parries.</p>
           </div>
 
-          {rewardCode && (
-            <p className={styles.codeReward} role="status">
-              Você liberou o código:
-              <strong>{GAME_CODES[rewardCode].code.toLowerCase()}</strong>
-            </p>
-          )}
+          <VictoryUnlocks rewardCode={rewardCode} className={styles.codeReward} />
 
           <div className={styles.actions}>
             <WordButton type="button" onClick={onBackToMenu}>

@@ -1,9 +1,11 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 
+import type { BattleDifficulty } from '../battle/battleTypes'
 import { GameFrame } from '../components/GameFrame/GameFrame'
 import { AudioProvider } from '../contexts/AudioContext'
 import { preloadGameAssets } from '../services/gameAssetPreloader'
-import { useGameNavigation } from './navigation'
+import { battleDifficultyFromHash, useGameNavigation } from './navigation'
+import { ThemeMusic } from './ThemeMusic'
 
 const MenuScreen = lazy(() =>
   import('../screens/MenuScreen/MenuScreen').then((module) => ({ default: module.MenuScreen })),
@@ -53,9 +55,24 @@ export function App() {
   const { route, navigate, backToMenu } = useGameNavigation()
   const [assetProgress, setAssetProgress] = useState({ completed: 0, total: 0 })
   const [assetsReady, setAssetsReady] = useState(import.meta.env.MODE === 'test')
+  const battleDifficulty: BattleDifficulty = battleDifficultyFromHash(window.location.hash)
   const battleTest = import.meta.env.DEV || import.meta.env.MODE === 'visual'
     ? new URLSearchParams(window.location.search).get('battleTest')
     : null
+  const battleGameOptions = battleTest
+    ? {
+        difficulty: battleDifficulty,
+        initialEnemyHp: 1,
+        enemyAiEnabled: false,
+        ...(battleTest === 'perfect'
+          ? { initialPlayerHp: 100, initialParryCount: 2 }
+          : battleTest === 'pidao'
+            ? { initialPlayerHp: 35 }
+            : battleTest === 'raca'
+              ? { initialPlayerHp: 70 }
+              : {}),
+      }
+    : { difficulty: battleDifficulty }
   const frameLayout =
     route === 'menu'
       ? 'menu'
@@ -82,6 +99,7 @@ export function App() {
 
   return (
     <AudioProvider>
+      <ThemeMusic route={route} />
       <GameFrame layout={frameLayout}>
         {!assetsReady ? (
           <LoadingScreen {...assetProgress} />
@@ -90,7 +108,9 @@ export function App() {
           {route === 'menu' && (
             <MenuScreen
               onHide={() => navigate('hide')}
-              onBattle={() => navigate('battle')}
+              onBattle={(difficulty) => {
+                navigate('battle', difficulty === 'hard' ? 'difficulty=hard' : undefined)
+              }}
               onHistory={() => navigate('history')}
               onEndings={() => navigate('endings')}
               onCuriosities={() => navigate('curiosities')}
@@ -100,21 +120,7 @@ export function App() {
           {route === 'battle' && (
             <BattleScreen
               onBackToMenu={backToMenu}
-              {...(battleTest
-                ? {
-                    gameOptions: {
-                      initialEnemyHp: 1,
-                      enemyAiEnabled: false,
-                      ...(battleTest === 'perfect'
-                        ? { initialPlayerHp: 100, initialParryCount: 2 }
-                        : battleTest === 'pidao'
-                        ? { initialPlayerHp: 35 }
-                        : battleTest === 'raca'
-                          ? { initialPlayerHp: 70 }
-                          : {}),
-                    },
-                  }
-                : {})}
+              gameOptions={battleGameOptions}
             />
           )}
           {route === 'history' && <HistoryScreen onBack={() => navigate('menu')} />}

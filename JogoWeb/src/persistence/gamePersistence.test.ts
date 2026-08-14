@@ -83,6 +83,15 @@ describe('persistência do jogo', () => {
     expect(new GamePersistence(localStorage).isCodeActive('ligeirinho')).toBe(false)
   })
 
+  it('persiste a confirmação do aviso do modo Pesadelo', () => {
+    const persistence = new GamePersistence(localStorage)
+
+    expect(persistence.hasSeenNightmareUnlock()).toBe(false)
+    persistence.markNightmareUnlockSeen()
+    expect(persistence.hasSeenNightmareUnlock()).toBe(true)
+    expect(new GamePersistence(localStorage).hasSeenNightmareUnlock()).toBe(true)
+  })
+
   it('ignora códigos desconhecidos ou ativos sem resgate no armazenamento', () => {
     localStorage.setItem(
       STORAGE_KEYS.codeProgress,

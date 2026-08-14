@@ -2,6 +2,7 @@ const audioBase = import.meta.env.BASE_URL
 const audio = (name: string) => `${audioBase}assets/audio/${name}.mp3`
 
 export const audioCatalog = {
+  menuTheme: audio('musica_tema'),
   tenseMusic: audio('musica_tensa'),
   centerTheme: audio('fnaf2_theme'),
   footsteps: audio('psicopata_passos'),
@@ -10,6 +11,8 @@ export const audioCatalog = {
   hideWin: audio('win_hide'),
   hideLose: audio('lose_hide'),
   battleMusic: audio('musica_batalha'),
+  berserkScream: audio('grito_berserk'),
+  berserkMusic: audio('musica_modo_berserk'),
   ratDanceMusic: audio('rat_dance_music'),
   pidaoEnding: audio('final_pidao'),
   perfectEnding: audio('sopa_lobo_audio'),

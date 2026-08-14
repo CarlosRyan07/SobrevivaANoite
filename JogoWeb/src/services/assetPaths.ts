@@ -5,7 +5,7 @@ const gif = (name: string) => `${assetBase}assets/gif/${name}`
 
 export const images = {
   start: optimized('tela_inicio'),
-  loreCampfire: image('lore_fogueira.jpg'),
+  loreCampfire: `${image('lore_fogueira.jpg')}?v=20260814`,
   cabin: optimized('background_cabana'),
   houseWithDoor: optimized('planta_casa_portainteira'),
   house: optimized('planta_casa'),
@@ -21,10 +21,31 @@ export const images = {
   killers: [optimized('terrifier'), optimized('lobisomem'), optimized('ghostface')] as const,
   enemy: {
     idle: optimized('psicopata_parado'),
-    preparingLeft: optimized('psicopata_preparando_esquerda'),
-    preparingRight: optimized('psicopata_preparando_direita'),
-    attackingLeft: optimized('psicopata_atacando_esquerda'),
-    attackingRight: optimized('psicopata_atacando_direita'),
+    berserkIdle: optimized('psicopata_parado_berserk'),
+    berserkActivation: gif('ativando_modo_berserk.gif'),
+    attackSequences: [
+      {
+        preparingLeft: optimized('psicopata_preparando_esquerda'),
+        attackingLeft: optimized('psicopata_atacando_esquerda'),
+        preparingRight: optimized('psicopata_preparando_direita'),
+        attackingRight: optimized('psicopata_atacando_direita'),
+        preparingDuration: 600,
+      },
+      {
+        preparingLeft: optimized('psicopata_preparando_corte_lateral_esquerda'),
+        attackingLeft: optimized('psicopata_corte_lateral_esquerda'),
+        preparingRight: optimized('psicopata_preparando_corte_lateral_direita'),
+        attackingRight: optimized('psicopata_corte_lateral_direita'),
+        preparingDuration: 500,
+      },
+      {
+        preparingLeft: optimized('psicopata_preparando_arranhada_para_cima_esquerda'),
+        attackingLeft: optimized('psicopata_arranhada_para_cima_esquerda'),
+        preparingRight: optimized('psicopata_preparando_arranhada_para_cima_direita'),
+        attackingRight: optimized('psicopata_arranhada_para_cima_direita'),
+        preparingDuration: 700,
+      },
+    ] as const,
     stunned: optimized('psicopata_atordoado'),
     hit: [1, 2, 3, 4].map((step) => optimized(`psicopata_atingido${step}`)),
     defeated: optimized('psicopata_derrotado'),

@@ -2,7 +2,10 @@ export const PLAYER_MAX_HP = 100
 export const PIDAO_ENDING_HP_THRESHOLD = PLAYER_MAX_HP * 0.4
 export const PERFECT_ENDING_MIN_PARRIES = 2
 export const ENEMY_MAX_HP = 700
+export const HARD_ENEMY_MAX_HP = 1_400
+export const HARD_PARRIES_TO_STUN = 3
 export const PLAYER_DAMAGE = 15
+export const BERSERK_PLAYER_DAMAGE = 25
 export const NORMAL_ATTACK_DAMAGE = 3
 export const STUNNED_ATTACK_DAMAGE = 10
 
@@ -28,6 +31,9 @@ export const INITIAL_ATTACK_SPEED = DEFAULT_ATTACK_SPEED_PROFILE.initial
 export const MINIMUM_ATTACK_SPEED = DEFAULT_ATTACK_SPEED_PROFILE.minimum
 export const ATTACK_SPEED_STEP = DEFAULT_ATTACK_SPEED_PROFILE.reduction
 export const BATTLE_MUSIC_VOLUME = 0.25
+// Menor valor = ataques mais rápidos. 0.80 mantém o Berserk ágil sem cortar animações.
+export const BERSERK_ATTACK_SPEED_MULTIPLIER = 0.80
+export const BERSERK_MUSIC_VOLUME = 0.25
 
 export const BATTLE_TIMINGS = {
   initialEnemyDelay: 2_000,
@@ -37,9 +43,12 @@ export const BATTLE_TIMINGS = {
   enemyAttackWindow: 100,
   enemyRecovering: 1_200,
   enemyStunned: 4_000,
+  hardParryReaction: 500,
+  hardParryGaugeStep: 1_000,
   playerDodge: 800,
   playerHit: 800,
   battleMusicFadeOut: 1_200,
+  berserkBattleMusicFadeOut: 500,
   comboTimeout: 1_500,
   enemyHit: 1_000,
   stunnedBeforeDefeat: 1_000,

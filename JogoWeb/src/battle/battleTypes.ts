@@ -2,12 +2,14 @@ import type { GameCodeId } from '../codes/gameCodes'
 import type { GameEndingId } from '../endings/gameEndings'
 
 export type AttackDirection = 'left' | 'right'
+export type BattleDifficulty = 'normal' | 'hard'
 
 export type EnemyAction =
   | { kind: 'idle' }
   | { kind: 'preparing'; direction: AttackDirection }
   | { kind: 'attacking'; direction: AttackDirection }
   | { kind: 'stunned' }
+  | { kind: 'berserk' }
   | { kind: 'recovering' }
   | { kind: 'defeated' }
 
@@ -21,6 +23,11 @@ export interface BattleState {
   playerImage: string
   playerState: PlayerState
   enemyHp: number
+  enemyMaxHp: number
+  parryGauge: number
+  difficulty: BattleDifficulty
+  isBerserk: boolean
+  berserkAuraActive: boolean
   enemyAction: EnemyAction
   enemyImage: string
   gameResult: BattleResult

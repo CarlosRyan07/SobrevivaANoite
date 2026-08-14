@@ -42,7 +42,7 @@ describe('HistoryScreen', () => {
     expect(screen.getByLabelText('Estatísticas de Esconde-Esconde')).toHaveTextContent(
       'Vitórias: 1 | Derrotas: 0',
     )
-    expect(screen.getByText('Vida Final: 10 | Parrys: 3')).toBeInTheDocument()
+    expect(screen.getByText('Dificuldade: Normal | Vida Final: 10 | Parrys: 3')).toBeInTheDocument()
     expect(screen.getByText('31/07/2026 às 13:45')).toBeInTheDocument()
   })
 
@@ -63,6 +63,6 @@ describe('HistoryScreen', () => {
     expect(screen.getByLabelText('Estatísticas de Batalha')).toHaveTextContent(
       'Vitórias: 1 | Derrotas: 0',
     )
-    expect(screen.getByText('Vida Final: 70 | Parrys: 4')).toBeInTheDocument()
+    expect(screen.getByText('Dificuldade: Normal | Vida Final: 70 | Parrys: 4')).toBeInTheDocument()
   })
 })
