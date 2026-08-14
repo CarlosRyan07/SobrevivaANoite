@@ -574,6 +574,11 @@ try {
       errors.push('As imagens visíveis não terminaram de carregar em 20 segundos.')
     }
 
+    await page.waitForSelector('main > section[aria-label="Sobreviva à Noite"]', {
+      visible: true,
+      timeout: 20_000,
+    })
+
     const metrics = await page.evaluate(() => {
       const frame = document.querySelector('main > section')
       if (!(frame instanceof HTMLElement)) throw new Error('GameFrame não encontrado.')
