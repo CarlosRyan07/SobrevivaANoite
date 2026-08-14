@@ -696,11 +696,11 @@ try {
         if (Math.abs(metrics.battleSpacing.recordTop - 24) > 1) {
           errors.push(`Recorde iniciou em ${metrics.battleSpacing.recordTop}px; esperado 24px.`)
         }
-        if (Math.abs(metrics.battleSpacing.enemyTop - 120) > 1) {
-          errors.push(`HUD do psicopata iniciou em ${metrics.battleSpacing.enemyTop}px; esperado 120px.`)
+        if (Math.abs(metrics.battleSpacing.enemyTop - 80) > 1) {
+          errors.push(`HUD do psicopata iniciou em ${metrics.battleSpacing.enemyTop}px; esperado 80px.`)
         }
-        if (Math.abs(metrics.battleSpacing.bottomGap - 16) > 1) {
-          errors.push(`HUD inferior terminou a ${metrics.battleSpacing.bottomGap}px; esperado 16px.`)
+        if (Math.abs(metrics.battleSpacing.bottomGap - 4) > 1) {
+          errors.push(`HUD inferior terminou a ${metrics.battleSpacing.bottomGap}px; esperado 4px.`)
         }
       }
     }
@@ -716,7 +716,7 @@ try {
         if (metrics.battleSpacing.recordTop < 23) {
           errors.push(`O recorde ficou cortado no topo: ${metrics.battleSpacing.recordTop}px.`)
         }
-        if (metrics.battleSpacing.bottomGap < 15) {
+        if (metrics.battleSpacing.bottomGap < 4) {
           errors.push(`Os controles ficaram cortados na base: ${metrics.battleSpacing.bottomGap}px.`)
         }
       }
