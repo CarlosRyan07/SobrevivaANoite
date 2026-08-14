@@ -99,6 +99,117 @@
   transition: opacity 1000ms ease 500ms;
 }
 
+.difficultyOverlay {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  display: grid;
+  padding: 24px;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 18%, rgb(73 123 205 / 30%), transparent 45%),
+    rgb(0 0 0 / 82%);
+}
+
+.difficultyPanel {
+  display: flex;
+  width: min(100%, 460px);
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 26px 22px 22px;
+  border: 2px solid #fff1bd;
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgb(27 54 108 / 98%), rgb(5 15 46 / 98%)),
+    #08153a;
+  box-shadow: 0 16px 48px rgb(0 0 0 / 72%), inset 0 0 0 3px rgb(5 15 46 / 72%);
+  text-align: center;
+}
+
+.difficultyPanel h2,
+.difficultyPanel p {
+  margin: 0;
+}
+
+.difficultyPanel h2 {
+  color: #fff1bd;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+.difficultyPanel p {
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.difficultyCards {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.difficultyCard {
+  display: flex;
+  position: relative;
+  min-height: 184px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  padding: 18px 13px 16px;
+  border: 2px solid #78b7ff;
+  border-radius: 16px;
+  background:
+    linear-gradient(145deg, rgb(39 104 184 / 95%), rgb(9 30 82 / 98%)),
+    #071d4f;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 24%), 0 7px 0 rgb(3 11 37 / 80%);
+  color: #fff;
+  cursor: pointer;
+}
+
+.difficultyCard strong {
+  color: #fff1bd;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 20px;
+  text-shadow: 0 3px 0 #071d4f;
+}
+
+.difficultyCard span {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.cardBadge {
+  align-self: center;
+  padding: 4px 8px;
+  border: 1px solid rgb(255 241 189 / 72%);
+  border-radius: 999px;
+  color: #fff1bd;
+  font-family: 'Bungee', 'Arial Black', sans-serif;
+  font-size: 8px !important;
+  letter-spacing: 0.4px;
+}
+
+.difficultyCard:hover,
+.difficultyCard:focus-visible {
+  outline: none;
+  border-color: #fff176;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 34%), 0 7px 0 rgb(3 11 37 / 80%), 0 0 22px rgb(120 183 255 / 52%);
+  filter: brightness(1.12);
+  transform: translateY(-2px);
+}
+
+.nightmareCard {
+  border-color: #e07070;
+  background:
+    linear-gradient(145deg, rgb(121 40 55 / 98%), rgb(41 11 31 / 98%)),
+    #250d20;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 7px 0 rgb(28 5 17 / 88%);
+}
+
 .story {
   display: flex;
   width: 100%;
@@ -144,6 +255,7 @@
 .actions {
   display: flex;
   width: 100%;
+  flex-wrap: wrap;
   justify-content: space-evenly;
   gap: 16px;
   margin-top: 24px;
@@ -152,6 +264,22 @@
 .actions button {
   min-width: 112px;
   font-size: 16px;
+}
+
+@media (max-width: 380px) {
+  .difficultyOverlay {
+    padding: 12px;
+  }
+
+  .difficultyPanel {
+    gap: 12px;
+    padding: 16px 12px;
+  }
+
+  .difficultyCard {
+    min-height: 132px;
+    padding: 12px 8px;
+  }
 }
 
 @media (max-height: 650px) {

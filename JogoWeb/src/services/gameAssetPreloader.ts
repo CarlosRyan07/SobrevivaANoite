@@ -12,6 +12,8 @@ const gameplayImages = [
   images.blood,
   ...images.killers,
   images.enemy.idle,
+  images.enemy.berserkIdle,
+  images.enemy.berserkActivation,
   ...images.enemy.attackSequences.flatMap(
     ({ preparingLeft, attackingLeft, preparingRight, attackingRight }) => [
       preparingLeft,

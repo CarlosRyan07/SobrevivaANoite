@@ -8,11 +8,12 @@ import {
   type GamePersistencePort,
 } from '../../persistence/gamePersistence'
 import { images, preloadImages } from '../../services/assetPaths'
+import type { BattleDifficulty } from '../../battle/battleTypes'
 import { CodesPanel } from './CodesPanel'
 import styles from './MenuScreen.module.css'
 
 interface MenuScreenProps {
-  onBattle: () => void
+  onBattle: (difficulty: BattleDifficulty) => void
   onHide: () => void
   onHistory: () => void
   onEndings: () => void
@@ -35,6 +36,7 @@ export function MenuScreen({
   const audio = useAudio()
   const [showLore, setShowLore] = useState(hashShowsLore)
   const [showCodes, setShowCodes] = useState(false)
+  const [showDifficultyChoice, setShowDifficultyChoice] = useState(false)
   const [codeProgress, setCodeProgress] = useState(() => persistence.getCodeProgress())
   const codesAvailable =
     codeProgress.discoveredCodes.length > 0 || codeProgress.redeemedCodes.length > 0
@@ -89,6 +91,26 @@ export function MenuScreen({
       callback()
     },
     [audio],
+  )
+
+  const chooseBattle = useCallback(() => {
+    if (codeProgress.discoveredCodes.includes('ligeirinho')) {
+      audio.play('buttonClick')
+      setShowDifficultyChoice(true)
+      return
+    }
+    chooseMode(() => onBattle('normal'), true)
+  }, [audio, chooseMode, codeProgress.discoveredCodes, onBattle])
+
+  const launchBattle = useCallback(
+    (difficulty: BattleDifficulty) => {
+      audio.play('buttonClick')
+      audio.stop('battleMusic')
+      audio.play('battleMusic', { loop: true, prepareMuted: true })
+      setShowDifficultyChoice(false)
+      onBattle(difficulty)
+    },
+    [audio, onBattle],
   )
 
   return (
@@ -209,13 +231,51 @@ export function MenuScreen({
               <WordButton type="button" onClick={() => chooseMode(onHide)} tabIndex={showLore ? 0 : -1}>
                 Esconder
               </WordButton>
-              <WordButton type="button" onClick={() => chooseMode(onBattle, true)} tabIndex={showLore ? 0 : -1}>
+              <WordButton type="button" onClick={chooseBattle} tabIndex={showLore ? 0 : -1}>
                 Lutar
+              </WordButton>
+              <WordButton type="button" onClick={() => chooseMode(() => onBattle('hard'), true)} tabIndex={-1} hidden>
+                Modo Difícil
               </WordButton>
             </div>
           </div>
         </article>
       </section>
+
+      {showDifficultyChoice && (
+        <section
+          className={styles.difficultyOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Escolha a dificuldade"
+        >
+          <div className={styles.difficultyPanel}>
+            <h2>ESCOLHA A DIFICULDADE</h2>
+            <p>Escolha como quer enfrentar o monstro.</p>
+            <div className={styles.difficultyCards}>
+              <button
+                className={styles.difficultyCard}
+                type="button"
+                onClick={() => launchBattle('normal')}
+              >
+                <strong>Normal</strong>
+                <span>O desafio clássico. Um parry deixa o inimigo vulnerável.</span>
+              </button>
+              <button
+                className={`${styles.difficultyCard} ${styles.nightmareCard}`}
+                type="button"
+                onClick={() => launchBattle('hard')}
+              >
+                <strong>Pesadelo</strong>
+                <span>Inimigo têm mais vida e demora mais para ficar atordoado.</span>
+              </button>
+            </div>
+            <WordButton type="button" onClick={() => setShowDifficultyChoice(false)}>
+              Voltar
+            </WordButton>
+          </div>
+        </section>
+      )}
     </div>
   )
 }

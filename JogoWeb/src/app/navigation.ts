@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 
+import type { BattleDifficulty } from '../battle/battleTypes'
+
 export type GameRoute = 'menu' | 'hide' | 'battle' | 'history' | 'endings' | 'curiosities'
 
 export function routeFromHash(hash: string): GameRoute {
-  const route = hash.replace(/^#\/?/, '')
+  const route = hash.replace(/^#\/?/, '').split('?')[0]
   if (
     route === 'hide' ||
     route === 'battle' ||
@@ -16,8 +18,14 @@ export function routeFromHash(hash: string): GameRoute {
   return 'menu'
 }
 
-function hashForRoute(route: GameRoute): string {
-  return route === 'menu' ? '' : `#/${route}`
+export function battleDifficultyFromHash(hash: string): BattleDifficulty {
+  const [, query = ''] = hash.replace(/^#\/?/, '').split('?')
+  return new URLSearchParams(query).get('difficulty') === 'hard' ? 'hard' : 'normal'
+}
+
+function hashForRoute(route: GameRoute, search?: string): string {
+  if (route === 'menu') return ''
+  return `#/${route}${search ? `?${search}` : ''}`
 }
 
 export function useGameNavigation() {
@@ -29,8 +37,8 @@ export function useGameNavigation() {
     return () => window.removeEventListener('hashchange', handleHashChange)
   }, [])
 
-  const navigate = useCallback((nextRoute: GameRoute) => {
-    const nextHash = hashForRoute(nextRoute)
+  const navigate = useCallback((nextRoute: GameRoute, search?: string) => {
+    const nextHash = hashForRoute(nextRoute, search)
     setRoute(nextRoute)
     if (window.location.hash !== nextHash) window.location.hash = nextHash
   }, [])

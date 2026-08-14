@@ -7,7 +7,7 @@ import type { AudioService } from '../../services/AudioService'
 import { MenuScreen } from './MenuScreen'
 
 describe('MenuScreen', () => {
-  const audio = { play: vi.fn() } as unknown as AudioService
+  const audio = { play: vi.fn(), stop: vi.fn() } as unknown as AudioService
 
   beforeEach(() => {
     window.location.hash = ''
@@ -48,6 +48,26 @@ describe('MenuScreen', () => {
 
     expect(audio.play).toHaveBeenCalledWith('buttonClick')
     expect(onBattle).toHaveBeenCalledOnce()
+    expect(onBattle).toHaveBeenCalledWith('normal')
+  })
+
+  it('libera os cards Normal e Pesadelo junto com o código LIGEIRINHO', async () => {
+    window.location.hash = '#/lore'
+    gamePersistence.discoverCode('ligeirinho')
+    const onBattle = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <AudioContext value={audio}>
+        <MenuScreen onBattle={onBattle} onHide={vi.fn()} onHistory={vi.fn()} onEndings={vi.fn()} />
+      </AudioContext>,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Lutar' }))
+    expect(screen.getByRole('dialog', { name: 'Escolha a dificuldade' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /Pesadelo/i }))
+    expect(onBattle).toHaveBeenCalledWith('hard')
+    expect(audio.stop).toHaveBeenCalledWith('battleMusic')
+    expect(audio.play).toHaveBeenCalledWith('battleMusic', { loop: true, prepareMuted: true })
   })
 
   it('abre o histórico a partir da tela inicial', async () => {

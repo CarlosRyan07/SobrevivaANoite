@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react'
 import { gamePersistence } from '../persistence/gamePersistence'
 import type { AudioService } from '../services/AudioService'
 import type { RandomSource } from '../utils/random'
-import { BATTLE_MUSIC_VOLUME, BATTLE_TIMINGS } from './battleConstants'
+import { BATTLE_MUSIC_VOLUME, BATTLE_TIMINGS, HARD_PARRIES_TO_STUN } from './battleConstants'
 import { useBattleGame } from './useBattleGame'
 
 const leftAttackRandom: RandomSource = {
@@ -48,7 +48,7 @@ describe('useBattleGame', () => {
       useBattleGame(audio, { random: leftAttackRandom }),
     )
 
-    await act(async () => vi.advanceTimersByTimeAsync(3_700))
+    await act(async () => vi.advanceTimersByTimeAsync(3_600))
     expect(result.current.state.enemyAction).toEqual({ kind: 'attacking', direction: 'left' })
 
     act(() => result.current.dodgeLeft())
@@ -59,6 +59,65 @@ describe('useBattleGame', () => {
     expect(audio.play).toHaveBeenCalledWith('parry')
     unmount()
   })
+
+  it('no modo difícil exige os parries configurados antes de atordoar o inimigo', async () => {
+    const audio = createAudioMock()
+    const { result, unmount } = renderHook(() =>
+      useBattleGame(audio, { random: leftAttackRandom, difficulty: 'hard' }),
+    )
+
+    expect(result.current.state.enemyHp).toBe(1_000)
+    expect(result.current.state.enemyMaxHp).toBe(1_000)
+    expect(result.current.state.parryGauge).toBe(0)
+
+    for (let parry = 1; parry <= HARD_PARRIES_TO_STUN; parry += 1) {
+      await act(async () => vi.advanceTimersByTimeAsync(parry === 1 ? 3_600 : 2_800))
+      expect(result.current.state.enemyAction).toEqual({ kind: 'attacking', direction: 'left' })
+      act(() => result.current.dodgeLeft())
+      await act(async () => vi.advanceTimersByTimeAsync(100))
+      expect(result.current.state.parryGauge).toBe(parry)
+    }
+
+    expect(result.current.state.enemyAction).toEqual({ kind: 'stunned' })
+    await act(async () => vi.advanceTimersByTimeAsync(BATTLE_TIMINGS.hardParryGaugeStep))
+    expect(result.current.state.parryGauge).toBe(HARD_PARRIES_TO_STUN - 1)
+    unmount()
+  })
+
+  it('ativa Berserk somente ao cruzar metade da vida no modo Pesadelo', () => {
+    const audio = createAudioMock()
+    const hardBattle = renderHook(() =>
+      useBattleGame(audio, {
+        random: leftAttackRandom,
+        difficulty: 'hard',
+        initialEnemyHp: 501,
+        enemyAiEnabled: false,
+      }),
+    )
+
+    act(() => hardBattle.result.current.attack())
+
+    expect(hardBattle.result.current.state.enemyHp).toBe(498)
+    expect(hardBattle.result.current.state.isBerserk).toBe(true)
+    expect(hardBattle.result.current.state.enemyAction).toEqual({ kind: 'berserk' })
+    expect(audio.fadeOut).toHaveBeenCalledWith('battleMusic', {
+      duration: BATTLE_TIMINGS.berserkBattleMusicFadeOut,
+    })
+    expect(audio.play).toHaveBeenCalledWith('berserkScream', expect.any(Object))
+    hardBattle.unmount()
+
+    const normalBattle = renderHook(() =>
+      useBattleGame(audio, {
+        random: leftAttackRandom,
+        initialEnemyHp: 350,
+        enemyAiEnabled: false,
+      }),
+    )
+    act(() => normalBattle.result.current.attack())
+    expect(normalBattle.result.current.state.isBerserk).toBe(false)
+    normalBattle.unmount()
+  })
+
 
   it('mantÃ©m o mesmo tipo de golpe entre a preparaÃ§Ã£o e o ataque', async () => {
     const audio = createAudioMock()
@@ -88,7 +147,7 @@ describe('useBattleGame', () => {
     expect(result.current.state.enemyAction).toEqual({ kind: 'preparing', direction: 'left' })
     expect(result.current.state.enemyImage).toContain('psicopata_preparando_corte_lateral_esquerda.webp')
 
-    await act(async () => vi.advanceTimersByTimeAsync(449))
+    await act(async () => vi.advanceTimersByTimeAsync(499))
     expect(result.current.state.enemyAction).toEqual({ kind: 'preparing', direction: 'left' })
 
     await act(async () => vi.advanceTimersByTimeAsync(1))
@@ -103,7 +162,7 @@ describe('useBattleGame', () => {
       useBattleGame(audio, { random: leftAttackRandom }),
     )
 
-    await act(async () => vi.advanceTimersByTimeAsync(3_700))
+    await act(async () => vi.advanceTimersByTimeAsync(3_600))
     act(() => result.current.dodgeLeft())
     await act(async () => vi.advanceTimersByTimeAsync(100))
     act(() => result.current.attack())
@@ -171,7 +230,7 @@ describe('useBattleGame', () => {
       useBattleGame(audio, { random: leftAttackRandom, initialEnemyHp: 1 }),
     )
 
-    await act(async () => vi.advanceTimersByTimeAsync(3_700))
+    await act(async () => vi.advanceTimersByTimeAsync(3_600))
     act(() => result.current.dodgeLeft())
     await act(async () => vi.advanceTimersByTimeAsync(100))
     act(() => result.current.attack())

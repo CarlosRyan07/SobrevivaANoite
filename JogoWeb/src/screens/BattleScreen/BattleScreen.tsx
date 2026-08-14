@@ -6,11 +6,12 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react'
 
-import { ENEMY_MAX_HP, PLAYER_MAX_HP } from '../../battle/battleConstants'
+import { HARD_PARRIES_TO_STUN, PLAYER_MAX_HP } from '../../battle/battleConstants'
 import { comboColor } from '../../battle/battleEngine'
 import { battleActionForKey } from '../../battle/battleKeyboard'
 import { useBattleGame, type BattleGameOptions } from '../../battle/useBattleGame'
 import { HpBar } from '../../components/HpBar/HpBar'
+import { ParryGauge } from '../../components/ParryGauge/ParryGauge'
 import { WordButton } from '../../components/WordButton/WordButton'
 import { useAudio } from '../../contexts/audioContextValue'
 import { useModalFocus } from '../../hooks/useModalFocus'
@@ -93,6 +94,8 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
     preloadImages([
       images.cabin,
       images.enemy.idle,
+      images.enemy.berserkIdle,
+      images.enemy.berserkActivation,
       ...images.enemy.attackSequences.flatMap(
         ({ preparingLeft, attackingLeft, preparingRight, attackingRight }) => [
           preparingLeft,
@@ -189,7 +192,14 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
 
       {state.enemyHp > 0 && state.gameResult !== 'win' && (
         <div className={styles.topUi} aria-hidden={showTutorial}>
-          <HpBar name="Psicopata" currentHp={state.enemyHp} maxHp={ENEMY_MAX_HP} />
+          <HpBar name="Psicopata" currentHp={state.enemyHp} maxHp={state.enemyMaxHp} />
+          {state.difficulty === 'hard' && (
+            <ParryGauge
+              current={state.parryGauge}
+              max={HARD_PARRIES_TO_STUN}
+              isStunned={state.enemyAction.kind === 'stunned'}
+            />
+          )}
         </div>
       )}
 
@@ -206,7 +216,17 @@ export function BattleScreen({ onBackToMenu, gameOptions }: BattleScreenProps) {
       )}
 
       <div className={styles.centerStage} aria-hidden={showTutorial}>
-        <img className={styles.enemy} src={state.enemyImage} alt="Psicopata" />
+        <img
+          className={`${styles.enemy} ${
+            state.isBerserk &&
+            state.berserkAuraActive &&
+            state.enemyAction.kind !== 'defeated'
+              ? styles.berserkEnemy
+              : ''
+          }`}
+          src={state.enemyImage}
+          alt="Psicopata"
+        />
         <img className={styles.survivor} src={state.playerImage} alt="Sobrevivente" />
       </div>
 

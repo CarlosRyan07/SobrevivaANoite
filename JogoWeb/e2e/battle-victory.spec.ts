@@ -38,7 +38,7 @@ test('vitória libera final, histórico e código somente no fluxo correto', asy
     'Vitórias: 1 | Derrotas: 0',
   )
   await expect(page.getByLabel('Partidas', { exact: true })).toContainText(
-    'Vida Final: 70 | Parrys: 0',
+    'Dificuldade: Normal | Vida Final: 70 | Parrys: 0',
   )
 
   await page.getByRole('button', { name: 'Voltar' }).click()

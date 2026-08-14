@@ -21,6 +21,8 @@ export const images = {
   killers: [optimized('terrifier'), optimized('lobisomem'), optimized('ghostface')] as const,
   enemy: {
     idle: optimized('psicopata_parado'),
+    berserkIdle: image('psicopata_parado_berserk.png'),
+    berserkActivation: gif('ativando_modo_berserk.gif'),
     attackSequences: [
       {
         preparingLeft: optimized('psicopata_preparando_esquerda'),

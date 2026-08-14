@@ -3,6 +3,7 @@ import {
   DEFAULT_ATTACK_SPEED_PROFILE,
   ENEMY_MAX_HP,
   NORMAL_ATTACK_DAMAGE,
+  HARD_ENEMY_MAX_HP,
   PERFECT_ENDING_MIN_PARRIES,
   PIDAO_ENDING_HP_THRESHOLD,
   PLAYER_MAX_HP,
@@ -11,6 +12,7 @@ import {
 } from './battleConstants'
 import type {
   AttackDirection,
+  BattleDifficulty,
   BattleState,
   DodgeTiming,
   EnemyAction,
@@ -24,12 +26,19 @@ export function createInitialBattleState(
   enemyHp = ENEMY_MAX_HP,
   highCombo = 0,
   playerHp = PLAYER_MAX_HP,
+  difficulty: BattleDifficulty = 'normal',
 ): BattleState {
+  const enemyMaxHp = difficulty === 'hard' ? HARD_ENEMY_MAX_HP : ENEMY_MAX_HP
   return {
     playerHp: Math.min(Math.max(playerHp, 0), PLAYER_MAX_HP),
     playerImage: images.survivor.idle,
     playerState: 'idle',
-    enemyHp: Math.min(Math.max(enemyHp, 0), ENEMY_MAX_HP),
+    enemyHp: Math.min(Math.max(enemyHp, 0), enemyMaxHp),
+    enemyMaxHp,
+    parryGauge: 0,
+    difficulty,
+    isBerserk: false,
+    berserkAuraActive: false,
     enemyAction: { kind: 'idle' },
     enemyImage: images.enemy.idle,
     gameResult: null,

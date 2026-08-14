@@ -7,7 +7,11 @@ import {
   resolveEnemyAttack,
   victoryEndingForPerformance,
 } from './battleEngine'
-import { LIGEIRINHO_ATTACK_SPEED_PROFILE } from './battleConstants'
+import {
+  HARD_ENEMY_MAX_HP,
+  HARD_PARRIES_TO_STUN,
+  LIGEIRINHO_ATTACK_SPEED_PROFILE,
+} from './battleConstants'
 
 describe('engine da batalha', () => {
   it('mantém HP e estado inicial do Android', () => {
@@ -20,6 +24,16 @@ describe('engine da batalha', () => {
       playerComboStep: 0,
       highCombo: 0,
     })
+  })
+
+  it('configura o modo difícil com 1.000 de vida e medidor de parry vazio', () => {
+    expect(createInitialBattleState(0, HARD_ENEMY_MAX_HP, 0, 100, 'hard')).toMatchObject({
+      difficulty: 'hard',
+      enemyHp: HARD_ENEMY_MAX_HP,
+      enemyMaxHp: HARD_ENEMY_MAX_HP,
+      parryGauge: 0,
+    })
+    expect(HARD_PARRIES_TO_STUN).toBeGreaterThan(0)
   })
 
   it('distingue parry, esquiva antecipada e dano', () => {

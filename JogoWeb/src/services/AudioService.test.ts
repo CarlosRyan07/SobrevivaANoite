@@ -6,6 +6,7 @@ class FakeAudio extends EventTarget {
   playbackRate = 0
   loop = false
   currentTime = 9
+  duration = 10
   paused = false
   play = vi.fn(() => Promise.resolve())
   pause = vi.fn(() => {
@@ -60,6 +61,19 @@ describe('AudioService', () => {
     expect(created[0]?.load).toHaveBeenCalledOnce()
     expect(created[0]?.play).toHaveBeenCalledOnce()
     expect(created[0]?.volume).toBe(0.3)
+  })
+
+  it('avisa uma vez quando o áudio se aproxima do fim', () => {
+    const audio = new FakeAudio()
+    const onNearEnd = vi.fn()
+    const service = new AudioService(10, () => audio as unknown as HTMLAudioElement)
+
+    service.play('berserkScream', { nearEndSeconds: 0.2, onNearEnd })
+    audio.currentTime = 9.85
+    audio.dispatchEvent(new Event('timeupdate'))
+    audio.dispatchEvent(new Event('timeupdate'))
+
+    expect(onNearEnd).toHaveBeenCalledOnce()
   })
 
   it('interrompe somente as vozes do som solicitado', () => {

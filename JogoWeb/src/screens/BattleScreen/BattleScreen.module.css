@@ -284,6 +284,12 @@
   height: 270px;
 }
 
+.berserkEnemy {
+  filter:
+    drop-shadow(0 0 1px #ff5252)
+    drop-shadow(0 0 5px rgba(157, 1, 1, 0.78));
+}
+
 .survivor {
   top: calc(50% + 60px);
   width: 60%;
@@ -535,6 +541,7 @@
     bottom: calc(8px + env(safe-area-inset-bottom, 0px));
   }
 }
+
 
 @media (max-width: 370px) {
   .controls button {

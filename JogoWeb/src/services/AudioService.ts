@@ -16,6 +16,9 @@ export interface PlaySoundOptions {
   resumePrepared?: boolean
   loop?: boolean
   volume?: number
+  onEnded?: () => void
+  onNearEnd?: () => void
+  nearEndSeconds?: number
 }
 
 export interface FadeOutOptions {
@@ -81,8 +84,29 @@ export class AudioService {
     audio.playbackRate = 1
     audio.loop = options.loop ?? false
 
+    let nearEndNotified = false
+    const timeUpdateHandler = () => {
+      const threshold = Math.max(options.nearEndSeconds ?? 0, 0)
+      if (
+        nearEndNotified ||
+        !options.onNearEnd ||
+        !Number.isFinite(audio.duration) ||
+        audio.duration - audio.currentTime > threshold
+      ) {
+        return
+      }
+
+      nearEndNotified = true
+      options.onNearEnd()
+    }
+    const endedHandler = () => {
+      options.onEnded?.()
+      cleanup()
+    }
     const cleanup = () => {
       audio.removeEventListener('ended', cleanup)
+      audio.removeEventListener('ended', endedHandler)
+      audio.removeEventListener('timeupdate', timeUpdateHandler)
       audio.removeEventListener('error', cleanup)
       const index = this.activeVoices.findIndex((voice) => voice.audio === audio)
       if (index >= 0) {
@@ -99,7 +123,8 @@ export class AudioService {
       fadeDelayTimer: null,
       fadeStepTimer: null,
     }
-    audio.addEventListener('ended', cleanup, { once: true })
+    audio.addEventListener('ended', endedHandler, { once: true })
+    if (options.onNearEnd) audio.addEventListener('timeupdate', timeUpdateHandler)
     audio.addEventListener('error', cleanup, { once: true })
     this.activeVoices.push(voice)
 

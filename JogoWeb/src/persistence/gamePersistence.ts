@@ -1,4 +1,5 @@
 import { GAME_CODES, isGameCodeId, type GameCodeId } from '../codes/gameCodes'
+import type { BattleDifficulty } from '../battle/battleTypes'
 import { isGameEndingId, type GameEndingId } from '../endings/gameEndings'
 
 export type GameMode = 'Batalha' | 'Esconde-Esconde'
@@ -9,6 +10,7 @@ export interface MatchHistory {
   wasVictory: boolean
   finalPlayerHp: number
   parryCount: number
+  difficulty?: BattleDifficulty
   timestamp: number
 }
 
@@ -80,6 +82,7 @@ function isMatchHistory(value: unknown): value is MatchHistory {
     typeof match.wasVictory === 'boolean' &&
     typeof match.finalPlayerHp === 'number' &&
     typeof match.parryCount === 'number' &&
+    (match.difficulty === undefined || match.difficulty === 'normal' || match.difficulty === 'hard') &&
     typeof match.timestamp === 'number'
   )
 }
